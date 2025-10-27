@@ -7,6 +7,6 @@
         <title>VinyDeskline</title>
     </head>
     <body>
-        
+        Test Home Page
     </body>
 </html>
