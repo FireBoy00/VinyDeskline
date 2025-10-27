@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "compose run dev",
+        "dev": "composer run dev",
         "build": "vite build",
         "laravel": "php artisan serve"
     },
