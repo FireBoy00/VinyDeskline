@@ -1,0 +1,9 @@
+/* Global Colors */
+:root {
+    --text-dark: #004F6E;
+    --bg-page: #C6DAE2;
+    --bg-card: #DCE5E9;
+    --btn-primary: #C6DAE2;
+    --btn-primary-hover: #0485B9;
+    --accent-dark: #004F6E;
+}
