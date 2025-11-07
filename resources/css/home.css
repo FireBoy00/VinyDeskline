@@ -41,6 +41,15 @@ body {
     gap: 35px;
 }
 
+/* CARD BASE */
+.card {
+    background: var(--bg-card);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* CARD POSITIONING */
 .briefing-card {
     grid-column: 1;
     text-align: center;
@@ -49,11 +58,13 @@ body {
 
 .temp-card {
     grid-column: 2;
+    text-align: center;
+    padding: 0;
 }
 
 .table-card {
     grid-column: 1;
-    grid-row: 2/span 2;
+    grid-row: 2 / span 2;
 }
 
 .optimal-card,
@@ -63,66 +74,68 @@ body {
 
 .feedback-card {
     grid-column: 2;
-    grid-row: 4 /span 5;
-}
-
-.stats-card {
-    grid-column: 1;
-    grid-row: 4 /span 5;
-}
-
-/* CARD BASE STYLE */
-.card {
-    background: var(--bg-card);
-    border-radius: 18px;
-    padding: 28px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-/* HEADINGS */
-.card h2,
-.card h3 {
-    text-align: center;
-    font-weight: 600;
-    margin-bottom: 22px;
-}
-
-/* DAILY BRIEFING */
-
-.brief-row {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 16px;
-}
-
-.brief-text {
-    font-size: 15px;
-    color: var(--text-dark);
-    line-height: 1.4;
-    word-break: break-word;
-    white-space: normal;
-    margin-right: 20px;
-    margin-left: 20px;
-}
-
-.briefing-card {
+    grid-row: 4 / span 5;
     text-align: center;
     padding: 0;
 }
 
-.briefing-card h2 {
-    font-size: 25px;
-    font-weight: 600;
-    margin-top: 20px;
+.stats-card {
+    grid-column: 1;
+    grid-row: 4 / span 5;
+    text-align: center;
+    padding: 0%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 20px;
 }
 
-.briefing-card span {
+/* TITLES (Accent Style) */
+.accent-title {
+    font-weight: 400;
+    color: var(--text-dark);
+    text-align: center;
+}
+
+.accent-title span {
     display: inline-block;
+    color: #000000;
+    font-weight: 500;
 }
 
+.accent-title span:first-letter,
+.accent span:first-letter,
+.footer-col strong::first-letter {
+    color: var(--text-dark);
+    font-weight: 700;
+}
 
-/* TEMPERATURE CARD */
+/* SIMPLE ACCENT TEXT (non-headings) */
+.accent {
+    font-weight: 300;
+    color: var(--text-dark);
+    text-align: center;
+}
+
+.accent span {
+    color: #000000;
+    font-weight: 400;
+}
+
+/* DAILY BRIEFING */
+.brief-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.brief-text {
+    font-size: 15px;
+    margin: 0 20px;
+    line-height: 1.4;
+}
+
+/* TEMPERATURE */
 .temp-controls {
     display: flex;
     align-items: center;
@@ -130,22 +143,21 @@ body {
     justify-content: space-between;
 }
 
+.left_arrow-btn,
 .right_arrow-btn {
     border: none;
     background: none;
     font-size: 30px;
     color: var(--accent-dark);
     cursor: pointer;
-    margin-right: 20px;
 }
 
 .left_arrow-btn {
-    border: none;
-    background: none;
-    font-size: 30px;
-    color: var(--accent-dark);
-    cursor: pointer;
     margin-left: 20px;
+}
+
+.right_arrow-btn {
+    margin-right: 20px;
 }
 
 .temp-value {
@@ -170,42 +182,15 @@ body {
     margin-bottom: 5px;
 }
 
-.temp-card {
-    text-align: center;
-    padding: 0;
-}
-
-.temp-card h2 {
-    font-size: 25px;
-    font-weight: 600;
-    margin-top: 20px;
-}
-
-.temp-card span {
-    display: inline-block;
-}
-
-/* TABLE IMAGE */
+/* TABLE CARD */
 .table-card img {
     width: 60%;
     display: block;
-    margin: auto;
-    margin-top: 10px;
+    margin: auto ;
 }
-
 .table-card {
     text-align: center;
     padding: 0;
-}
-
-.table-card h2 {
-    font-size: 25px;
-    font-weight: 600;
-    margin-top: 20px;
-}
-
-.table-card span {
-    display: inline-block;
 }
 
 /* OPTIMAL POSITIONS */
@@ -239,35 +224,19 @@ body {
 }
 
 .pos-group .pos-btn {
-    background: rgba(6,116,165,0.08);
+    background: rgba(6, 116, 165, 0.08);
     color: var(--text-dark);
     padding: 10px 16px;
     border-radius: 10px;
-    border: 0px rgba(6,116,165,0.14);
+    border: 0;
     font-size: 16px;
     width: 215px;
     text-align: center;
 }
 
 .save-icon {
-    width: 50px;
-    height: 50px;
-    display: block;
-    object-fit: contain;
-    cursor: pointer;
-}
-
-.optimal-row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    min-height: 50px;
-}
-
-.save-icon {
     width: 30px;
     height: 30px;
-    display: block;
     object-fit: contain;
     cursor: pointer;
     margin-right: 20px;
@@ -285,13 +254,17 @@ body {
 }
 
 /* CUSTOM POSITIONS */
+.custom-card {
+    text-align: center;
+    padding: 20px;
+}
+
 .pos-row {
     display: flex;
-    gap: px;
     margin-top: 20px;
 }
 
-input {
+.pos-row input {
     flex: 1;
     padding: 12px;
     border-radius: 12px;
@@ -313,11 +286,8 @@ input {
 
 .custom-card .pos-row input:last-child {
     background: #66B2D0;
-    color: #000000;
+    color: #000;
     font-weight: 600;
-    padding: 12px 18px;
-    border-radius: 12px;
-    margin-bottom: 10px;
 }
 
 .custom-card .pos-row input::placeholder {
@@ -327,16 +297,9 @@ input {
     font-size: 18px;
 }
 
-.custom-card {
-    text-align: center;
-    padding: 20px 20px;
-}
 
 .custom-card h2 {
     margin-top: 0px;
-}
-.custom-card span {
-    display: inline-block;
 }
 
 button.action-btn:hover,
@@ -345,25 +308,12 @@ button.action-btn:hover,
 }
 
 /* FEEDBACK */
-.feedback-list {
-    padding-left: 25px;
-    font-size: 28px;
-    line-height: 32px;
-}
-
 .feedback-dot {
     width: 18px;
     height: 18px;
     background: var(--accent-dark);
     border-radius: 50%;
-    margin-top: 14px;
-    margin-left: 20px;
-    margin-bottom: 20px;
-}
-
-.feedback-card {
-    text-align: center;
-    padding: 0;
+    margin: 14px 20px 20px;
 }
 
 .feedback-card p {
@@ -371,55 +321,12 @@ button.action-btn:hover,
     font-weight: 600;
 }
 
-.feedback-card span {
-    display: inline-block;
-}
-
-/* FOOTER (consolidated) */
-.page-footer {
-    margin-top: 60px;
-    background: var(--bg-card);
-    padding: 45px 28px;
-    display: flex;
-    justify-content: space-around;
-    text-align: center;
-    font-size: 16px;
-}
-
-.page-footer strong {
-    display: block;
-    margin-bottom: 4px;
-}
-
-.page-footer h1 {
-    font-size: 34px;
-    font-weight: 600;
-}
-
-.page-footer span {
-    display: inline-block;
-}
-
-.stats-card {
-    text-align: center;
-    padding: 0;
-}
-
-.stats-card p {
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.stats-card span {
-    display: inline-block;
-}
-
+/* STATISTICS */
 #myPlot {
     width: 100%;
     max-width: 700px;
     height: 400px;
     margin: 20px auto 30px;
-    display: block;
 }
 
 /* Statistics Legend */
@@ -427,12 +334,9 @@ button.action-btn:hover,
     display: flex;
     justify-content: center;
     gap: 24px;
-    margin: 0 auto;
     padding: 16px 24px;
     background: rgba(255, 255, 255, 0.5);
     border-radius: 12px;
-    max-width: fit-content;
-    margin-bottom: 20px;
 }
 
 .legend-item {
@@ -469,11 +373,25 @@ button.action-btn:hover,
     font-weight: 500;
 }
 
-.stats-card {
-    padding: 0;
+/* FOOTER */
+.page-footer {
+    margin-top: 60px;
+    background: var(--bg-card);
+    padding: 45px 28px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: space-around;
+    text-align: center;
+    font-size: 16px;
+}
+
+.page-footer strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.page-footer h1 {
+    font-size: 34px;
+    font-weight: 600;
 }
 
 /* RESPONSIVE */
@@ -481,35 +399,4 @@ button.action-btn:hover,
     .layout {
         grid-template-columns: 1fr;
     }
-}
-
-/* TYPOGRAPHY */
-.accent-title {
-    font-weight: 400;
-    color: var(--text-dark);
-    text-align: center;
-}
-
-.accent-title span {
-    font-weight: 500;
-    display: inline-block;
-    color: #083c4a;
-}
-
-.accent-title span:first-letter,
-.accent span:first-letter,
-.footer-col strong::first-letter {
-    font-weight: 700;
-    color: var(--text-dark);
-}
-
-.accent {
-    font-weight: 300;
-    color: var(--text-dark);
-    text-align: center;
-}
-
-.accent span {
-    color: #083c4a;
-    font-weight: 400;
 }
