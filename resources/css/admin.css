@@ -1,0 +1,81 @@
+.dashboard {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: var(--general-margin);
+}
+
+.section {
+    border-radius: var(--general-border-radius);
+    background-color: var(--color-primary);
+}
+
+/* #region /** Overview Section */
+.section#overview {
+    width: 100%;
+    height: fit-content;
+}
+
+.section#overview .section-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--color-accent-dark);
+    padding-top: calc(var(--general-margin) / 2);
+    font-family: monospace;
+}
+
+.section#overview .overview-cards {
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    gap: var(--general-margin);
+    padding: var(--general-margin);
+    padding-top: calc(var(--general-margin) / 2);
+}
+.section#overview .overview-cards .overview-card {
+    flex: 1;
+    background-color: var(--color-primary-dark);
+    color: var(--color-info);
+    text-align: center;
+    border-radius: var(--general-border-radius);
+    padding: calc(var(--general-margin) / 2);
+    display: flex;
+    gap: 8px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.section#overview .overview-cards .overview-card h2 {
+    font-size: 1rem;
+    color: var(--color-medium-gray);
+}
+
+.section#overview .overview-cards .overview-card p {
+    font-size: 1.5rem;
+    font-weight: bold;
+    font-family: monospace;
+    color: var(--color-accent-light);
+}
+
+/* #region /** Desk Status Section */
+.section#overview .overview-card.connected {
+    background-color: var(--color-desk-connected-dark);
+}
+.section#overview .overview-card.raised {
+    background-color: var(--color-desk-raised-dark);
+}
+.section#overview .overview-card.lowered {
+    background-color: var(--color-desk-lowered-dark);
+}
+.section#overview .overview-card.occupied {
+    background-color: var(--color-desk-occupied-dark);
+}
+.section#overview .overview-card.available {
+    background-color: var(--color-desk-available-dark);
+}
+.section#overview .overview-card.faulty {
+    background-color: var(--color-desk-faulty-dark);
+}
+/* #endregion */
+/* #endregion */
