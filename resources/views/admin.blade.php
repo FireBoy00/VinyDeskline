@@ -21,7 +21,7 @@
             <div class="nav-sections">
                 <ul class="nav-links nav-top">
                     <li>
-                        <a href="{{ route('home') }}" class="nav-link active">
+                        <a href="{{ route('admin') }}" class="nav-link active">
                             <span class="material-symbols-rounded nav-icon icon">dashboard</span>
                             <span>Overall Statistics</span>
                         </a>
