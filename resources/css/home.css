@@ -1,0 +1,402 @@
+body {
+    margin: 0;
+    background: var(--bg-page);
+    font-family: "Inter", Arial, sans-serif;
+    color: var(--text-dark);
+}
+
+/* HEADER */
+.page-header {
+    text-align: center;
+    padding: 28px 0;
+}
+
+.page-header h1 {
+    font-size: 32px;
+    font-weight: 600;
+}
+
+.page-header span {
+    display: inline-block;
+}
+
+.account-box {
+    position: absolute;
+    top: 28px;
+    right: 20px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    padding: 28px 0;
+}
+
+/* GRID LAYOUT */
+.layout {
+    width: 92%;
+    max-width: 1500px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    grid-template-rows: repeat(10, min-content);
+    gap: 35px;
+}
+
+/* CARD BASE */
+.card {
+    background: var(--bg-card);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* CARD POSITIONING */
+.briefing-card {
+    grid-column: 1;
+    text-align: center;
+    padding: 0;
+}
+
+.temp-card {
+    grid-column: 2;
+    text-align: center;
+    padding: 0;
+}
+
+.table-card {
+    grid-column: 1;
+    grid-row: 2 / span 2;
+}
+
+.optimal-card,
+.custom-card {
+    grid-column: 2;
+}
+
+.feedback-card {
+    grid-column: 2;
+    grid-row: 4 / span 5;
+    text-align: center;
+    padding: 0;
+}
+
+.stats-card {
+    grid-column: 1;
+    grid-row: 4 / span 5;
+    text-align: center;
+    padding: 0%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 20px;
+}
+
+/* TITLES (Accent Style) */
+.accent-title {
+    font-weight: 400;
+    color: var(--text-dark);
+    text-align: center;
+}
+
+.accent-title span {
+    display: inline-block;
+    color: #000000;
+    font-weight: 500;
+}
+
+.accent-title span:first-letter,
+.accent span:first-letter,
+.footer-col strong::first-letter {
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+/* SIMPLE ACCENT TEXT (non-headings) */
+.accent {
+    font-weight: 300;
+    color: var(--text-dark);
+    text-align: center;
+}
+
+.accent span {
+    color: #000000;
+    font-weight: 400;
+}
+
+/* DAILY BRIEFING */
+.brief-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.brief-text {
+    font-size: 15px;
+    margin: 0 20px;
+    line-height: 1.4;
+}
+
+/* TEMPERATURE */
+.temp-controls {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    justify-content: space-between;
+}
+
+.left_arrow-btn,
+.right_arrow-btn {
+    border: none;
+    background: none;
+    font-size: 30px;
+    color: var(--accent-dark);
+    cursor: pointer;
+}
+
+.left_arrow-btn {
+    margin-left: 20px;
+}
+
+.right_arrow-btn {
+    margin-right: 20px;
+}
+
+.temp-value {
+    padding: 12px 38px;
+    border-radius: 12px;
+    background: #C6DAE2;
+    font-size: 16px;
+}
+
+.temp-pagination {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+.temp-pagination span {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-dark);
+    border-radius: 50%;
+    margin-bottom: 5px;
+}
+
+/* TABLE CARD */
+.table-card img {
+    width: 60%;
+    display: block;
+    margin: auto ;
+}
+.table-card {
+    text-align: center;
+    padding: 0;
+}
+
+/* OPTIMAL POSITIONS */
+.optimal-card {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    padding: 20px 20px;
+    align-items: stretch;
+    justify-content: center;
+}
+
+.optimal-card .item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 12px;
+    padding: px;
+}
+
+.optimal-card .item p.accent {
+    margin: 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+.pos-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pos-group .pos-btn {
+    background: rgba(6, 116, 165, 0.08);
+    color: var(--text-dark);
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 0;
+    font-size: 16px;
+    width: 215px;
+    text-align: center;
+}
+
+.save-icon {
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+.optimal-card p {
+    font-size: 25px;
+    font-weight: 600;
+    margin-top: 20px;
+    padding-left: 10px;
+}
+
+.optimal-card span {
+    display: inline-block;
+}
+
+/* CUSTOM POSITIONS */
+.custom-card {
+    text-align: center;
+    padding: 20px;
+}
+
+.pos-row {
+    display: flex;
+    margin-top: 20px;
+}
+
+.pos-row input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 12px;
+    background: #C6DAE2;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    border: none;
+}
+
+.custom-card .pos-row input:first-child {
+    background: #66B2D0;
+    font-weight: 0;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.custom-card .pos-row input:last-child {
+    background: #66B2D0;
+    color: #000;
+    font-weight: 600;
+}
+
+.custom-card .pos-row input::placeholder {
+    color: #004F6E;
+    font-weight: 600;
+    text-align: center;
+    font-size: 18px;
+}
+
+
+.custom-card h2 {
+    margin-top: 0px;
+}
+
+button.action-btn:hover,
+.pos-btn:hover {
+    background: var(--btn-primary-hover);
+}
+
+/* FEEDBACK */
+.feedback-dot {
+    width: 18px;
+    height: 18px;
+    background: var(--accent-dark);
+    border-radius: 50%;
+    margin: 14px 20px 20px;
+}
+
+.feedback-card p {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* STATISTICS */
+#myPlot {
+    width: 100%;
+    max-width: 700px;
+    height: 400px;
+    margin: 20px auto 30px;
+}
+
+/* Statistics Legend */
+.stats-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+}
+
+.legend-dot.sitting {
+    background-color: #0485B9;
+}
+
+.legend-dot.standing {
+    background-color: #004F6E;
+}
+
+.legend-dot.cleaning {
+    background-color: #66B2D0;
+}
+
+.legend-dot.unknown {
+    background-color: #C6DAE2;
+}
+
+.legend-label {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* FOOTER */
+.page-footer {
+    margin-top: 60px;
+    background: var(--bg-card);
+    padding: 45px 28px;
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    font-size: 16px;
+}
+
+.page-footer strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.page-footer h1 {
+    font-size: 34px;
+    font-weight: 600;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+}
