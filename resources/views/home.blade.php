@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>VinyDeskline</title>
 
-        @vite(['resources/css/app.css, resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
         @vite(['resources/css/home.css'])
 
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>

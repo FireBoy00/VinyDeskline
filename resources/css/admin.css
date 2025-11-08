@@ -1,3 +1,118 @@
+/* Whatever was in my app.css */
+/* #region /** app.css */
+/* #region /** General Reset Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/*! For now we'll use the dark theme until we implement a theme switcher */
+html, body {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    color: var(--color-accent-dark);
+    background-color: var(--color-primary-dark);
+}
+
+body {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--color-background);
+    padding: var(--general-margin);
+    gap: var(--general-margin);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+a:visited {
+    color: inherit;
+}
+/* #endregion */
+
+/* #region /** Icons */
+.material-symbols-rounded {
+    font-variation-settings:
+        'FILL' 0,
+        'wght' 100,
+        'GRAD' 200,
+        'opsz' 24;
+}
+.material-symbols-rounded.fill {
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 100,
+        'GRAD' 200,
+        'opsz' 24;
+}
+.icon {
+    user-select: none;
+}
+/* #endregion */
+
+/* #region /** Navbar */
+nav.navbar {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    min-width: 225px;
+    height: 100%;
+    background-color: var(--color-primary);
+    padding: var(--spacing-base);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+nav.navbar h1 {
+    font-family: monospace;
+    text-align: center;
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-base);
+    color: var(--color-white);
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--color-white);
+}
+nav.navbar h1 span {
+    color: var(--color-primary-dark);
+}
+
+nav.navbar .nav-sections {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+}
+nav.navbar .nav-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+nav.navbar .nav-link {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: var(--color-secondary);
+    transition: background-color 0.3s, color 0.3s;
+}
+nav.navbar .nav-link:hover,
+nav.navbar .nav-link.active {
+    background-color: var(--color-primary-dark);
+    color: var(--color-white);
+    cursor: pointer;
+}
+nav.navbar .nav-link .nav-icon {
+    margin-right: 4px;
+}
+/* #endregion */
+/* #endregion app.css*/
+
+
 .dashboard {
     width: 100%;
     display: flex;
