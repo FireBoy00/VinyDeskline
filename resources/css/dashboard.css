@@ -1,60 +1,3 @@
-/* Whatever was in my app.css */
-/* #region /** app.css */
-/* #region /** General Reset Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/*! For now we'll use the dark theme until we implement a theme switcher */
-html, body {
-    display: flex;
-    width: 100%;
-    height: 100%;
-    font-family: var(--font-family);
-    font-size: var(--font-size-base);
-    color: var(--color-accent-dark);
-    background-color: var(--color-primary-dark);
-}
-
-body {
-    display: flex;
-    flex-direction: row;
-    background-color: var(--color-background);
-    padding: var(--general-margin);
-    gap: var(--general-margin);
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-a:visited {
-    color: inherit;
-}
-/* #endregion */
-
-/* #region /** Icons */
-.material-symbols-rounded {
-    font-variation-settings:
-        'FILL' 0,
-        'wght' 100,
-        'GRAD' 200,
-        'opsz' 24;
-}
-.material-symbols-rounded.fill {
-    font-variation-settings:
-        'FILL' 1,
-        'wght' 100,
-        'GRAD' 200,
-        'opsz' 24;
-}
-.icon {
-    user-select: none;
-}
-/* #endregion */
-
 /* #region /** Navbar */
 nav.navbar {
     display: flex;
@@ -62,7 +5,7 @@ nav.navbar {
     border-radius: 8px;
     min-width: 225px;
     height: 100%;
-    background-color: var(--color-primary);
+    background-color: var(--bg-card);
     padding: var(--spacing-base);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -72,12 +15,12 @@ nav.navbar h1 {
     text-align: center;
     font-size: 1.5rem;
     margin-bottom: var(--spacing-base);
-    color: var(--color-white);
+    color: var(--text-dark);
     padding-bottom: 15px;
-    border-bottom: 2px solid var(--color-white);
+    border-bottom: 2px solid var(--accent-dark);
 }
 nav.navbar h1 span {
-    color: var(--color-primary-dark);
+    color: var(--accent-dark);
 }
 
 nav.navbar .nav-sections {
@@ -97,20 +40,19 @@ nav.navbar .nav-link {
     align-items: center;
     padding: 10px;
     border-radius: 5px;
-    background-color: var(--color-secondary);
+    background-color: var(--btn-primary);
     transition: background-color 0.3s, color 0.3s;
 }
 nav.navbar .nav-link:hover,
 nav.navbar .nav-link.active {
-    background-color: var(--color-primary-dark);
-    color: var(--color-white);
+    background-color: var(--btn-primary-hover);
+    color: var(--bg-page);
     cursor: pointer;
 }
 nav.navbar .nav-link .nav-icon {
     margin-right: 4px;
 }
 /* #endregion */
-/* #endregion app.css*/
 
 
 .dashboard {
@@ -118,11 +60,12 @@ nav.navbar .nav-link .nav-icon {
     display: flex;
     flex-direction: row;
     gap: var(--general-margin);
+    background-color: var(--bg-page);
 }
 
 .section {
     border-radius: var(--general-border-radius);
-    background-color: var(--color-primary);
+    background-color: var(--bg-card);
 }
 
 /* #region /** Overview Section */
@@ -135,7 +78,7 @@ nav.navbar .nav-link .nav-icon {
     text-align: center;
     font-size: 1.5rem;
     font-weight: bold;
-    color: var(--color-accent-dark);
+    color: var(--accent-dark);
     padding-top: calc(var(--general-margin) / 2);
     font-family: monospace;
 }
@@ -150,8 +93,8 @@ nav.navbar .nav-link .nav-icon {
 }
 .section#overview .overview-cards .overview-card {
     flex: 1;
-    background-color: var(--color-primary-dark);
-    color: var(--color-info);
+    background-color: var(--btn-primary-hover);
+    color: var(--accent-dark);
     text-align: center;
     border-radius: var(--general-border-radius);
     padding: calc(var(--general-margin) / 2);
@@ -163,34 +106,34 @@ nav.navbar .nav-link .nav-icon {
 }
 .section#overview .overview-cards .overview-card h2 {
     font-size: 1rem;
-    color: var(--color-medium-gray);
+    color: var(--accent-dark);
 }
 
 .section#overview .overview-cards .overview-card p {
     font-size: 1.5rem;
     font-weight: bold;
     font-family: monospace;
-    color: var(--color-accent-light);
+    color: var(--accent-dark);
 }
 
 /* #region /** Desk Status Section */
 .section#overview .overview-card.connected {
-    background-color: var(--color-desk-connected-dark);
+    background-color: var(--color-desk-connected);
 }
 .section#overview .overview-card.raised {
-    background-color: var(--color-desk-raised-dark);
+    background-color: var(--color-desk-raised);
 }
 .section#overview .overview-card.lowered {
-    background-color: var(--color-desk-lowered-dark);
+    background-color: var(--color-desk-lowered);
 }
 .section#overview .overview-card.occupied {
-    background-color: var(--color-desk-occupied-dark);
+    background-color: var(--color-desk-occupied);
 }
 .section#overview .overview-card.available {
-    background-color: var(--color-desk-available-dark);
+    background-color: var(--color-desk-available);
 }
 .section#overview .overview-card.faulty {
-    background-color: var(--color-desk-faulty-dark);
+    background-color: var(--color-desk-faulty);
 }
 /* #endregion */
 /* #endregion */
