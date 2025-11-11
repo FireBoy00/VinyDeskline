@@ -89,6 +89,31 @@
                     <div class="plot-wrap">
                         <div id="myPlot"></div>
                     </div>
+<section class="section" id="positions">
+  <div class="positions-wrapper">
+    <div class="position-box">
+      <span class="position-label">Cleaning</span>
+      <div class="position-badges">
+        <span class="badge">in 3h</span>
+        <span class="badge">17–19 pm</span>
+      </div>
+    </div>
+
+    <div class="position-box">
+      <span class="position-label">Uniform</span>
+      <div class="position-badges">
+        <span class="badge">in 3h</span>
+        <span class="badge">17–19 pm</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
+            <section class="section" id="graphs">
 
                     <div class="stats-legend">
                         <div class="legend-item">

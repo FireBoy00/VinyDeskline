@@ -63,6 +63,7 @@ nav.navbar .nav-link .nav-icon {
 /* #endregion */
 
 
+/* #region /** Dashboard Layout */
 .dashboard {
     width: 100%;
     display: flex;
@@ -75,6 +76,8 @@ nav.navbar .nav-link .nav-icon {
     border-radius: var(--general-border-radius);
     background-color: var(--bg-card);
 }
+/* #endregion */
+
 
 /* #region /** Overview Section */
 .section#overview {
@@ -101,6 +104,7 @@ nav.navbar .nav-link .nav-icon {
     padding: var(--general-margin);
     padding-top: calc(var(--general-margin) / 2);
 }
+
 .section#overview .overview-cards .overview-card {
     flex: 1;
     background-color: var(--btn-primary-hover);
@@ -118,7 +122,6 @@ nav.navbar .nav-link .nav-icon {
     font-size: 1rem;
     color: var(--accent-dark);
 }
-
 .section#overview .overview-cards .overview-card p {
     font-size: 1.5rem;
     font-weight: bold;
@@ -126,10 +129,62 @@ nav.navbar .nav-link .nav-icon {
     color: var(--accent-dark);
 }
 /* #region /** Main Stats Section */
+/* #endregion */
 
-/* #region /** Desk Status Section */
-.section#overview .overview-card {
-    background-color: var(--bg-card-dark);
+
+/* #region /** Positions Section */
+.section#positions {
+  position: relative;
+  left: -16px; /* <-- offset by var(--general-margin) */
+  width: calc(100% + 16px); /* same margin value */
+  background-color: var(--bg-page) !important;
+  border-radius: var(--general-border-radius);
+  padding: 0;
+}
+
+/* internal layout identical to overview */
+.section#positions .positions-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  list-style: none;
+  width: 100%;
+  gap: var(--general-margin);
+  padding: var(--general-margin);
+  padding-top: calc(var(--general-margin) / 2);
+}
+
+/* containers */
+.section#positions .position-box {
+  flex: 1;
+  background-color: #DCE5E9;
+  border-radius: 12px;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* label + badges remain same */
+.section#positions .position-label {
+  font-family: "Inter", sans-serif;
+  font-size: 1.1rem;
+  color: #0a1e2d;
+}
+
+.section#positions .position-badges {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.section#positions .badge {
+  background-color: #0485B9;
+  color: #004F6E;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  padding: 5px 12px;
 }
 /* #endregion */
 
