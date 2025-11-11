@@ -81,9 +81,30 @@
                     </li>
                 </ul>
             </section>
-            <section class="section" id="positions">
+<section class="section" id="positions">
+  <div class="positions-wrapper">
+    <div class="position-box">
+      <span class="position-label">Cleaning</span>
+      <div class="position-badges">
+        <span class="badge">in 3h</span>
+        <span class="badge">17–19 pm</span>
+      </div>
+    </div>
 
-            </section>
+    <div class="position-box">
+      <span class="position-label">Uniform</span>
+      <div class="position-badges">
+        <span class="badge">in 3h</span>
+        <span class="badge">17–19 pm</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+
             <section class="section" id="graphs">
 
             </section>
