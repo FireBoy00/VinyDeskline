@@ -19,7 +19,7 @@
                 </a>
             </h1>
             <div class="nav-sections">
-                <ul class="nav-links nav-top">
+                <ul class="nav-links">
                     <li>
                         <a href="{{ route('admin') }}" class="nav-link active">
                             <span class="material-symbols-rounded nav-icon icon">dashboard</span>
@@ -35,36 +35,20 @@
                     <li>
                         <a href="#" class="nav-link">
                             <span class="material-symbols-rounded nav-icon icon">schedule</span>
-                            <span>Cleaning Schedule</span>
+                            <span>Schedules</span>
                         </a>
                     </li>
-                    <li>
-                        <a href="#" class="nav-link">
-                            <span class="material-symbols-rounded nav-icon icon">people</span>
-                            <span>Users</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link">
-                            <span class="material-symbols-rounded nav-icon icon">info</span>
-                            <span>About</span>
-                        </a>
-                    </li>
+                    <ul class="nav-links nav-bottom">
+                                <li>
+                                    <a href="#" class="nav-link nav-account">
+                                        <span class="material-symbols-rounded nav-icon icon">account_circle</span>
+                                        <span>Account</span>
+                                    </a>
+                                </li>
+                    </ul>
+                
                 </ul>
-                <ul class="nav-links nav-bottom">
-                    <li>
-                        <a href="#" class="nav-link nav-settings">
-                            <span class="material-symbols-rounded nav-icon icon">settings</span>
-                            <span>Settings</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#" class="nav-link nav-account">
-                            <span class="material-symbols-rounded nav-icon icon">account_circle</span>
-                            <span>Account</span>
-                        </a>
-                    </li>
-                </ul>
+                
             </div>
         </nav>
         <main class="dashboard" id="dashboard">

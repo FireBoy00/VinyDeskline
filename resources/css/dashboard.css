@@ -1,3 +1,7 @@
+body {
+    padding: var(--general-margin);
+}
+
 /* #region /** Navbar */
 nav.navbar {
     display: flex;
@@ -51,6 +55,10 @@ nav.navbar .nav-link.active {
 }
 nav.navbar .nav-link .nav-icon {
     margin-right: 4px;
+}
+
+.nav-bottom {
+    padding-top: 125px;
 }
 /* #endregion */
 
@@ -117,23 +125,7 @@ nav.navbar .nav-link .nav-icon {
 }
 
 /* #region /** Desk Status Section */
-.section#overview .overview-card.connected {
-    background-color: var(--color-desk-connected);
+.section#overview .overview-card {
+    background-color: var(--bg-card-dark);
 }
-.section#overview .overview-card.raised {
-    background-color: var(--color-desk-raised);
-}
-.section#overview .overview-card.lowered {
-    background-color: var(--color-desk-lowered);
-}
-.section#overview .overview-card.occupied {
-    background-color: var(--color-desk-occupied);
-}
-.section#overview .overview-card.available {
-    background-color: var(--color-desk-available);
-}
-.section#overview .overview-card.faulty {
-    background-color: var(--color-desk-faulty);
-}
-/* #endregion */
 /* #endregion */

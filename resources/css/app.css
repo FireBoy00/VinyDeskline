@@ -8,14 +8,8 @@
     --btn-primary: #C6DAE2;
     --btn-primary-hover: #0485B9;
     --accent-dark: #004F6E;
+    --bg-card-dark: #66B2D0;
 
-    /* Desk Status Colors */
-    --color-desk-raised: #2196f3;
-    --color-desk-lowered: #ffeb3b;
-    --color-desk-occupied: #ff9800;
-    --color-desk-faulty: #f44336;
-    --color-desk-connected: #4caf50;
-    --color-desk-available: #9e9e9e;
 
     /* Common Variables */
     --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
