@@ -7,7 +7,8 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @vite(['resources/css/dashboard.css'])
-        
+
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <title>VinyDeskline</title>
     </head>
     <body style="background-color: var(--bg-page);">
@@ -81,12 +82,99 @@
                     </li>
                 </ul>
             </section>
-            <section class="section" id="positions">
+            <div class="graphs-row">
+                <section class="section" id="line-graph">
+                    <h1 class="section-title"><span>Overall</span> <span>Statistics</span></h1>
 
-            </section>
-            <section class="section" id="graphs">
+                    <div class="plot-wrap">
+                        <div id="myPlot"></div>
+                    </div>
 
-            </section>
+                    <div class="stats-legend">
+                        <div class="legend-item">
+                            <span class="legend-dot sitting"></span>
+                            <span class="legend-label">Sitting</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot standing"></span>
+                            <span class="legend-label">Standing</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot cleaning"></span>
+                            <span class="legend-label">Cleaning</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-dot unknown"></span>
+                            <span class="legend-label">Unknown</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="section" id="pie-graph">
+                    <h1 class="section-title">Table positions</h1>
+
+                    <div class="pie-wrap">
+                        <div id="piePlot"></div>
+
+                        <div class="pie-legend card-legend">
+                            <div class="legend-item">
+                                <span class="legend-dot sitting"></span>
+                                <span class="legend-label">Sitting</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot standing"></span>
+                                <span class="legend-label">Standing</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot cleaning"></span>
+                                <span class="legend-label">Cleaning</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-dot unknown"></span>
+                                <span class="legend-label">Unknown</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <script>
+                    const xArray = [50,60,70,80,90,100,110,120,130,140,150];
+                    const yArray = [7,8,8,9,9,9,10,11,14,14,15];
+
+                    Plotly.newPlot("myPlot", [{
+                        x: xArray,
+                        y: yArray,
+                        mode: "lines",
+                        line: { color: '#004F6E' }
+                    }], {
+                        autosize: true,
+                        xaxis: { title: "Square Meters" },
+                        yaxis: { title: "Price in Millions" },
+                        margin: { t: 20, b: 40, l: 60, r: 20 },
+                        plot_bgcolor: 'transparent',
+                        paper_bgcolor: 'transparent',
+                        showlegend: false
+                    }, {responsive: true});
+
+                    const pieValues = [25, 25, 25, 25];
+                    const pieLabels = ['Sitting', 'Standing', 'Cleaning', 'Unknown'];
+                    const pieColors = ['#0485B9', '#004F6E', '#66B2D0', '#C6DAE2'];
+
+                    Plotly.newPlot('piePlot', [{
+                        values: pieValues,
+                        labels: pieLabels,
+                        type: 'pie',
+                        marker: { colors: pieColors, line: { color: '#ffffff', width: 2 } },
+                        hoverinfo: 'label+percent'
+                    }], {
+                        height: 300,
+                        margin: { t: 20, b: 20, l: 20, r: 20 },
+                        showlegend: false,
+                        paper_bgcolor: 'transparent',
+                        plot_bgcolor: 'transparent'
+                    }, { responsive: true });
+                </script>
+            </div>
         </main>
     </body>
 </html>
