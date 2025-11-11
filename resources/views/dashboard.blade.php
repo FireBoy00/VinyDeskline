@@ -81,6 +81,12 @@
                     </li>
                 </ul>
             </section>
+            <section class="section" id="positions">
+
+            </section>
+            <section class="section" id="graphs">
+
+            </section>
         </main>
     </body>
 </html>
