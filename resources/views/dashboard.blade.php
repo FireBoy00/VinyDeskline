@@ -82,14 +82,7 @@
                     </li>
                 </ul>
             </section>
-            <div class="graphs-row">
-                <section class="section" id="line-graph">
-                    <h1 class="section-title"><span>Overall</span> <span>Statistics</span></h1>
-
-                    <div class="plot-wrap">
-                        <div id="myPlot"></div>
-                    </div>
-<section class="section" id="positions">
+            <section class="section" id="positions">
   <div class="positions-wrapper">
     <div class="position-box">
       <span class="position-label">Cleaning</span>
@@ -109,12 +102,13 @@
   </div>
 </section>
 
+            <div class="graphs-row">
+                <section class="section" id="line-graph">
+                    <h1 class="section-title"><span>Overall</span> <span>Statistics</span></h1>
 
-
-
-
-            <section class="section" id="graphs">
-
+                    <div class="plot-wrap">
+                        <div id="myPlot"></div>
+                    </div>
                     <div class="stats-legend">
                         <div class="legend-item">
                             <span class="legend-dot sitting"></span>
@@ -134,7 +128,6 @@
                         </div>
                     </div>
                 </section>
-
                 <section class="section" id="pie-graph">
                     <h1 class="section-title">Table positions</h1>
 

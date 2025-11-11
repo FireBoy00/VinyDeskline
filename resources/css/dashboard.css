@@ -256,13 +256,11 @@ nav.navbar .nav-link .nav-icon {
     display: flex;
     gap: var(--general-margin);
     align-items: stretch; /* make both sections equal height */
-    padding: var(--general-margin);
 }
 
 /* make each section a card and split space: left bigger, right smaller */
 .graphs-row > .section {
     flex: 1 1 0%;
-    padding: calc(var(--general-margin) / 2);
     box-sizing: border-box;
     display: flex;
     flex-direction: column; /* allow children to stretch vertically */
