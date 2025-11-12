@@ -120,13 +120,13 @@ nav.navbar .nav-link .nav-icon {
 }
 .section#overview .overview-cards .overview-card h2 {
     font-size: 1rem;
-    color: var(--accent-dark);
+    color: white;
 }
 .section#overview .overview-cards .overview-card p {
     font-size: 1.5rem;
     font-weight: bold;
     font-family: monospace;
-    color: var(--accent-dark);
+    color: white;
 }
 /* #region /** Main Stats Section */
 /* #endregion */
@@ -134,12 +134,9 @@ nav.navbar .nav-link .nav-icon {
 
 /* #region /** Positions Section */
 .section#positions {
-  position: relative;
-  left: -16px; /* <-- offset by var(--general-margin) */
-  width: calc(100% + 16px); /* same margin value */
+  position: block;
   background-color: var(--bg-page) !important;
   border-radius: var(--general-border-radius);
-  padding: 0;
 }
 
 /* internal layout identical to overview */
@@ -150,7 +147,6 @@ nav.navbar .nav-link .nav-icon {
   list-style: none;
   width: 100%;
   gap: var(--general-margin);
-  padding: var(--general-margin);
   padding-top: calc(var(--general-margin) / 2);
 }
 
@@ -179,8 +175,8 @@ nav.navbar .nav-link .nav-icon {
 }
 
 .section#positions .badge {
-  background-color: #0485B9;
-  color: #004F6E;
+  background-color: var(--btn-primary-hover);
+  color: white;
   font-weight: 500;
   font-size: 0.95rem;
   border-radius: 10px;
@@ -268,7 +264,7 @@ nav.navbar .nav-link .nav-icon {
 
 /* left: bigger area for the line chart */
 .graphs-row > #line-graph {
-    flex: 1.6; /* roughly 62% */
+    flex: 1; /* roughly 62% */
 }
 
 /* right: pie area */
@@ -283,11 +279,11 @@ nav.navbar .nav-link .nav-icon {
 
 .pie-wrap {
     display: flex;
-    gap: 24px;
+    gap: var(--general-margin);
     align-items: center;
     justify-content: center;
     width: 100%;
-    flex: 1; /* fill the full height of the section */
+    flex: 1;
 }
 
 /* keep pie square and centered */

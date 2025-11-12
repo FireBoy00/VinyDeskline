@@ -43,7 +43,7 @@
                                 <li>
                                     <a href="#" class="nav-link nav-account">
                                         <span class="material-symbols-rounded nav-icon icon">account_circle</span>
-                                        <span>Account</span>
+                                        <span>John Doe</span>
                                     </a>
                                 </li>
                     </ul>
