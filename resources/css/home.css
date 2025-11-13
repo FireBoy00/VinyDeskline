@@ -24,8 +24,6 @@ body {
     position: absolute;
     top: 28px;
     right: 20px;
-    width: 30px;
-    height: 30px;
     cursor: pointer;
     padding: 28px 0;
 }
@@ -56,7 +54,7 @@ body {
     padding: 0;
 }
 
-.temp-card {
+.carousel-card {
     grid-column: 2;
     text-align: center;
     padding: 0;
@@ -135,51 +133,57 @@ body {
     line-height: 1.4;
 }
 
-/* TEMPERATURE */
-.temp-controls {
+/* CAROUSEL CONTROLS */
+.carousel-controls {
     display: flex;
     align-items: center;
     gap: 14px;
     justify-content: space-between;
 }
 
-.left_arrow-btn,
-.right_arrow-btn {
+.chevron-btn {
     border: none;
     background: none;
     font-size: 30px;
-    color: var(--accent-dark);
+    color: var(--accent-dark); 
     cursor: pointer;
+    transition: color 0.2s;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
-.left_arrow-btn {
-    margin-left: 20px;
-}
 
-.right_arrow-btn {
-    margin-right: 20px;
-}
 
-.temp-value {
+.carousel-value {
     padding: 12px 38px;
     border-radius: 12px;
     background: #C6DAE2;
     font-size: 16px;
+    flex-shrink: 0;
 }
 
-.temp-pagination {
-    margin-top: 14px;
+.carousel-pagination {
+    margin-top: 25px;
     display: flex;
     justify-content: center;
     gap: 6px;
+    padding-bottom: 10px;
 }
 
-.temp-pagination span {
+.carousel-pagination .dot {
     width: 8px;
     height: 8px;
     background: var(--accent-dark);
     border-radius: 50%;
     margin-bottom: 5px;
+    cursor: pointer;
+    transition: background 0.3s, box-shadow 0.3s, border 0.3s;
+}
+
+.dot.active {
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(0, 0, 0, 0.2); 
+    border: 1px solid white; 
+    background-color: var(--accent-dark); 
 }
 
 /* TABLE CARD */
@@ -195,12 +199,10 @@ body {
 
 /* OPTIMAL POSITIONS */
 .optimal-card {
-    display: flex;
-    flex-direction: column;
-    gap: 28px;
-    padding: 20px 20px;
-    align-items: stretch;
-    justify-content: center;
+    text-align: center;
+    padding-top: 0px;
+    padding-right: 20px;
+    padding-bottom: 20px;
 }
 
 .optimal-card .item {
@@ -208,11 +210,12 @@ body {
     align-items: center;
     justify-content: space-between;
     border-radius: 12px;
-    padding: px;
+    padding-bottom: 20px;
 }
 
 .optimal-card .item p.accent {
     margin: 0;
+    padding: 0px;
     font-size: 18px;
     text-align: left;
 }
@@ -226,11 +229,11 @@ body {
 .pos-group .pos-btn {
     background: rgba(6, 116, 165, 0.08);
     color: var(--text-dark);
-    padding: 10px 16px;
+    padding: 10px 0px;
     border-radius: 10px;
     border: 0;
     font-size: 16px;
-    width: 215px;
+    width: 300px;
     text-align: center;
 }
 
@@ -240,13 +243,7 @@ body {
     object-fit: contain;
     cursor: pointer;
     margin-right: 20px;
-}
-
-.optimal-card p {
-    font-size: 25px;
-    font-weight: 600;
-    margin-top: 20px;
-    padding-left: 10px;
+    padding-top: 5px;
 }
 
 .optimal-card span {
@@ -273,6 +270,7 @@ body {
     margin-right: 10px;
     margin-bottom: 20px;
     border: none;
+    width: 220px;
 }
 
 .custom-card .pos-row input:first-child {
@@ -286,7 +284,6 @@ body {
 
 .custom-card .pos-row input:last-child {
     background: #66B2D0;
-    color: #000;
     font-weight: 600;
 }
 
@@ -294,7 +291,7 @@ body {
     color: #004F6E;
     font-weight: 600;
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 
@@ -305,6 +302,7 @@ body {
 button.action-btn:hover,
 .pos-btn:hover {
     background: var(--btn-primary-hover);
+    color: #fff;
 }
 
 /* FEEDBACK */
