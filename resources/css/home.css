@@ -94,6 +94,8 @@ body {
     font-weight: 400;
     color: var(--text-dark);
     text-align: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .accent-title span {
@@ -254,12 +256,14 @@ body {
 /* CUSTOM POSITIONS */
 .custom-card {
     text-align: center;
-    padding: 20px;
+    padding: 0px;
+    padding-left: 20px;
+    padding-bottom: 20px;
 }
 
 .pos-row {
     display: flex;
-    margin-top: 20px;
+    margin-top: 0px;
 }
 
 .pos-row input {
