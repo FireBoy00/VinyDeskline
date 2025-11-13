@@ -6,11 +6,11 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @vite(['resources/css/admin.css'])
+        @vite(['resources/css/dashboard.css'])
         
         <title>VinyDeskline</title>
     </head>
-    <body>
+    <body style="background-color: var(--bg-page);">
         <nav class="navbar" id="navbar">
             <h1 class="nav-logo">
                 <a href="{{ route('home') }}">
