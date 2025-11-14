@@ -20,4 +20,10 @@ class HomeController extends Controller
     {
         return view('dashboard');
     }
+    
+    public function schedules()
+    {
+        return view('schedules');
+    }
+
 }
