@@ -22,19 +22,19 @@
             <div class="nav-sections">
                 <ul class="nav-links">
                     <li>
-                        <a href="{{ route('admin') }}" class="nav-link active">
+                        <a href="#overall-statistics" class="nav-link active" data-target="overall">
                             <span class="material-symbols-rounded nav-icon icon">dashboard</span>
                             <span class="nav-text">Overall Statistics</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link">
+                        <a href="#arrangement" class="nav-link" data-target="arrangement">
                             <span class="material-symbols-rounded nav-icon icon">desk</span>
                             <span class="nav-text">Desk Arrangement</span>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link">
+                        <a href="#schedules" class="nav-link" data-target="schedules">
                             <span class="material-symbols-rounded nav-icon icon">schedule</span>
                             <span class="nav-text">Schedules</span>
                         </a>
@@ -43,7 +43,7 @@
 
                 <ul class="nav-links nav-bottom">
                     <li>
-                        <a href="#" class="nav-link nav-account">
+                        <a href="#account" class="nav-link nav-account" data-target="account">
                             <span class="material-symbols-rounded nav-icon icon">account_circle</span>
                             <span class="nav-text">John Doe</span>
                         </a>
@@ -53,6 +53,7 @@
             </div>
         </nav>
         <main class="dashboard" id="dashboard">
+            <div id="overall-container">
             <section class="section" id="overview">
                 <h1 class="section-title">Overview</h1>
                 <ul class="overview-cards">
@@ -156,6 +157,29 @@
                 </section>
 
             </div>
+            </div>
+
+            <!-- Desk Arrangement section (hidden by default) -->
+            <section id="arrangement" style="display: none;">
+                <section class="section">
+                  <h1 class="section-title">Desk Arrangement</h1>  
+                </section>
+            </section>
+
+            <!-- Schedules section (hidden by default) -->
+            <section  id="schedules" style="display: none;">
+                <section class="section">
+                  <h1 class="section-title">Schedules</h1>  
+                </section>
+            </section>
+
+            <!-- Account section (hidden by default) -->
+            <section id="account" style="display: none;">
+                <section class="section">
+                  <h1 class="section-title">Account</h1>  
+                </section>
+                
+            </section>
         </main>
     </body>
 </html>
