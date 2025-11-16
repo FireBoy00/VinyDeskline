@@ -14,7 +14,7 @@
         <section class="login-container">
             <h1 class="login-title"> Welcome to VinyDeskline</h1>
             <p class="login-motto">
-                Let us <span class="motto-highlight">elevate</span> your working experience!
+                Let us <span class="highlight">elevate</span> your working experience!
             </p>
             <form class="login-form" method="POST" action="{{ route('login.submit') }}">
                 @csrf
@@ -22,6 +22,7 @@
                 <input type="text" id="pass" name="password" placeholder="Password"><br>
                 <button type="submit" class="login-btn">Log In</button>
             </form>
+            <p class="forgot_pass"> Forgot your password? <span class="highlight"><a href="#">Click here</a></span></p>
         </section>
     </body>
 </html>

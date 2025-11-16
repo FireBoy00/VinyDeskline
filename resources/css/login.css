@@ -41,7 +41,7 @@ body {
     margin-bottom: 56px;
 }
 
-.motto-highlight{
+.highlight{
     color: #0485B9;
     font-weight: bold;
 }
@@ -66,4 +66,13 @@ body {
     color: white;
     font-size: 16px;
     cursor: pointer;
+}
+
+.forgot_pass{
+    width: 60%; 
+    margin-top: 16px;
+    font-size: 14px;
+    color: black;
+    text-align: left;
+    
 }
