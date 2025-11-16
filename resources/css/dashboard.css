@@ -1,14 +1,29 @@
+/* -------------------------------
+   Base layout
+   ------------------------------- */
+html, body {
+    height: 100%;
+}
 body {
     padding: var(--general-margin);
+    display: flex;
+    align-items: stretch;
+    gap: var(--general-margin);
 }
 
-/* #region /** Navbar */
+
+/* -------------------------------
+   Navbar / Sidebar
+   ------------------------------- */
 nav.navbar {
-    display: flex;
+    display:flex;
     flex-direction: column;
     border-radius: 8px;
-    min-width: 225px;
-    height: 100%;
+    position: fixed;
+    top: var(--general-margin);
+    left: var(--general-margin);
+    width: 250px; /* fixed sidebar width */
+    height: calc(100vh - (2 * var(--general-margin)));
     background-color: var(--bg-card);
     padding: var(--spacing-base);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -19,14 +34,16 @@ nav.navbar h1 {
     text-align: center;
     font-size: 1.5rem;
     margin-bottom: var(--spacing-base);
-    color: var(--text-dark);
+    color: black;
     padding-bottom: 15px;
     border-bottom: 2px solid var(--accent-dark);
 }
 nav.navbar h1 span {
     color: var(--accent-dark);
 }
-
+.nav-text {
+    font-weight: bold;
+}
 nav.navbar .nav-sections {
     display: flex;
     flex-direction: column;
@@ -57,29 +74,43 @@ nav.navbar .nav-link .nav-icon {
     margin-right: 4px;
 }
 
-.nav-bottom {
-    padding-top: 125px;
-}
-/* #endregion */
 
-
-/* #region /** Dashboard Layout */
+/* -------------------------------
+   Dashboard layout (main content)
+   ------------------------------- */
 .dashboard {
-    width: 100%;
+    flex: 1;
+    margin-left: calc(250px + 2 * var(--general-margin));
     display: flex;
     flex-direction: column;
     gap: var(--general-margin);
     background-color: var(--bg-page);
 }
-
+/* Responsive: on small screens, revert sidebar to normal document flow */
+@media (max-width: 800px) {
+    nav.navbar {
+        position: static;
+        width: auto;
+        height: auto;
+        top: auto;
+        left: auto;
+    }
+    .dashboard {
+        margin-left: 0;
+    }
+}
+/* -------------------------------
+   Dashboard Sections
+   ------------------------------- */
 .section {
     border-radius: var(--general-border-radius);
     background-color: var(--bg-card);
 }
-/* #endregion */
 
 
-/* #region /** Overview Section */
+/* -------------------------------
+   Overview Section
+   ------------------------------- */
 .section#overview {
     width: 100%;
     height: fit-content;
@@ -88,12 +119,15 @@ nav.navbar .nav-link .nav-icon {
 .section-title {
     text-align: center;
     font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--accent-dark);
+    color: black;
     padding-top: calc(var(--general-margin) / 2);
     font-family: monospace;
-    /* make it stick on the top of element */
-    top: 0;
+}
+
+/* make the first letter use the accent color while the rest remain dark/black */
+.section-title::first-letter {
+    color: var(--accent-dark);
+    font-weight: bold;
 }
 
 .section#overview .overview-cards {
@@ -128,15 +162,14 @@ nav.navbar .nav-link .nav-icon {
     font-family: monospace;
     color: white;
 }
-/* #region /** Main Stats Section */
-/* #endregion */
 
 
-/* #region /** Positions Section */
+/* -------------------------------
+   Positions Section
+   ------------------------------- */
 .section#positions {
-  position: block;
-  background-color: var(--bg-page) !important;
-  border-radius: var(--general-border-radius);
+    background-color: var(--bg-page) !important;
+    border-radius: var(--general-border-radius);
 }
 
 /* internal layout identical to overview */
@@ -182,11 +215,11 @@ nav.navbar .nav-link .nav-icon {
   border-radius: 10px;
   padding: 5px 12px;
 }
-/* #endregion */
-
-/* #region /** Graphs Section */
 
 
+/* -------------------------------
+   Graphs / Charts Section
+   ------------------------------- */
 .stats-legend {
     display: flex;
     justify-content: center;
@@ -211,19 +244,19 @@ nav.navbar .nav-link .nav-icon {
 }
 
 .legend-dot.sitting {
-    background-color: #0485B9;
+    background-color: var(--btn-primary-hover);
 }
 
 .legend-dot.standing {
-    background-color: #004F6E;
+    background-color: var(--text-dark);
 }
 
 .legend-dot.cleaning {
-    background-color: #66B2D0;
+    background-color: var(--bgn-card-dark);
 }
 
 .legend-dot.unknown {
-    background-color: #C6DAE2;
+    background-color: var(--btn-primary);
 }
 
 .legend-label {
@@ -231,15 +264,14 @@ nav.navbar .nav-link .nav-icon {
     font-size: 14px;
     font-weight: 500;
 }
-/* #endregion */
 
 .plot-wrap {
     width: 100%;
-    margin: 0 auto;   /* center inside #line-graph */
+    margin: 0 auto; 
     display: flex;
     align-items: center;
     justify-content: center;
-    flex: 1; /* allow the plot area to expand to full section height */
+    flex: 1; 
 }
 #myPlot {
     width: 100%;
@@ -251,7 +283,7 @@ nav.navbar .nav-link .nav-icon {
 .graphs-row {
     display: flex;
     gap: var(--general-margin);
-    align-items: stretch; /* make both sections equal height */
+    align-items: stretch;
 }
 
 /* make each section a card and split space: left bigger, right smaller */
@@ -259,22 +291,9 @@ nav.navbar .nav-link .nav-icon {
     flex: 1 1 0%;
     box-sizing: border-box;
     display: flex;
-    flex-direction: column; /* allow children to stretch vertically */
-}
-
-/* left: bigger area for the line chart */
-.graphs-row > #line-graph {
-    flex: 1; /* roughly 62% */
-}
-
-/* right: pie area */
-.graphs-row > #pie-graph {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
-    align-items: stretch; /* ensure inner .pie-wrap can stretch */
+    flex-direction: column; 
+    background-color: var(--bg-card);
+    border-radius: var(--general-border-radius);
 }
 
 .pie-wrap {
@@ -286,10 +305,9 @@ nav.navbar .nav-link .nav-icon {
     flex: 1;
 }
 
-/* keep pie square and centered */
+/* keep pie graph size */
 #piePlot {
-    width: 220px;
-    height: 220px;
+    width: 62%;
 }
 
 /* legend as white rounded box like the design */
@@ -301,10 +319,4 @@ nav.navbar .nav-link .nav-icon {
     flex-direction: column;
     gap: 12px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-/* make section cards visually match the design */
-.graphs-row > .section {
-    background-color: var(--bg-card);
-    border-radius: var(--general-border-radius);
 }
