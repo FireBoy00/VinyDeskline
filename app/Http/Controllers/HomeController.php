@@ -20,4 +20,15 @@ class HomeController extends Controller
     {
         return view('dashboard');
     }
+
+    public function showLogin()
+    {
+        return view('login');
+    }
+
+    public function login(Request $request)
+    {
+        // Later add auth logic here
+        return redirect()->route('home'); 
+    }
 }
