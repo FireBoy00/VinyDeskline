@@ -7,7 +7,7 @@
         <title>VinyDeskline</title>
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @vite(['resources/css/home.css'])
+        @vite(['resources/css/home.css', 'resources/js/home.js'])
 
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     </head>
@@ -115,29 +115,10 @@
                         <span class="legend-label">Cleaning</span>
                     </div>
                     <div class="legend-item">
-                        <span class="legend-dot unknown"></span>
-                        <span class="legend-label">Unknown</span>
+                        <span class="legend-dot lowered"></span>
+                        <span class="legend-label">Lowered</span>
                     </div>
                 </div>
-
-                <script>
-                    const xArray = [50,60,70,80,90,100,110,120,130,140,150];
-                    const yArray = [7,8,8,9,9,9,10,11,14,14,15];
-
-                    Plotly.newPlot("myPlot", [{
-                        x: xArray,
-                        y: yArray,
-                        mode: "lines",
-                        line: { color: '#004F6E' }
-                    }], {
-                        xaxis: { title: "Square Meters" },
-                        yaxis: { title: "Price in Millions" },
-                        margin: { t: 20, b: 40, l: 60, r: 20 },
-                        plot_bgcolor: 'transparent',
-                        paper_bgcolor: 'transparent',
-                        showlegend: false
-                    });
-                </script>
             </section>
 
             <!-- FEEDBACK -->

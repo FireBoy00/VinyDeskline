@@ -5,8 +5,18 @@ export default defineConfig({
     plugins: [
         laravel({
             input: [
+                // General
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/js/bootstrap.js',
+
+                // Dashboard
+                'resources/css/dashboard.css',
+                'resources/js/dashboard.js',
+                
+                // Home
+                'resources/css/home.css',
+                'resources/js/home.js',
             ],
             refresh: true,
         }),
