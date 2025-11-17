@@ -7,10 +7,7 @@
     <title>VinyDeskline</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @vite(['resources/css/home.css', 'resources/js/home.js'])
-    
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    @vite(['resources/css/home.css', 'resources/js/home.js', 'resources/js/plotly.js'])
 </head>
 
 <body>
@@ -20,7 +17,7 @@
         <span>Deskline</span>
     </h1>
 
-    <i class="material-icons account-box">account_box</i>
+    <i class="material-icons-round account-box">account_box</i>
 </header>
 
 <main class="layout">
@@ -41,9 +38,9 @@
     <section class="card carousel-card">
         <h2 class="accent-title"><span id="sensor-title">Temperature</span></h2>
         <div class="carousel-controls">
-            <i class="material-icons chevron-btn" id="prev-btn">chevron_left</i>
+            <i class="material-icons-round chevron-btn" id="prev-btn">chevron_left</i>
             <div class="carousel-value" id="sensor-value">19°C</div>
-            <i class="material-icons chevron-btn" id="next-btn">chevron_right</i>
+            <i class="material-icons-round chevron-btn" id="next-btn">chevron_right</i>
         </div>
         
         <div id="pagination-dots" class="carousel-pagination"></div>
@@ -62,7 +59,7 @@
             <p class="accent"><span>Standing</span></p>
             <div class="pos-group">
                 <button class="pos-btn">114 CM</button>
-                <i class="material-icons save-icon">save</i>
+                <i class="material-icons-round save-icon">save</i>
             </div>
         </div>
 
@@ -70,7 +67,7 @@
             <p class="accent"><span>Sitting</span></p>
             <div class="pos-group">
                 <button class="pos-btn">70 CM</button>
-                <i class="material-icons save-icon">save</i>
+                <i class="material-icons-round save-icon">save</i>
             </div>
         </div>
     </section>
@@ -81,12 +78,12 @@
         <div class="pos-row">
             <input type="text" placeholder="Give it a name">
             <input type="number" placeholder="Height">
-            <i class="material-icons save-icon">save</i>
+            <i class="material-icons-round save-icon">save</i>
         </div>
         <div class="pos-row">
             <input type="text" placeholder="Give it a name">
             <input type="number" placeholder="Height">
-            <i class="material-icons save-icon">save</i>
+            <i class="material-icons-round save-icon">save</i>
         </div>
     </section>
 
@@ -114,25 +111,6 @@
                 <span class="legend-label">Unknown</span>
             </div>
         </div>
-
-        <script>
-            const xArray = [50,60,70,80,90,100,110,120,130,140,150];
-            const yArray = [7,8,8,9,9,9,10,11,14,14,15];
-
-            Plotly.newPlot("myPlot", [{
-                x: xArray,
-                y: yArray,
-                mode: "lines",
-                line: { color: '#004F6E' }
-            }], {
-                xaxis: { title: "Square Meters" },
-                yaxis: { title: "Price in Millions" },
-                margin: { t: 20, b: 40, l: 60, r: 20 },
-                plot_bgcolor: 'transparent',
-                paper_bgcolor: 'transparent',
-                showlegend: false
-            });
-        </script>
     </section>
 
             <!-- FEEDBACK -->
