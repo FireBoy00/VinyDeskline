@@ -16,6 +16,7 @@ export default defineConfig({
                 
                 // Home
                 'resources/css/home.css',
+                'resources/js/home.js',
             ],
             refresh: true,
         }),

@@ -58,49 +58,55 @@
                 <h1 class="section-title">Overview</h1>
                 <ul class="overview-cards">
                     <li class="overview-card connected">
-                        <p class="statistic">150</p>
                         <h2>Total Desks</h2>
+                        <div class="card-divider"></div>
+                        <p class="statistic">150</p>
                     </li>
                     <li class="overview-card occupied">
-                        <p class="statistic">120</p>
                         <h2>Occupied Desks</h2>
+                        <div class="card-divider"></div>
+                        <p class="statistic">120</p>
                     </li>
                     <li class="overview-card available">
-                        <p class="statistic">30</p>
                         <h2>Available Desks</h2>
+                        <div class="card-divider"></div>
+                        <p class="statistic">30</p>
                     </li>
                     <li class="overview-card raised">
-                        <p class="statistic">140</p>
                         <h2>Raised Desks</h2>
+                        <div class="card-divider"></div>
+                        <p class="statistic">140</p>
                     </li>
                     <li class="overview-card lowered">
-                        <p class="statistic">10</p>
                         <h2>Lowered Desks</h2>
+                        <div class="card-divider"></div>
+                        <p class="statistic">10</p>
                     </li>
                     <li class="overview-card faulty">
-                        <p class="statistic">5</p>
                         <h2>Faulty Desks</h2>
+                        <div class="card-divider"></div>
+                        <p class="statistic">5</p>
                     </li>
                 </ul>
             </section>
             <section class="section" id="positions">
-            <div class="positions-wrapper">
-                <div class="position-box">
-                <span class="position-label">Cleaning</span>
-                <div class="position-badges">
-                    <span class="badge">in 3h</span>
-                    <span class="badge">17–19 pm</span>
-                </div>
-                </div>
+                <div class="positions-wrapper">
+                    <div class="position-box">
+                        <span class="position-label">Cleaning Schedule</span>
+                        <div class="position-badges">
+                            <span class="badge">in 3h</span>
+                            <span class="badge">17–19 pm</span>
+                        </div>
+                    </div>
 
-                <div class="position-box">
-                <span class="position-label">Uniform</span>
-                <div class="position-badges">
-                    <span class="badge">in 3h</span>
-                    <span class="badge">17–19 pm</span>
+                    <div class="position-box">
+                        <span class="position-label">Uniform Schedule</span>
+                        <div class="position-badges">
+                            <span class="badge">in 3h</span>
+                            <span class="badge">17–19 pm</span>
+                        </div>
+                    </div>
                 </div>
-                </div>
-            </div>
             </section>
 
             <div class="graphs-row">
@@ -124,8 +130,8 @@
                             <span class="legend-label">Cleaning</span>
                         </div>
                         <div class="legend-item">
-                            <span class="legend-dot unknown"></span>
-                            <span class="legend-label">Unknown</span>
+                            <span class="legend-dot lowered"></span>
+                            <span class="legend-label">Lowered</span>
                         </div>
                     </div>
                 </section>
@@ -149,8 +155,8 @@
                                 <span class="legend-label">Cleaning</span>
                             </div>
                             <div class="legend-item">
-                                <span class="legend-dot unknown"></span>
-                                <span class="legend-label">Unknown</span>
+                                <span class="legend-dot lowered"></span>
+                                <span class="legend-label">Lowered</span>
                             </div>
                         </div>
                     </div>

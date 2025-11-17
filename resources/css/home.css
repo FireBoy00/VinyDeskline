@@ -330,50 +330,6 @@ button.action-btn:hover,
     margin: 20px auto 30px;
 }
 
-/* Statistics Legend */
-.stats-legend {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    padding: 16px 24px;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 12px;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.legend-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-}
-
-.legend-dot.sitting {
-    background-color: #0485B9;
-}
-
-.legend-dot.standing {
-    background-color: #004F6E;
-}
-
-.legend-dot.cleaning {
-    background-color: #66B2D0;
-}
-
-.legend-dot.unknown {
-    background-color: #C6DAE2;
-}
-
-.legend-label {
-    color: var(--text-dark);
-    font-size: 14px;
-    font-weight: 500;
-}
-
 /* FOOTER */
 .page-footer {
     margin-top: 60px;

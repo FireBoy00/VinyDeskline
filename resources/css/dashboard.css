@@ -54,24 +54,32 @@ nav.navbar .nav-links {
     list-style: none;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 nav.navbar .nav-link {
     display: flex;
     align-items: center;
-    padding: 10px;
-    border-radius: 5px;
-    background-color: var(--btn-primary);
-    transition: background-color 0.3s, color 0.3s;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(0, 79, 110, 0.15);
+    transition: all 0.2s ease;
+    color: var(--text-dark);
 }
-nav.navbar .nav-link:hover,
-nav.navbar .nav-link.active {
-    background-color: var(--btn-primary-hover);
-    color: var(--bg-page);
+nav.navbar .nav-link:hover {
+    background-color: rgba(4, 133, 185, 0.15);
+    border-color: rgba(4, 133, 185, 0.3);
     cursor: pointer;
 }
+nav.navbar .nav-link.active {
+    background-color: var(--btn-primary-hover);
+    color: white;
+    border-color: var(--btn-primary-hover);
+    box-shadow: 0 2px 6px rgba(4, 133, 185, 0.25);
+}
 nav.navbar .nav-link .nav-icon {
-    margin-right: 4px;
+    font-size: 20px;
 }
 
 
@@ -81,6 +89,8 @@ nav.navbar .nav-link .nav-icon {
 .dashboard {
     flex: 1;
     margin-left: calc(250px + 2 * var(--general-margin));
+    margin-right: var(--general-margin);
+    max-width: calc(100vw - 250px - 4 * var(--general-margin));
     display: flex;
     flex-direction: column;
     gap: var(--general-margin);
@@ -120,7 +130,7 @@ nav.navbar .nav-link .nav-icon {
     text-align: center;
     font-size: 1.5rem;
     color: black;
-    padding-top: calc(var(--general-margin) / 2);
+    padding: 16px 0 8px 0;
     font-family: monospace;
 }
 
@@ -134,9 +144,9 @@ nav.navbar .nav-link .nav-icon {
     list-style: none;
     display: flex;
     flex-direction: row;
-    gap: var(--general-margin);
-    padding: var(--general-margin);
-    padding-top: calc(var(--general-margin) / 2);
+    gap: 20px;
+    padding: 20px;
+    padding-top: 12px;
 }
 
 .section#overview .overview-cards .overview-card {
@@ -145,7 +155,7 @@ nav.navbar .nav-link .nav-icon {
     color: var(--accent-dark);
     text-align: center;
     border-radius: var(--general-border-radius);
-    padding: calc(var(--general-margin) / 2);
+    padding: 16px 12px;
     display: flex;
     gap: 8px;
     flex-direction: column;
@@ -153,11 +163,20 @@ nav.navbar .nav-link .nav-icon {
     align-items: center;
 }
 .section#overview .overview-cards .overview-card h2 {
-    font-size: 1rem;
+    font-size: 0.85rem;
     color: white;
+    font-weight: 400;
 }
+
+.section#overview .overview-cards .overview-card .card-divider {
+    width: 60%;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.3);
+    margin: 2px 0;
+}
+
 .section#overview .overview-cards .overview-card p {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
     font-weight: bold;
     font-family: monospace;
     color: white;
@@ -174,98 +193,57 @@ nav.navbar .nav-link .nav-icon {
 
 /* internal layout identical to overview */
 .section#positions .positions-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  list-style: none;
-  width: 100%;
-  gap: var(--general-margin);
-  padding-top: var(--general-margin);
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    list-style: none;
+    width: 100%;
+    gap: var(--general-margin);
+    padding-top: var(--general-margin);
 }
 
 /* containers */
 .section#positions .position-box {
-  flex: 1;
-  background-color: #DCE5E9;
-  border-radius: 12px;
-  padding: 16px 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--general-margin);
+    flex: 1;
+    background: linear-gradient(135deg, #DCE5E9 0%, #C6DAE2 100%);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--general-margin);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(4, 133, 185, 0.1);
 }
 
 /* label + badges remain same */
 .section#positions .position-label {
-  font-family: "Inter", sans-serif;
-  font-size: 1.1rem;
-  color: #0a1e2d;
+    font-family: "Inter", sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #0a1e2d;
 }
 
 .section#positions .position-badges {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
 }
 
 .section#positions .badge {
-  background-color: var(--btn-primary-hover);
-  color: white;
-  font-weight: 500;
-  font-size: 0.95rem;
-  border-radius: 10px;
-  padding: 5px 12px;
+    background-color: var(--btn-primary-hover);
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 10px;
+    padding: 6px 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 
 /* -------------------------------
    Graphs / Charts Section
    ------------------------------- */
-.stats-legend {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    padding: 12px 20px;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 12px;
-    margin:auto;
-    width: fit-content;
-}
-
-.legend-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.legend-dot {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-}
-
-.legend-dot.sitting {
-    background-color: var(--btn-primary-hover);
-}
-
-.legend-dot.standing {
-    background-color: var(--text-dark);
-}
-
-.legend-dot.cleaning {
-    background-color: var(--bgn-card-dark);
-}
-
-.legend-dot.unknown {
-    background-color: var(--btn-primary);
-}
-
-.legend-label {
-    color: var(--text-dark);
-    font-size: 14px;
-    font-weight: 500;
-}
-
 .plot-wrap {
     width: 100%;
     margin: 0 auto; 
@@ -276,7 +254,7 @@ nav.navbar .nav-link .nav-icon {
 }
 #myPlot {
     width: 100%;
-    height: 360px;
+    height: 320px;
     display: block;
 }
 

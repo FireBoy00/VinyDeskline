@@ -5,6 +5,7 @@
     --text-dark: #004F6E;
     --bg-page: #C6DAE2;
     --bg-card: #DCE5E9;
+    --bgn-card-dark: #66B2D0;
     --btn-primary: #C6DAE2;
     --btn-primary-hover: #0485B9;
     --accent-dark: #004F6E;
@@ -72,3 +73,49 @@ a:visited {
 }
 /* #endregion */
 
+/* #region /** Shared Legend Styles */
+.stats-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    margin: 20px auto;
+    width: fit-content;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+}
+
+.legend-dot.sitting {
+    background-color: #0485B9;
+}
+
+.legend-dot.standing {
+    background-color: #004F6E;
+}
+
+.legend-dot.cleaning {
+    background-color: #66B2D0;
+}
+
+.legend-dot.lowered {
+    background-color: #C6DAE2;
+}
+
+.legend-label {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 500;
+}
+/* #endregion */
