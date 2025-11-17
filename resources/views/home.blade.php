@@ -93,25 +93,25 @@
 
         <div id="myPlot"></div>
 
-        <div class="stats-legend">
-            <div class="legend-item">
-                <span class="legend-dot sitting"></span>
-                <span class="legend-label">Sitting</span>
-            </div>
-            <div class="legend-item">
-                <span class="legend-dot standing"></span>
-                <span class="legend-label">Standing</span>
-            </div>
-            <div class="legend-item">
-                <span class="legend-dot cleaning"></span>
-                <span class="legend-label">Cleaning</span>
-            </div>
-            <div class="legend-item">
-                <span class="legend-dot unknown"></span>
-                <span class="legend-label">Unknown</span>
-            </div>
-        </div>
-    </section>
+                <div class="stats-legend">
+                    <div class="legend-item">
+                        <span class="legend-dot sitting"></span>
+                        <span class="legend-label">Sitting</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot standing"></span>
+                        <span class="legend-label">Standing</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot cleaning"></span>
+                        <span class="legend-label">Cleaning</span>
+                    </div>
+                    <div class="legend-item">
+                        <span class="legend-dot lowered"></span>
+                        <span class="legend-label">Lowered</span>
+                    </div>
+                </div>
+            </section>
 
             <!-- FEEDBACK -->
     <section class="card feedback-card">
