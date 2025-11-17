@@ -12,7 +12,7 @@
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     </head>
 
-    <body>  
+    <body>
         <header class="page-header">
             <h1 class="accent-title">
                 <span>Viny</span><br>

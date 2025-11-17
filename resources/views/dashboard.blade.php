@@ -136,7 +136,7 @@
                     </div>
                 </section>
                 <section class="section" id="pie-graph">
-                    <h1 class="section-title"><p><span>T</span>able positions</p> </h1>
+                    <h1 class="section-title"><span>T</span>able positions</h1>
 
                     <div class="pie-wrap">
                         <div id="piePlot"></div>
@@ -168,21 +168,21 @@
             <!-- Desk Arrangement section (hidden by default) -->
             <section id="arrangement" style="display: none;">
                 <section class="section">
-                  <h1 class="section-title">Desk Arrangement</h1>  
+                  <h1 class="section-title">Desk Arrangement</h1>
                 </section>
             </section>
 
             <!-- Schedules section (hidden by default) -->
             <section  id="schedules" style="display: none;">
                 <section class="section">
-                  <h1 class="section-title">Schedules</h1>  
+                  <h1 class="section-title">Schedules</h1>
                 </section>
             </section>
 
             <!-- Account section (hidden by default) -->
             <section id="account" style="display: none;">
                 <section class="section">
-                  <h1 class="section-title">Account</h1>  
+                  <h1 class="section-title">Account</h1>
                 </section>
                 
             </section>

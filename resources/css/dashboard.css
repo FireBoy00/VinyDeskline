@@ -16,7 +16,7 @@ body {
    Navbar / Sidebar
    ------------------------------- */
 nav.navbar {
-    display:flex;
+    display: flex;
     flex-direction: column;
     border-radius: 8px;
     position: fixed;
