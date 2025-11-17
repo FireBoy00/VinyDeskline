@@ -9,6 +9,9 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/js/bootstrap.js',
+                
+                // Plotly (for charts)
+                'resources/js/plotly.js',
 
                 // Dashboard
                 'resources/css/dashboard.css',
@@ -21,4 +24,7 @@ export default defineConfig({
             refresh: true,
         }),
     ],
+    build: {
+        chunkSizeWarningLimit: 1200,
+    },
 });
