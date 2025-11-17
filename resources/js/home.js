@@ -1,18 +1,16 @@
 const sensorData = [
-    { id: 'temp', title: 'Temperature', value: '19°C'},
+    { id: 'temp', title: 'Temperature', value: '19°C' },
     { id: 'humid', title: 'Humidity', value: '65%' },
-    { id: 'light', title: 'Light', value: '750 Lux'},
+    { id: 'light', title: 'Light', value: '750 Lux' },
 ];
 
 let currentSlide = 0;
-let cardsWrapper;
 let paginationDotsContainer;
 let sensorTitleElement;
 let sensorValueElement;
 let myPlotElement;
 
 document.addEventListener('DOMContentLoaded', () => {
-    cardsWrapper = document.getElementById('cards-wrapper');
     paginationDotsContainer = document.getElementById('pagination-dots');
     sensorTitleElement = document.getElementById('sensor-title');
     sensorValueElement = document.getElementById('sensor-value');
@@ -47,10 +45,6 @@ function initializeChart() {
 }
 
 function renderCarousel() {
-    if (cardsWrapper) {
-        cardsWrapper.innerHTML = sensorData.map(() => '<div class="carousel-slide"></div>').join('');
-    }
-
     if (paginationDotsContainer) {
         paginationDotsContainer.innerHTML = sensorData.map((_, index) => 
             `<span class="dot" data-index="${index}"></span>`

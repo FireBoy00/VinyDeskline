@@ -22,19 +22,19 @@
                 <ul class="nav-links">
                     <li>
                         <a href="#overall-statistics" class="nav-link active" data-target="overall">
-                            <span class="material-symbols-rounded nav-icon icon">dashboard</span>
+                            <span class="material-icons-round nav-icon icon">dashboard</span>
                             <span class="nav-text">Overall Statistics</span>
                         </a>
                     </li>
                     <li>
                         <a href="#arrangement" class="nav-link" data-target="arrangement">
-                            <span class="material-symbols-rounded nav-icon icon">desk</span>
+                            <span class="material-icons-round nav-icon icon">desk</span>
                             <span class="nav-text">Desk Arrangement</span>
                         </a>
                     </li>
                     <li>
                         <a href="#schedules" class="nav-link" data-target="schedules">
-                            <span class="material-symbols-rounded nav-icon icon">schedule</span>
+                            <span class="material-icons-round nav-icon icon">schedule</span>
                             <span class="nav-text">Schedules</span>
                         </a>
                     </li>
@@ -43,7 +43,7 @@
                 <ul class="nav-links nav-bottom">
                     <li>
                         <a href="#account" class="nav-link nav-account" data-target="account">
-                            <span class="material-symbols-rounded nav-icon icon">account_circle</span>
+                            <span class="material-icons-round nav-icon icon">account_circle</span>
                             <span class="nav-text">John Doe</span>
                         </a>
                     </li>
