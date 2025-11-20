@@ -15,11 +15,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create admin users (personalized)
+        User::factory()
+            ->count(3)
+            ->admin()
+            ->personalized()
+            ->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Create regular users who have already personalized
+        User::factory()
+            ->count(5)
+            ->personalized()
+            ->create();
+
+        // Create new users who need to personalize
+        User::factory()
+            ->count(4)
+            ->needsPersonalization()
+            ->create();
+
+        // Note: All users have password: "password"
+        // Emails follow pattern: {firstLetter}{first4LettersLastName}@vinydeskline.com
     }
 }

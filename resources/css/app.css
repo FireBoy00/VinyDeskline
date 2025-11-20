@@ -1,14 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+@import '@fontsource/material-icons-round';
 
 :root {
     /* Color Palette */
     --text-dark: #004F6E;
     --bg-page: #C6DAE2;
     --bg-card: #DCE5E9;
+    --bg-card-dark: #66B2D0;
     --btn-primary: #C6DAE2;
     --btn-primary-hover: #0485B9;
     --accent-dark: #004F6E;
-    --bg-card-dark: #66B2D0;
+    --border-light: #E5E7EB;
 
 
     /* Common Variables */
@@ -16,7 +17,7 @@
     --font-size-base: 16px;
     --spacing-base: 1rem;
     --general-border-radius: 8px;
-    --general-margin: 16px;
+    --general-margin: 35px;
 }
 
 /* #region /** Global Styles */
@@ -67,8 +68,71 @@ a:visited {
         'GRAD' 200,
         'opsz' 24;
 }
+.material-icons-round {
+    font-family: 'Material Icons Round';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: 'liga';
+}
 .icon {
     user-select: none;
 }
 /* #endregion */
 
+/* #region /** Shared Legend Styles */
+.stats-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    margin: 20px auto;
+    width: fit-content;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+}
+
+.legend-dot.sitting {
+    background-color: #0485B9;
+}
+
+.legend-dot.standing {
+    background-color: #004F6E;
+}
+
+.legend-dot.cleaning {
+    background-color: #66B2D0;
+}
+
+.legend-dot.lowered {
+    background-color: #C6DAE2;
+}
+
+.legend-label {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 500;
+}
+/* #endregion */

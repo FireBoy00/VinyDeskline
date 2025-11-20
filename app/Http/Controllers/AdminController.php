@@ -1,18 +1,17 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
 
 
-class HomeController extends Controller
+class AdminController extends Controller
 {
     /**
-     * Display the home page.
+     * Display the admin dashboard.
      *
      * @return \Illuminate\Contracts\View\View
      */
     public function index()
     {
-        return view('home');
+        return view('dashboard');
     }
 }

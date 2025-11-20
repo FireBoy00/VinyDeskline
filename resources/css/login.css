@@ -1,0 +1,215 @@
+body {
+    height: 100vh;  
+    background: linear-gradient(135deg, var(--bg-page) 0%, var(--bg-card) 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    font-family: var(--font-family);
+    color: var(--text-dark);
+}
+
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: white;
+    padding: 48px 56px;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 10px 40px rgba(0, 79, 110, 0.15);
+    position: relative;
+    animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.logo-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+    width: 100%;
+}
+
+.logo-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--accent-dark) 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(4, 133, 185, 0.25);
+}
+
+.logo-icon .material-icons-round {
+    color: white;
+    font-size: 36px;
+}
+
+.login-title {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.login-motto {
+    font-size: 16px;
+    color: var(--text-dark);
+    text-align: center;
+    opacity: 0.8;
+}
+
+.highlight {
+    color: var(--btn-primary-hover);
+    font-weight: 600;
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #FEE2E2;
+    color: #991B1B;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    width: 100%;
+    font-size: 14px;
+    border-left: 4px solid #DC2626;
+}
+
+.error-icon {
+    font-size: 20px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 20px;
+}
+
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--text-dark);
+    opacity: 0.5;
+    font-size: 20px;
+    pointer-events: none;
+}
+
+.login-form input[type="email"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 14px 14px 14px 48px;
+    border: 2px solid var(--border-light);
+    border-radius: 10px;
+    font-size: 15px;
+    background-color: #F9FAFB;
+    transition: all 0.3s ease;
+    font-family: var(--font-family);
+    color: var(--text-dark);
+}
+
+.login-form input[type="email"]:focus,
+.login-form input[type="password"]:focus {
+    outline: none;
+    border-color: var(--btn-primary-hover);
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(4, 133, 185, 0.1);
+}
+
+.login-form input::placeholder {
+    color: #9CA3AF;
+}
+
+.form-options {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-dark);
+}
+
+.remember-me input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--btn-primary-hover);
+}
+
+.login-btn {
+    margin-top: 8px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--accent-dark) 100%);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(4, 133, 185, 0.25);
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(4, 133, 185, 0.35);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+.login-btn .material-icons-round {
+    font-size: 20px;
+}
+
+.forgot-pass {
+    width: 100%; 
+    margin-top: 24px;
+    font-size: 14px;
+    color: var(--text-dark);
+    text-align: center;
+}
+
+.forgot-pass a {
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+.forgot-pass a:hover {
+    opacity: 0.8;
+}
