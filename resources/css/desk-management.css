@@ -1,0 +1,624 @@
+/* Desk Management Page Styles */
+
+/* Desk Page Title */
+.section-title {
+    padding: 16px 0;
+}
+
+/* Desk Rows Container */
+.desk-rows-container {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: var(--general-margin);
+    gap: var(--spacing-base);
+}
+#desksList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-base);
+}
+
+/* Loading Container */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 20px;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(4, 133, 185, 0.1);
+    border-top-color: var(--btn-primary-hover);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-container p {
+    color: var(--text-dark);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 20px;
+}
+
+.error-container .material-icons-round {
+    font-size: 60px;
+    color: #ff6b6b;
+}
+
+.error-container p {
+    color: var(--text-dark);
+    font-size: 1rem;
+    text-align: center;
+}
+
+.retry-btn {
+    padding: 12px 24px;
+    background: var(--btn-primary-hover);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.retry-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(4, 133, 185, 0.4);
+}
+
+/* Individual Desk Row */
+.desk-row {
+    background-color: var(--bg-card);
+    border-radius: var(--general-border-radius);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.desk-row:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Row Header - Row Number on Right */
+.row-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 70px;
+    gap: 4px;
+}
+
+.row-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(4, 133, 185, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.row-number {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--btn-primary-hover);
+    font-family: monospace;
+}
+
+/* Row Separator */
+.row-separator {
+    width: 2px;
+    height: 60%;
+    background: linear-gradient(to bottom, 
+        transparent 0%, 
+        rgba(4, 133, 185, 0.3) 20%, 
+        rgba(4, 133, 185, 0.3) 80%, 
+        transparent 100%);
+    align-self: center;
+}
+
+/* Desk Items Container */
+.desk-items {
+    flex: 1;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* Individual Desk Card */
+.desk-card {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid rgba(4, 133, 185, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.desk-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    border-color: var(--btn-primary-hover);
+}
+
+.desk-card.selected {
+    border-color: var(--btn-primary-hover);
+    background: linear-gradient(135deg, rgba(4, 133, 185, 0.1) 0%, rgba(4, 133, 185, 0.05) 100%);
+    box-shadow: 0 4px 8px rgba(4, 133, 185, 0.3);
+}
+
+/* Desk Icon */
+.desk-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.desk-icon .material-icons-round {
+    font-size: 40px;
+    color: var(--accent-dark);
+}
+
+/* Desk Status Indicator */
+.desk-status {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.desk-status.occupied {
+    background-color: #0485B9;
+}
+
+.desk-status.available {
+    background-color: #66dd8a;
+}
+
+.desk-status.faulty {
+    background-color: #ff6b6b;
+}
+
+.desk-status.cleaning {
+    background-color: #ffd93d;
+}
+
+/* Action Panel / Table Header */
+.action-panel {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--bg-card);
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-bottom: 2px solid rgba(4, 133, 185, 0.15);
+}
+
+.action-panel-content {
+    width: 100%;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.desk-status-text {
+    flex: 1;
+    text-align: center;
+    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 600;
+    padding: 0;
+    margin: 0;
+    opacity: 0.9;
+}
+
+.actions-menu-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Action Buttons */
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 1px solid rgba(4, 133, 185, 0.25);
+    background-color: white;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.action-btn:not(:disabled):hover {
+    background-color: rgba(4, 133, 185, 0.08);
+    border-color: var(--btn-primary-hover);
+}
+
+.action-btn.primary {
+    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--accent-dark) 100%);
+    color: white;
+    border-color: var(--btn-primary-hover);
+}
+
+.action-btn.primary:not(:disabled):hover {
+    box-shadow: 0 4px 12px rgba(4, 133, 185, 0.4);
+    transform: translateY(-2px);
+}
+
+.action-btn .material-icons-round {
+    font-size: 20px;
+}
+
+#select-btn.primary .material-icons-round {
+    content: 'check_box';
+}
+
+/* Actions Dropdown */
+.actions-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(4, 133, 185, 0.2);
+    min-width: 220px;
+    padding: 8px;
+    animation: dropDown 0.2s ease;
+}
+
+.actions-dropdown.active {
+    display: block;
+}
+
+@keyframes dropDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dropdown-action-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 8px;
+    width: 100%;
+    text-align: left;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.dropdown-action-item:hover {
+    background-color: rgba(4, 133, 185, 0.08);
+}
+
+.dropdown-action-item.danger {
+    color: #ff6b6b;
+}
+
+.dropdown-action-item.danger:hover {
+    background-color: rgba(255, 107, 107, 0.08);
+}
+
+.dropdown-action-item .material-icons-round {
+    font-size: 20px;
+    color: var(--btn-primary-hover);
+}
+
+.dropdown-action-item.danger .material-icons-round {
+    color: #ff6b6b;
+}
+
+/* Desk Detail Modal */
+.desk-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.desk-modal.active {
+    display: flex;
+}
+
+.desk-modal-content {
+    background: white;
+    border-radius: 16px;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Modal Header */
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px;
+    border-bottom: 2px solid rgba(4, 133, 185, 0.1);
+    gap: 16px;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0;
+    flex: 1;
+    text-align: center;
+}
+
+.modal-nav-btn {
+    background: none;
+    border: 1px solid rgba(4, 133, 185, 0.3);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    width: 40px;
+    height: 40px;
+}
+
+.modal-nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.modal-nav-btn:not(:disabled):hover {
+    background-color: rgba(4, 133, 185, 0.1);
+    border-color: var(--btn-primary-hover);
+}
+
+.modal-nav-btn .material-icons-round {
+    font-size: 24px;
+    color: var(--text-dark);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background-color: rgba(4, 133, 185, 0.1);
+}
+
+.modal-close .material-icons-round {
+    font-size: 24px;
+    color: var(--text-dark);
+}
+
+/* Modal Body */
+.modal-body {
+    padding: 24px;
+}
+
+.desk-detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background-color: rgba(4, 133, 185, 0.05);
+    border-radius: 10px;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--accent-dark);
+    font-size: 0.95rem;
+}
+
+.detail-value {
+    font-weight: 500;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+/* Modal Actions */
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.modal-action-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 140px;
+}
+
+.modal-action-btn.secondary {
+    background-color: rgba(4, 133, 185, 0.1);
+    color: var(--btn-primary-hover);
+}
+
+.modal-action-btn.secondary:hover {
+    background-color: rgba(4, 133, 185, 0.2);
+}
+
+.modal-action-btn.danger {
+    background-color: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+}
+
+.modal-action-btn.danger:hover {
+    background-color: rgba(255, 107, 107, 0.2);
+}
+
+.modal-action-btn.success {
+    background: linear-gradient(135deg, #66dd8a 0%, #4CAF50 100%);
+    color: white;
+}
+
+.modal-action-btn.success:hover {
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .desk-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .row-header {
+        width: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+
+    .row-separator {
+        display: none;
+    }
+
+    .desk-items {
+        width: 100%;
+    }
+
+    .action-panel {
+        position: sticky;
+    }
+
+    .action-panel-content {
+        padding: 12px 16px;
+        gap: 12px;
+    }
+
+    .desk-status-text {
+        font-size: 13px;
+    }
+
+    .actions-dropdown {
+        right: 0;
+    }
+
+    .action-btn span:not(.material-icons-round) {
+        display: none;
+    }
+    
+    #actions-btn {
+        padding: 10px;
+    }
+    
+    #select-btn {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 600px) {
+    .desk-card {
+        width: 70px;
+        height: 70px;
+    }
+
+    .desk-icon .material-icons-round {
+        font-size: 32px;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+    }
+
+    .modal-action-btn {
+        width: 100%;
+    }
+}

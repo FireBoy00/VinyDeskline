@@ -20,7 +20,7 @@
             <li>
                 <a href="{{ route('admin.arrangement') }}" class="nav-link {{ $active === 'arrangement' ? 'active' : '' }}">
                     <span class="material-icons-round nav-icon icon">desk</span>
-                    <span class="nav-text">Desk Arrangement</span>
+                    <span class="nav-text">Desk Management</span>
                 </a>
             </li>
 
