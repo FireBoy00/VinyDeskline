@@ -9,6 +9,12 @@ body {
     display: flex;
     align-items: stretch;
     gap: var(--general-margin);
+    background-color: var(--bg-page);
+}
+
+/* Hidden sections */
+.hidden-section {
+    display: none;
 }
 
 
