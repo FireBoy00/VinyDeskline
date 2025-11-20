@@ -11,54 +11,9 @@
         <title>VinyDeskline</title>
     </head>
     <body>
-        <nav class="navbar" id="navbar">
-            <h1 class="nav-logo">
-                <a href="{{ route('home') }}">
-                    <p><span>V</span>iny</p>
-                    <p><span>D</span>eskline</p>
-                </a>
-            </h1>
-            <div class="nav-sections">
-                <ul class="nav-links">
-                    <li>
-                        <a href="#overall-statistics" class="nav-link active" data-target="overall">
-                            <span class="material-icons-round nav-icon icon">dashboard</span>
-                            <span class="nav-text">Overall Statistics</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#arrangement" class="nav-link" data-target="arrangement">
-                            <span class="material-icons-round nav-icon icon">desk</span>
-                            <span class="nav-text">Desk Arrangement</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#schedules" class="nav-link" data-target="schedules">
-                            <span class="material-icons-round nav-icon icon">schedule</span>
-                            <span class="nav-text">Schedules</span>
-                        </a>
-                    </li>
-                </ul>
-
-                <ul class="nav-links nav-bottom">
-                    <li>
-                        <a href="#account" class="nav-link nav-account" data-target="account">
-                            <span class="material-icons-round nav-icon icon">account_circle</span>
-                            <span class="nav-text">{{ Auth::user()->name ?? 'User' }}</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('logout') }}" class="nav-link nav-logout">
-                            <span class="material-icons-round nav-icon icon">logout</span>
-                            <span class="nav-text">Logout</span>
-                        </a>
-                    </li>
-                </ul>
-                
-            </div>
-        </nav>
+        <x-navbar active="dashboard" />
+        
         <main class="dashboard" id="dashboard">
-            <div id="overall-container">
             <section class="section" id="overview">
                 <h1 class="section-title">Overview</h1>
                 <ul class="overview-cards">
@@ -168,29 +123,6 @@
                 </section>
 
             </div>
-            </div>
-
-            <!-- Desk Arrangement section (hidden by default) -->
-            <section id="arrangement" class="hidden-section">
-                <section class="section">
-                  <h1 class="section-title">Desk Arrangement</h1>
-                </section>
-            </section>
-
-            <!-- Schedules section (hidden by default) -->
-            <section id="schedules" class="hidden-section">
-                <section class="section">
-                  <h1 class="section-title">Schedules</h1>
-                </section>
-            </section>
-
-            <!-- Account section (hidden by default) -->
-            <section id="account" class="hidden-section">
-                <section class="section">
-                  <h1 class="section-title">Account</h1>
-                </section>
-                
-            </section>
         </main>
     </body>
 </html>

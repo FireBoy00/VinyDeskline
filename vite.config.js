@@ -9,6 +9,9 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/js/bootstrap.js',
+
+                // Admin Pages
+                'resources/css/admin-pages.css',
                 
                 // Plotly (for charts)
                 'resources/js/plotly.js',
@@ -26,6 +29,9 @@ export default defineConfig({
 
                 // Personalize
                 'resources/css/personalize.css',
+
+                // Schedules
+                'resources/css/schedules.css',
             ],
             refresh: true,
         }),

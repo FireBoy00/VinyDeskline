@@ -1,3 +1,9 @@
+/* Schedules Page Specific Styles */
+
+body {
+    background-color: var(--bg-page);
+}
+
 .schedules-page {
     display: flex;
     gap: 40px;
@@ -156,8 +162,5 @@ input[type='radio'] {
     margin-left: 920px;
 }
 
-.material-symbols-outlined {
-    font-size: 20px;
-    color: white;
-    vertical-align: bottom;
+.material-icons-round {
 }

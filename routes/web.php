@@ -23,13 +23,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     
     // Admin-only routes
-    Route::middleware('admin')->group(function () {
-        Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
-        Route::get('/admin/dashboard/schedules', [AdminController::class, 'schedules'])->name('schedules');
+    Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+        Route::get('/schedules', [AdminController::class, 'schedules'])->name('schedules');
+        Route::get('/arrangement', [AdminController::class, 'arrangement'])->name('arrangement');
+        Route::get('/account', [AdminController::class, 'account'])->name('account');
         
         // Admin desk management
         Route::get('/desks', [DeskController::class, 'index'])->name('desks');
-        Route::get('/desks/{desk_id}', [DeskController::class, 'state']);
+        Route::get('/desks/{desk_id}', [DeskController::class, 'state'])->name('desks.state');
     });
     
     // Logout (support both GET and POST for simplicity)
