@@ -32,6 +32,10 @@ export default defineConfig({
 
                 // Schedules
                 'resources/css/schedules.css',
+
+                // Desk Management
+                'resources/css/desk-management.css',
+                'resources/js/desk-management.js',
             ],
             refresh: true,
         }),

@@ -205,6 +205,7 @@ nav.navbar .nav-link .nav-icon {
     list-style: none;
     width: 100%;
     gap: var(--general-margin);
+    padding-top: var(--general-margin);
 }
 
 /* containers */
