@@ -11,6 +11,7 @@ class DeskController extends Controller
     public function index()
     {
         $apiKey = env('DESKS_API_KEY');
+        // TODO: Move URL to .env
         $url = "http://127.0.0.1:8001/api/v2/{$apiKey}/desks";
 
         $response = Http::get($url);
@@ -36,6 +37,7 @@ class DeskController extends Controller
     public function state($desk_id)
     {
         $apiKey = env('DESKS_API_KEY');
+        // TODO: Move URL to .env
         $url = "http://127.0.0.1:8001/api/v2/{$apiKey}/desks/{$desk_id}";
 
         $response = Http::get($url);
