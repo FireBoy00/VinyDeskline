@@ -15,11 +15,39 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Create admin user with personalization already completed
+        User::factory()->create([
+            'name' => 'John Doe',
+            'email' => 'admin@vinydeskline.com',
+            'password' => bcrypt('password'),
+            'height' => 175.5,
+            'age' => 35,
+            'needs_personalization' => false,
+        ]);
+
+        // Create new user who needs to personalize
+        User::factory()->create([
+            'name' => 'Jane Smith',
+            'email' => 'jane@vinydeskline.com',
+            'password' => bcrypt('password'),
+            'needs_personalization' => true,
+        ]);
+
+        // Create additional users with varying states
+        User::factory()->create([
+            'name' => 'Bob Wilson',
+            'email' => 'bob@vinydeskline.com',
+            'password' => bcrypt('password'),
+            'height' => 182.0,
+            'age' => 28,
+            'needs_personalization' => false,
+        ]);
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Alice Johnson',
+            'email' => 'alice@vinydeskline.com',
+            'password' => bcrypt('password'),
+            'needs_personalization' => true,
         ]);
     }
 }

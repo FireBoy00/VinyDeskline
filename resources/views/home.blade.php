@@ -17,7 +17,10 @@
         <span>Deskline</span>
     </h1>
 
-    <i class="material-icons-round account-box">account_box</i>
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <span style="font-size: 14px; color: var(--text-dark); font-weight: 500;">{{ Auth::user()->name ?? 'User' }}</span>
+        <i class="material-icons-round account-box">account_box</i>
+    </div>
 </header>
 
 <main class="layout">

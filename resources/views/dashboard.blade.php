@@ -44,8 +44,17 @@
                     <li>
                         <a href="#account" class="nav-link nav-account" data-target="account">
                             <span class="material-icons-round nav-icon icon">account_circle</span>
-                            <span class="nav-text">John Doe</span>
+                            <span class="nav-text">{{ Auth::user()->name ?? 'User' }}</span>
                         </a>
+                    </li>
+                    <li>
+                        <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                            @csrf
+                            <button type="submit" class="nav-link nav-logout" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
+                                <span class="material-icons-round nav-icon icon">logout</span>
+                                <span class="nav-text">Logout</span>
+                            </button>
+                        </form>
                     </li>
                 </ul>
                 
