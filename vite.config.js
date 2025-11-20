@@ -20,6 +20,12 @@ export default defineConfig({
                 // Home
                 'resources/css/home.css',
                 'resources/js/home.js',
+
+                // Login
+                'resources/css/login.css',
+
+                // Personalize
+                'resources/css/personalize.css',
             ],
             refresh: true,
         }),
