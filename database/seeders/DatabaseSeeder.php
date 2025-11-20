@@ -15,39 +15,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create admin user with personalization already completed
-        User::factory()->create([
-            'name' => 'John Doe',
-            'email' => 'admin@vinydeskline.com',
-            'password' => bcrypt('password'),
-            'height' => 175.5,
-            'age' => 35,
-            'needs_personalization' => false,
-        ]);
+        // Create admin users (personalized)
+        User::factory()
+            ->count(3)
+            ->admin()
+            ->personalized()
+            ->create();
 
-        // Create new user who needs to personalize
-        User::factory()->create([
-            'name' => 'Jane Smith',
-            'email' => 'jane@vinydeskline.com',
-            'password' => bcrypt('password'),
-            'needs_personalization' => true,
-        ]);
+        // Create regular users who have already personalized
+        User::factory()
+            ->count(5)
+            ->personalized()
+            ->create();
 
-        // Create additional users with varying states
-        User::factory()->create([
-            'name' => 'Bob Wilson',
-            'email' => 'bob@vinydeskline.com',
-            'password' => bcrypt('password'),
-            'height' => 182.0,
-            'age' => 28,
-            'needs_personalization' => false,
-        ]);
+        // Create new users who need to personalize
+        User::factory()
+            ->count(4)
+            ->needsPersonalization()
+            ->create();
 
-        User::factory()->create([
-            'name' => 'Alice Johnson',
-            'email' => 'alice@vinydeskline.com',
-            'password' => bcrypt('password'),
-            'needs_personalization' => true,
-        ]);
+        // Note: All users have password: "password"
+        // Emails follow pattern: {firstLetter}{first4LettersLastName}@vinydeskline.com
     }
 }

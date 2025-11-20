@@ -19,15 +19,20 @@ Route::middleware('auth')->group(function () {
     Route::post('/personalize', [AuthController::class, 'savePersonalization'])->name('personalize.submit');
     Route::get('/personalize/skip', [AuthController::class, 'skipPersonalization'])->name('personalize.skip');
     
-    // Main application routes
+    // Main application routes (all authenticated users)
     Route::get('/home', [HomeController::class, 'index'])->name('home');
-    Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     
-    // Desks routes
-    Route::get('/desks', [DeskController::class, 'index'])->name('desks');
-    Route::get('/desks/{desk_id}', [DeskController::class, 'state']);
+    // Admin-only routes
+    Route::middleware('admin')->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        
+        // Admin desk management
+        Route::get('/desks', [DeskController::class, 'index'])->name('desks');
+        Route::get('/desks/{desk_id}', [DeskController::class, 'state']);
+    });
     
-    // Logout
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    // Logout (support both GET and POST for simplicity)
+    Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
 

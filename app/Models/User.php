@@ -24,6 +24,7 @@ class User extends Authenticatable
         'height',
         'age',
         'needs_personalization',
+        'is_admin',
     ];
 
     /**

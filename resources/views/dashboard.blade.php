@@ -10,7 +10,7 @@
         
         <title>VinyDeskline</title>
     </head>
-    <body style="background-color: var(--bg-page);">
+    <body>
         <nav class="navbar" id="navbar">
             <h1 class="nav-logo">
                 <a href="{{ route('home') }}">
@@ -48,13 +48,10 @@
                         </a>
                     </li>
                     <li>
-                        <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
-                            @csrf
-                            <button type="submit" class="nav-link nav-logout" style="width: 100%; text-align: left; background: none; border: none; cursor: pointer;">
-                                <span class="material-icons-round nav-icon icon">logout</span>
-                                <span class="nav-text">Logout</span>
-                            </button>
-                        </form>
+                        <a href="{{ route('logout') }}" class="nav-link nav-logout">
+                            <span class="material-icons-round nav-icon icon">logout</span>
+                            <span class="nav-text">Logout</span>
+                        </a>
                     </li>
                 </ul>
                 
@@ -174,21 +171,21 @@
             </div>
 
             <!-- Desk Arrangement section (hidden by default) -->
-            <section id="arrangement" style="display: none;">
+            <section id="arrangement" class="hidden-section">
                 <section class="section">
                   <h1 class="section-title">Desk Arrangement</h1>
                 </section>
             </section>
 
             <!-- Schedules section (hidden by default) -->
-            <section  id="schedules" style="display: none;">
+            <section id="schedules" class="hidden-section">
                 <section class="section">
                   <h1 class="section-title">Schedules</h1>
                 </section>
             </section>
 
             <!-- Account section (hidden by default) -->
-            <section id="account" style="display: none;">
+            <section id="account" class="hidden-section">
                 <section class="section">
                   <h1 class="section-title">Account</h1>
                 </section>
