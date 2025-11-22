@@ -43,6 +43,12 @@
                                     <input type="time" class="schedule-input" name="end_time" aria-label="End time">
                                 </div>
                             </div>
+                            <div class="input-group">
+                                <label class="input-label" for="uniform-height-range">Height</label>
+                                <div class="height-range-inputs">
+                                    <input type="height" class="schedule-input" placeholder="Enter height">
+                                </div>
+                            </div>
                         </div>
 
                         <div class="form-row">
@@ -101,6 +107,12 @@
                                     <input type="time" class="schedule-input" name="start_time" aria-label="Start time">
                                     <span style="margin: 0 8px;">-</span>
                                     <input type="time" class="schedule-input" name="end_time" aria-label="End time">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label class="input-label" for="uniform-height-range">Height</label>
+                                <div class="height-range-inputs">
+                                    <input type="height" class="schedule-input" placeholder="Enter height">
                                 </div>
                             </div>
                         </div>
