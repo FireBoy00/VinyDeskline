@@ -30,7 +30,10 @@ document.addEventListener("DOMContentLoaded", () =>
             if (radio.value === "once" && radio.checked) {
                 uniformDateContainer.style.display = "block";
                 flatpickr(uniformDateInput, { dateFormat: "d-m-y" });
-            } else {
+            }else if (radio.value === "multiple" && radio.checked){
+                uniformDateContainer.style.display = "block";
+                flatpickr(uniformDateInput, { dateFormat: "d-m-y", mode: "multiple"})
+            }else {
                 uniformDateContainer.style.display = "none";
             }
         });
@@ -47,7 +50,10 @@ document.addEventListener("DOMContentLoaded", () =>
             if (radio.value === "once" && radio.checked) {
                 cleaningDateContainer.style.display = "block";
                 flatpickr(cleaningDateInput, { dateFormat: "d-m-y" });
-            } else {
+            }else if (radio.value === "multiple" && radio.checked){
+                cleaningDateContainer.style.display = "block";
+                flatpickr(cleaningDateInput, { dateFormat: "d-m-y", mode: "multiple"})
+            }else {
                 cleaningDateContainer.style.display = "none";
             }
         });
@@ -75,7 +81,7 @@ document.addEventListener("DOMContentLoaded", () =>
             } else if (selectedRadio.value === 'daily') {
                 frequency = 'Every day';
             } else if (selectedRadio.value === 'multiple') {
-                frequency = 'Multiple days';
+                frequency = date;
             }
         }
         
@@ -113,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () =>
             } else if (selectedRadio.value === 'daily') {
                 frequency = 'Every day';
             } else if (selectedRadio.value === 'multiple') {
-                frequency = 'Multiple days';
+                frequency = date;
             }
         }
         
