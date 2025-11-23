@@ -8,6 +8,11 @@
         @vite(['resources/css/admin-pages.css'])
         @vite(['resources/css/dashboard.css'])
         @vite(['resources/css/schedules.css'])
+        @vite(['resources/css/schedules.js'])
+
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
         <title>Schedules</title>
     </head>
 
@@ -42,6 +47,9 @@
                                     <span style="margin: 0 8px;">-</span>
                                     <input type="time" class="schedule-input" name="end_time" id="uniformEnd" aria-label="End time">
                                 </div>
+                            </div>
+                            <div id="uniformDateContainer" style="display: none;">
+                                        <input type="text" id="uniformDate" class="schedule-input" placeholder="Select date">
                             </div>
                         </div>
 
@@ -78,7 +86,8 @@
                             <div class="current-schedule-info">
                                 <span class="material-icons-round">schedule</span>
                                 <span class="schedule-label">Title:</span>
-                                <span class="schedule-time">Time</span>
+                                <span class="schedule-date">Date:</span>
+                                <span class="schedule-time">Time:</span>  
                             </div>
                             <button class="delete-btn material-icons-round">delete</button>
                         </div>
@@ -108,6 +117,9 @@
                                     <input type="time" class="schedule-input" name="end_time" id="cleaningEnd" aria-label="End time">
                                 </div>
                             </div>
+                            <div id="cleaningDateContainer" style="display: none;">
+                                        <input type="text" id="cleaningDate" class="schedule-input" placeholder="Select date">
+                            </div>
                         </div>
 
                         <div class="form-row">
@@ -125,7 +137,7 @@
                                     <input type="radio" name="cleaning-frequency" value="multiple">
                                     <span class="material-icons-round radio-icon">calendar_today</span>
                                     <span class="radio-label">Multiple</span>
-                                </label>
+                                </label> 
                             </div>
                         </div>
 

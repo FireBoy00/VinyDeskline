@@ -235,6 +235,26 @@
     margin-left: auto;
 }
 
+.schedule-date {
+    padding: 6px 12px;
+    background-color: rgba(102, 178, 208, 0.3);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-dark);
+    margin-left: auto;
+}
+
+.schedule-title {
+    padding: 6px 12px;
+    background-color: rgba(102, 178, 208, 0.3);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-dark);
+    margin-left: auto;
+}
+
 .remove-schedule-btn {
     background: none;
     border: none;
@@ -243,6 +263,10 @@
     font-size: 20px;
 }
 
+.calendar-icon {
+            width: 28px;
+            cursor: pointer;
+        }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
