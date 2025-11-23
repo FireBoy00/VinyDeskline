@@ -3,12 +3,12 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         @vite(['resources/css/admin-pages.css'])
         @vite(['resources/css/dashboard.css'])
         @vite(['resources/css/schedules.css'])
-        @vite(['resources/css/schedules.js'])
 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
@@ -76,24 +76,25 @@
                             <span class="material-icons-round">check_circle</span>
                         </button>
                     </div>
-                    <div id="uniformList"></div>
-                </section>
-
-
-                <template id="scheduleTemplate">
-                        <div class="current-schedule">
-                           <!-- <div class="current-schedule-badge">Regular</div> -->
+                    <div id="uniformList">
+                    @foreach($uniformSchedules as $schedule)
+                        <div class="current-schedule" data-id="{{ $schedule->id }}">
                             <div class="current-schedule-info">
                                 <span class="material-icons-round">schedule</span>
-                                <span class="schedule-label">Title:</span>
-                                <span class="schedule-date">Date:</span>
-                                <span class="schedule-time">Time:</span>  
+                                <span class="schedule-label">{{ $schedule->title }}:</span>
+                                <span class="schedule-date">
+                                    @if($schedule->frequency === 'daily')
+                                        Daily
+                                    @else
+                                        {{ $schedule->date }}
+                                    @endif</span>
+                                <span class="schedule-time">{{ $schedule->start_time }} - {{ $schedule->end_time }}</span>
                             </div>
                             <button class="delete-btn material-icons-round">delete</button>
                         </div>
-                    </template>
-
-
+                    @endforeach
+                    </div>
+                </section>
                 <!-- Cleaning Schedule Card -->
                 <section class="section schedule-card">
                     <div class="schedule-card-header">
@@ -146,8 +147,24 @@
                             <span class="material-icons-round">check_circle</span>
                         </button>
                     </div>
-
-                    <div id="cleaningList"></div>
+                    <div id="cleaningList">
+                    @foreach($cleaningSchedules as $schedule)
+                        <div class="current-schedule" data-id="{{ $schedule->id }}">
+                            <div class="current-schedule-info">
+                                <span class="material-icons-round">schedule</span>
+                                <span class="schedule-label">{{ $schedule->title }}:</span>
+                                <span class="schedule-date">
+                                    @if($schedule->frequency === 'daily')
+                                        Daily
+                                    @else
+                                        {{ $schedule->date }}
+                                    @endif</span>
+                                <span class="schedule-time">{{ $schedule->start_time }} - {{ $schedule->end_time }}</span>
+                            </div>
+                            <button class="delete-btn material-icons-round">delete</button>
+                        </div>
+                    @endforeach
+                    </div>
                 </section>
             </div>
         </main>

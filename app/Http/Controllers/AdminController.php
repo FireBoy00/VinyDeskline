@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Schedule;
 
 
 class AdminController extends Controller
@@ -22,7 +23,10 @@ class AdminController extends Controller
      */
     public function schedules()
     {
-        return view('schedules');
+        $uniformSchedules = Schedule::where('type', 'uniform')->get();
+        $cleaningSchedules = Schedule::where('type', 'cleaning')->get();
+
+        return view('schedules', compact('uniformSchedules','cleaningSchedules'));
     }
 
     /**

@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DeskController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ScheduleController;
 
 // Guest routes (only accessible when not logged in)
 Route::middleware('guest')->group(function () {
@@ -26,6 +27,8 @@ Route::middleware('auth')->group(function () {
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
         Route::get('/schedules', [AdminController::class, 'schedules'])->name('schedules');
+        Route::post('/schedules', [ScheduleController::class, 'store']);
+        Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
         Route::get('/arrangement', [AdminController::class, 'arrangement'])->name('arrangement');
         Route::get('/account', [AdminController::class, 'account'])->name('account');
         

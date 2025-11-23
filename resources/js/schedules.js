@@ -1,21 +1,8 @@
 document.addEventListener("DOMContentLoaded", () =>
 {
-    const template = document.getElementById("scheduleTemplate");
-
+    //initial_position=680, min_position=680, max_position=1320
     const saveUniformBtn= document.getElementById("saveUniformBtn");
     const saveCleaningBtn= document.getElementById("saveCleaningBtn");
-
-    const uniformList =document.getElementById("uniformList");
-    const cleaningList =document.getElementById("cleaningList");
-
-    const uniformStart = document.getElementById("uniformStart");
-    const cleaningStart = document.getElementById("cleaningStart");
-
-    const uniformEnd = document.getElementById("uniformEnd");
-    const cleaningEnd = document.getElementById("cleaningEnd");
-
-    const uniformTitle = document.getElementById("uniform-title");
-    const cleaningTitle = document.getElementById("cleaning-title");
 
     const uniformDateContainer = document.getElementById("uniformDateContainer");
     const uniformDateInput = document.getElementById("uniformDate");
@@ -29,121 +16,100 @@ document.addEventListener("DOMContentLoaded", () =>
         radio.addEventListener("change", () => {
             if (radio.value === "once" && radio.checked) {
                 uniformDateContainer.style.display = "block";
-                flatpickr(uniformDateInput, { dateFormat: "d-m-y" });
+                flatpickr(uniformDateInput, { dateFormat: "Y-m-d" });
             }else if (radio.value === "multiple" && radio.checked){
                 uniformDateContainer.style.display = "block";
-                flatpickr(uniformDateInput, { dateFormat: "d-m-y", mode: "multiple"})
+                flatpickr(uniformDateInput, { dateFormat: "Y-m-d", mode: "multiple"})
             }else {
                 uniformDateContainer.style.display = "none";
             }
         });
     });
 
-    const uniformCalendarIcon = document.querySelector('.radio-icon');
-    uniformCalendarIcon.addEventListener("click", () => {
-        uniformDateContainer.style.display = "block";
-        uniformDateInput.focus();
-    });
-
     cleaningFrequencyRadios.forEach(radio => {
         radio.addEventListener("change", () => {
             if (radio.value === "once" && radio.checked) {
                 cleaningDateContainer.style.display = "block";
-                flatpickr(cleaningDateInput, { dateFormat: "d-m-y" });
+                flatpickr(cleaningDateInput, { dateFormat: "Y-m-d" });
             }else if (radio.value === "multiple" && radio.checked){
                 cleaningDateContainer.style.display = "block";
-                flatpickr(cleaningDateInput, { dateFormat: "d-m-y", mode: "multiple"})
+                flatpickr(cleaningDateInput, { dateFormat: "Y-m-d", mode: "multiple"})
             }else {
                 cleaningDateContainer.style.display = "none";
             }
         });
     });
 
-    const cleaningCalendarIcon = document.querySelector('.radio-icon');
-    cleaningCalendarIcon.addEventListener("click", () => {
-        cleaningDateContainer.style.display = "block";
-        cleaningDateInput.focus();
-    });
+    function sendSchedule(type) {
+        
+        const title = document.getElementById(`${type}-title`).value.trim();
+        const start = document.getElementById(`${type}Start`).value;
+        const end = document.getElementById(`${type}End`).value;
+        const selectedRadio = document.querySelector(`input[name="${type}-frequency"]:checked`);
+        const frequency = selectedRadio ? selectedRadio.value : 'daily';
 
-
-    function addUniform() 
-    {
-        const title = uniformTitle.value.trim();
-        const start = uniformStart.value;
-        const end = uniformEnd.value;
-        const date = uniformDateInput.value;
-
-        let frequency = 'Every day';
-        const selectedRadio = document.querySelector('input[name="uniform-frequency"]:checked');
-        if (selectedRadio) {
-            if (selectedRadio.value === 'once') {
-                frequency = date;
-            } else if (selectedRadio.value === 'daily') {
-                frequency = 'Every day';
-            } else if (selectedRadio.value === 'multiple') {
-                frequency = date;
-            }
+        let dates = [];
+        const dateInput = document.getElementById(`${type}Date`);
+        const fp = dateInput._flatpickr;
+        if (fp) {
+            dates = fp.selectedDates.map(d => {
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2,'0');
+                const day = String(d.getDate()).padStart(2,'0');
+                return `${y}-${m}-${day}`;
+            });
         }
-        
-        const clone = template.content.cloneNode(true);
 
-        const label = clone.querySelector(".schedule-label");
-        const timeText = clone.querySelector(".schedule-time");
-        const dateText = clone.querySelector(".schedule-date");
-        const deleteBtn = clone.querySelector(".delete-btn");
+        fetch('/admin/schedules', {
+            method: 'POST',
+            headers: {
+                'Content-Type':'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify({ type, title, start_time: start, end_time: end, frequency, dates })
+        })
+        .then(res => res.json())
+        .then(data => {
+            const list = document.getElementById(type + 'List');
+            const schedule = data.schedule;
 
-        label.textContent = title + ":";
-        timeText.textContent = `${start} - ${end}`;
-        dateText.textContent = frequency;
-        deleteBtn.addEventListener("click", () => 
-        {
-            deleteBtn.closest(".current-schedule").remove();
+            const div = document.createElement('div');
+            
+            div.classList.add('current-schedule');
+            div.dataset.id =schedule.id;
+            div.innerHTML = `
+                <div class="current-schedule-info">
+                    <span class="schedule-label">${schedule.title}:</span>
+                    <span class="schedule-date">${schedule.frequency}</span>
+                    <span class="schedule-time">${schedule.start} - ${schedule.end}</span>
+                </div>
+                <button class="delete-btn material-icons-round">delete</button>
+            `;
+            list.appendChild(div);
         });
-        
-        uniformList.appendChild(clone)
-
     }
 
-    function addCleaning() 
-    {
-        const title = cleaningTitle.value.trim();
-        const start = cleaningStart.value;
-        const end = cleaningEnd.value;
-        const date = cleaningDateInput.value;
-
-        let frequency = 'Every day';
-        const selectedRadio = document.querySelector('input[name="cleaning-frequency"]:checked');
-        if (selectedRadio) {
-            if (selectedRadio.value === 'once') {
-                frequency = date;
-            } else if (selectedRadio.value === 'daily') {
-                frequency = 'Every day';
-            } else if (selectedRadio.value === 'multiple') {
-                frequency = date;
-            }
-        }
-        
-        const clone = template.content.cloneNode(true);
-
-        const label = clone.querySelector(".schedule-label");
-        const timeText = clone.querySelector(".schedule-time");
-        const dateText = clone.querySelector(".schedule-date");
-        const deleteBtn = clone.querySelector(".delete-btn");
-
-        label.textContent = title + ":";
-        timeText.textContent = `${start} - ${end}`;
-        dateText.textContent = frequency;
-        deleteBtn.addEventListener("click", () => 
-        {
-            deleteBtn.closest(".current-schedule").remove();
-        });
-        
-        cleaningList.appendChild(clone)
-
-    }
     
-    saveUniformBtn.addEventListener("click", addUniform);
-    saveCleaningBtn.addEventListener("click", addCleaning);
+    saveUniformBtn.addEventListener("click", () => sendSchedule('uniform'));
+    saveCleaningBtn.addEventListener("click", () => sendSchedule('cleaning'));
 
+    document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("delete-btn")) {
+            const item = e.target.closest(".current-schedule");
+            const id = item.dataset.id;
+
+            fetch(`/admin/schedules/${id}`, {
+                method: "DELETE",
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log("Deleted:", data.message);
+                item.remove();
+            });
+        }
+    });
 });
 
