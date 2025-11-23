@@ -38,9 +38,9 @@
                             <div class="input-group">
                                 <label class="input-label" for="uniform-time-range">Time Range</label>
                                 <div class="time-range-inputs">
-                                    <input type="time" class="schedule-input" name="start_time" aria-label="Start time">
+                                    <input type="time" class="schedule-input" name="start_time" id="uniformStart" aria-label="Start time">
                                     <span style="margin: 0 8px;">-</span>
-                                    <input type="time" class="schedule-input" name="end_time" aria-label="End time">
+                                    <input type="time" class="schedule-input" name="end_time" id="uniformEnd" aria-label="End time">
                                 </div>
                             </div>
                         </div>
@@ -63,22 +63,27 @@
                                 </label>
                             </div>
                         </div>
-
-                        <button type="button" class="schedule-save-btn">
+                        <button type="button" class="schedule-save-btn" id="saveUniformBtn">
                             <span>Save Schedule</span>
                             <span class="material-icons-round">check_circle</span>
                         </button>
                     </div>
-
-                    <div class="current-schedule">
-                        <div class="current-schedule-badge">Regular</div>
-                        <div class="current-schedule-info">
-                            <span class="material-icons-round">schedule</span>
-                            <span class="schedule-label">Current scheduled time:</span>
-                            <span class="schedule-time">Every day from 18:00-07:30</span>
-                        </div>
-                    </div>
+                    <div id="uniformList"></div>
                 </section>
+
+
+                <template id="scheduleTemplate">
+                        <div class="current-schedule">
+                           <!-- <div class="current-schedule-badge">Regular</div> -->
+                            <div class="current-schedule-info">
+                                <span class="material-icons-round">schedule</span>
+                                <span class="schedule-label">Title:</span>
+                                <span class="schedule-time">Time</span>
+                            </div>
+                            <button class="delete-btn material-icons-round">delete</button>
+                        </div>
+                    </template>
+
 
                 <!-- Cleaning Schedule Card -->
                 <section class="section schedule-card">
@@ -93,14 +98,14 @@
                         <div class="form-row">
                             <div class="input-group">
                                 <label class="input-label">Title</label>
-                                <input type="text" class="schedule-input" placeholder="Enter title">
+                                <input type="text" class="schedule-input" id="cleaning-title" placeholder="Enter title">
                             </div>
                             <div class="input-group">
                                 <label class="input-label" for="uniform-time-range">Time Range</label>
                                 <div class="time-range-inputs">
-                                    <input type="time" class="schedule-input" name="start_time" aria-label="Start time">
+                                    <input type="time" class="schedule-input" id="cleaningStart" name="start_time" aria-label="Start time">
                                     <span style="margin: 0 8px;">-</span>
-                                    <input type="time" class="schedule-input" name="end_time" aria-label="End time">
+                                    <input type="time" class="schedule-input" name="end_time" id="cleaningEnd" aria-label="End time">
                                 </div>
                             </div>
                         </div>
@@ -124,20 +129,13 @@
                             </div>
                         </div>
 
-                        <button type="button" class="schedule-save-btn">
+                        <button type="button" class="schedule-save-btn" id="saveCleaningBtn">
                             <span>Save Schedule</span>
                             <span class="material-icons-round">check_circle</span>
                         </button>
                     </div>
 
-                    <div class="current-schedule">
-                        <div class="current-schedule-badge">Regular</div>
-                        <div class="current-schedule-info">
-                            <span class="material-icons-round">schedule</span>
-                            <span class="schedule-label">Current scheduled time:</span>
-                            <span class="schedule-time">Every day from 17:00-19:00</span>
-                        </div>
-                    </div>
+                    <div id="cleaningList"></div>
                 </section>
             </div>
         </main>

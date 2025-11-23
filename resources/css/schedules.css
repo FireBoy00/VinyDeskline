@@ -235,6 +235,15 @@
     margin-left: auto;
 }
 
+.remove-schedule-btn {
+    background: none;
+    border: none;
+    color: red;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+
 /* Responsive Design */
 @media (max-width: 1200px) {
     .schedules-container {
