@@ -255,10 +255,10 @@
     margin-left: auto;
 }
 
-.remove-schedule-btn {
+.delete-btn {
     background: none;
     border: none;
-    color: red;
+    color: black;
     cursor: pointer;
     font-size: 20px;
 }
