@@ -1,5 +1,10 @@
 /* Desk Management Page Styles */
 
+/* Hidden Element */
+.hidden {
+    display: none;
+}
+
 /* Desk Page Title */
 .section-title {
     padding: 16px 0;

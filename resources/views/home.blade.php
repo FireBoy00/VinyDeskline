@@ -19,7 +19,7 @@
 
             <div class="user-account-card">
                 <div class="user-account-trigger">
-                    <span class="user-name">{{ Auth::user()->name ?? 'User' }}</span>
+                    <span class="user-name">{{ (Auth::user()->first_name ?? '') . ' ' . (Auth::user()->last_name ?? '') ?: 'User' }}</span>
                     <div class="user-avatar">
                         <span class="material-icons-round">person</span>
                     </div>
@@ -30,7 +30,7 @@
                                 <span class="material-icons-round">person</span>
                             </div>
                             <div class="user-info">
-                                <span class="dropdown-user-name">{{ Auth::user()->name }}</span>
+                                <span class="dropdown-user-name">{{ Auth::user()->full_name }}</span>
                                 <span class="dropdown-user-email">{{ Auth::user()->email }}</span>
                             </div>
                         </div>
