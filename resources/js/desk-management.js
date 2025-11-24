@@ -24,12 +24,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Status mapping from API to display
     const statusMap = {
-        'Normal': 'Available',
-        'normal': 'Available',
+        'Normal': 'Normal',
+        'normal': 'Normal',
         'Moving': 'In Use',
         'moving': 'In Use',
-        'Error': 'Faulty',
-        'error': 'Faulty',
+        'Collision': 'Faulty',
+        'collision': 'Faulty',
         'Occupied': 'Occupied',
         'occupied': 'Occupied'
     };
@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getStatusClass(status) {
         const normalized = status.toLowerCase();
-        if (normalized.includes('error') || normalized.includes('faulty')) return 'faulty';
+        if (normalized.includes('error') || normalized.includes('collision')) return 'faulty';
         if (normalized.includes('moving') || normalized.includes('use')) return 'occupied';
         if (normalized.includes('cleaning')) return 'cleaning';
         return 'available';
