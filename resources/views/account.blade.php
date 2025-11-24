@@ -15,8 +15,11 @@
         <x-navbar active="account" />
         
         <main class="dashboard">
+            <section class="section account-header">
+                <h1 class="section-title"><span>A</span>ccount Settings</h1>
+            </section>
+
             <section class="section account-section">
-                <h1 class="section-title">Account Settings</h1>
 
                 <div class="account-layout">
                     <!-- LEFT COLUMN: USER INFORMATION -->
@@ -76,7 +79,8 @@
                             </div>
 
                             <button type="button" class="primary-btn save-account-btn">
-                                Save
+                                <span>Save Changes</span>
+                                <span class="material-icons-round">check_circle</span>
                             </button>
                         </form>
                     </div>
@@ -86,7 +90,8 @@
                         <div class="account-settings-header">
                             <h2 class="account-subtitle">User Settings</h2>
                             <button type="button" class="danger-btn reset-account-btn">
-                                Reset Data
+                                <span class="material-icons-round">delete_forever</span>
+                                <span>Reset Data</span>
                             </button>
                         </div>
 
