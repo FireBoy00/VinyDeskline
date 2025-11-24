@@ -5,8 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @vite(['resources/css/admin-pages.css'])
-        @vite(['resources/css/dashboard.css'])
+        @vite(['resources/css/general-admin.css'])
         @vite(['resources/css/schedules.css'])
         <title>Schedules</title>
     </head>
@@ -39,7 +38,7 @@
                                 <label class="input-label" for="uniform-time-range">Time Range</label>
                                 <div class="time-range-inputs">
                                     <input type="time" class="schedule-input" name="start_time" aria-label="Start time">
-                                    <span style="margin: 0 8px;">-</span>
+                                    <span class="time-range-separator">-</span>
                                     <input type="time" class="schedule-input" name="end_time" aria-label="End time">
                                 </div>
                             </div>
@@ -105,7 +104,7 @@
                                 <label class="input-label" for="uniform-time-range">Time Range</label>
                                 <div class="time-range-inputs">
                                     <input type="time" class="schedule-input" name="start_time" aria-label="Start time">
-                                    <span style="margin: 0 8px;">-</span>
+                                    <span class="time-range-separator">-</span>
                                     <input type="time" class="schedule-input" name="end_time" aria-label="End time">
                                 </div>
                             </div>

@@ -29,6 +29,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/arrangement', [AdminController::class, 'arrangement'])->name('arrangement');
         Route::get('/account', [AdminController::class, 'account'])->name('account');
         
+        // Account management routes
+        Route::post('/account/update-info', [AdminController::class, 'updateUserInfo'])->name('account.update-info');
+        Route::post('/account/update-settings', [AdminController::class, 'updateUserSettings'])->name('account.update-settings');
+        Route::post('/account/reset-settings', [AdminController::class, 'resetUserSettings'])->name('account.reset-settings');
+        
         // Admin desk management
         Route::get('/desks', [DeskController::class, 'index'])->name('desks');
         Route::get('/desks/{desk_id}', [DeskController::class, 'state'])->name('desks.state');

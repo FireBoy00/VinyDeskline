@@ -6,7 +6,8 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @vite(['resources/css/dashboard.css', 'resources/js/dashboard.js', 'resources/js/plotly.js'])
+        @vite(['resources/css/general-admin.css', 'resources/js/plotly.js'])
+        @vite(['resources/css/dashboard.css', 'resources/js/dashboard.js'])
         
         <title>VinyDeskline</title>
     </head>

@@ -1,13 +1,6 @@
-/* Admin Pages Common Styles */
-
-.coming-soon-message {
-    text-align: center;
-    padding: 20px;
-    color: var(--text-dark);
-}
-
 /* ========================================= */
-/* ACCOUNT PAGE                               */
+/* ACCOUNT PAGE STYLES                        */
+/* Account settings page specific styles     */
 /* ========================================= */
 
 /* Account Header Section */
@@ -113,13 +106,18 @@
     width: fit-content;
 }
 
-.primary-btn:hover {
+.primary-btn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
 }
 
-.primary-btn:active {
+.primary-btn:active:not(:disabled) {
     transform: translateY(0);
+}
+
+.primary-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .primary-btn .material-icons-round {
@@ -141,9 +139,14 @@
     transition: all 0.2s ease;
 }
 
-.danger-btn:hover {
+.danger-btn:hover:not(:disabled) {
     background-color: rgba(255, 107, 107, 0.2);
     border-color: #ff6b6b;
+}
+
+.danger-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .danger-btn .material-icons-round {

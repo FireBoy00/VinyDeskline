@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @vite(['resources/css/dashboard.css'])
+        @vite(['resources/css/general-admin.css'])
         @vite(['resources/css/desk-management.css', 'resources/js/desk-management.js'])
         
         <title>VinyDeskline - Desk Management</title>
@@ -38,7 +38,7 @@
                         
                         <!-- Right: Actions Menu Button -->
                         <div class="actions-menu-container">
-                            <button class="action-btn" id="actions-btn" style="display: none;">
+                            <button class="action-btn hidden" id="actions-btn">
                                 <span class="material-icons-round">more_vert</span>
                             </button>
                             <!-- Actions dropdown menu -->
@@ -76,11 +76,11 @@
             <div class="desk-modal" id="desk-modal">
                 <div class="desk-modal-content">
                     <div class="modal-header">
-                        <button class="modal-nav-btn" id="modal-prev-desk" style="display: none;">
+                        <button class="modal-nav-btn hidden" id="modal-prev-desk">
                             <span class="material-icons-round">chevron_left</span>
                         </button>
                         <h2 class="modal-title">Desk Details</h2>
-                        <button class="modal-nav-btn" id="modal-next-desk" style="display: none;">
+                        <button class="modal-nav-btn hidden" id="modal-next-desk">
                             <span class="material-icons-round">chevron_right</span>
                         </button>
                         <button class="modal-close" id="modal-close">
