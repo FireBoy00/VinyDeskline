@@ -48,6 +48,12 @@
                                     <input type="time" class="schedule-input" name="end_time" id="uniformEnd" aria-label="End time">
                                 </div>
                             </div>
+                            <div class="input-group">
+                                <label class="input-label" for="uniform-height-range">Height</label>
+                                <div class="height-range-inputs">
+                                    <input type="height" class="schedule-input" id="uniform-height" value="680">
+                                </div>
+                            </div>
                             <div id="uniformDateContainer" style="display: none;">
                                         <input type="text" id="uniformDate" class="schedule-input" placeholder="Select date">
                             </div>
@@ -82,6 +88,7 @@
                             <div class="current-schedule-info">
                                 <span class="material-icons-round">schedule</span>
                                 <span class="schedule-label">{{ $schedule->title }}:</span>
+                                <span class="schedule-height">{{ $schedule->height }}mm</span>
                                 <span class="schedule-date">
                                     @if($schedule->frequency === 'daily')
                                         Daily
@@ -118,6 +125,12 @@
                                     <input type="time" class="schedule-input" name="end_time" id="cleaningEnd" aria-label="End time">
                                 </div>
                             </div>
+                            <div class="input-group">
+                                <label class="input-label" for="cleaning-height-range">Height</label>
+                                <div class="height-range-inputs">
+                                    <input type="height" class="schedule-input" id="cleaning-height" value="1320">
+                                </div>
+                            </div>
                             <div id="cleaningDateContainer" style="display: none;">
                                         <input type="text" id="cleaningDate" class="schedule-input" placeholder="Select date">
                             </div>
@@ -140,6 +153,7 @@
                                     <span class="radio-label">Multiple</span>
                                 </label> 
                             </div>
+
                         </div>
 
                         <button type="button" class="schedule-save-btn" id="saveCleaningBtn">
@@ -153,6 +167,7 @@
                             <div class="current-schedule-info">
                                 <span class="material-icons-round">schedule</span>
                                 <span class="schedule-label">{{ $schedule->title }}:</span>
+                                <span class="schedule-height">{{ $schedule->height }}mm</span>
                                 <span class="schedule-date">
                                     @if($schedule->frequency === 'daily')
                                         Daily

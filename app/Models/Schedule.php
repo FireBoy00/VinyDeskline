@@ -10,6 +10,6 @@ class Schedule extends Model
     use HasFactory;
 
     protected $fillable = [
-        'type', 'title', 'start_time', 'end_time', 'date', 'frequency',
+        'type', 'title', 'height', 'start_time', 'end_time', 'date', 'frequency',
     ];
 }

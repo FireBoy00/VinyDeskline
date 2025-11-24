@@ -12,6 +12,7 @@ class ScheduleController extends Controller
         $data = $request->validate([
             'type' => 'required|string',
             'title' => 'required|string',
+            'height' => 'required|integer',
             'start_time' => 'required',
             'end_time' => 'required',
             'frequency' => 'required|in:daily,once,multiple',
@@ -25,6 +26,7 @@ class ScheduleController extends Controller
             $schedule = Schedule::create([
                 'type' => $data['type'],
                 'title' => $data['title'],
+                'height' => $data['height'],
                 'start_time' => $data['start_time'],
                 'end_time' => $data['end_time'],
                 'frequency' => 'daily',
@@ -36,6 +38,7 @@ class ScheduleController extends Controller
             $schedule = Schedule::create([
                 'type' => $data['type'],
                 'title' => $data['title'],
+                'height' => $data['height'],
                 'start_time' => $data['start_time'],
                 'end_time' => $data['end_time'],
                 'frequency' => $data['frequency'],

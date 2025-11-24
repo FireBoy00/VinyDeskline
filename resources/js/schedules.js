@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () =>
         const end = document.getElementById(`${type}End`).value;
         const selectedRadio = document.querySelector(`input[name="${type}-frequency"]:checked`);
         const frequency = selectedRadio ? selectedRadio.value : 'daily';
+        const height = document.getElementById(`${type}-height`).value;
 
         let dates = [];
         const dateInput = document.getElementById(`${type}Date`);
@@ -66,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () =>
                 'Content-Type':'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
-            body: JSON.stringify({ type, title, start_time: start, end_time: end, frequency, dates })
+            body: JSON.stringify({ type, title, height, start_time: start, end_time: end, frequency, dates })
         })
         .then(res => res.json())
         .then(data => {
@@ -81,6 +82,7 @@ document.addEventListener("DOMContentLoaded", () =>
                 <div class="current-schedule-info">
                     <span class="schedule-label">${schedule.title}:</span>
                     <span class="schedule-date">${schedule.frequency}</span>
+                    <span class="schedule-height">${schedule.height }</span>
                     <span class="schedule-time">${schedule.start} - ${schedule.end}</span>
                 </div>
                 <button class="delete-btn material-icons-round">delete</button>

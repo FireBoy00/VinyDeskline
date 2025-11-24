@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('type');        // uniform / cleaning
             $table->string('title');
+            $table->integer('height');
             $table->time('start_time');
             $table->time('end_time');
             $table->date('date')->nullable();

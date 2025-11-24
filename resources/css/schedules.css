@@ -225,6 +225,17 @@
     font-weight: 500;
 }
 
+.schedule-height {
+    padding: 6px 12px;
+    background-color: rgba(102, 178, 208, 0.3);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--accent-dark);
+    margin-left: auto;
+    align-items: right;
+}
+
 .schedule-time {
     padding: 6px 12px;
     background-color: rgba(102, 178, 208, 0.3);
