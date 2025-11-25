@@ -16,10 +16,10 @@ document.addEventListener("DOMContentLoaded", () =>
         radio.addEventListener("change", () => {
             if (radio.value === "once" && radio.checked) {
                 uniformDateContainer.style.display = "block";
-                flatpickr(uniformDateInput, { dateFormat: "Y-m-d" });
+                flatpickr(uniformDateInput, { dateFormat: "Y-m-d", minDate: "today"});
             }else if (radio.value === "multiple" && radio.checked){
                 uniformDateContainer.style.display = "block";
-                flatpickr(uniformDateInput, { dateFormat: "Y-m-d", mode: "multiple"})
+                flatpickr(uniformDateInput, { dateFormat: "Y-m-d", mode: "multiple", minDate: "today"})
             }else {
                 uniformDateContainer.style.display = "none";
             }
@@ -30,10 +30,10 @@ document.addEventListener("DOMContentLoaded", () =>
         radio.addEventListener("change", () => {
             if (radio.value === "once" && radio.checked) {
                 cleaningDateContainer.style.display = "block";
-                flatpickr(cleaningDateInput, { dateFormat: "Y-m-d" });
+                flatpickr(cleaningDateInput, { dateFormat: "Y-m-d", minDate: "today"});
             }else if (radio.value === "multiple" && radio.checked){
                 cleaningDateContainer.style.display = "block";
-                flatpickr(cleaningDateInput, { dateFormat: "Y-m-d", mode: "multiple"})
+                flatpickr(cleaningDateInput, { dateFormat: "Y-m-d", mode: "multiple", minDate: "today"})
             }else {
                 cleaningDateContainer.style.display = "none";
             }

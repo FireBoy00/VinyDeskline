@@ -34,28 +34,28 @@
                         <h2 class="schedule-card-title">Uniform Schedule</h2>
                     </div>
 
-                    <div class="schedule-form">
+                    <form class="schedule-form">
                         <div class="form-row">
                             <div class="input-group">
                                 <label class="input-label" for="uniform-title">Title</label>
-                                <input type="text" class="schedule-input" id="uniform-title" placeholder="Enter title">
+                                <input type="text" class="schedule-input" id="uniform-title" placeholder="Enter title" required>
                             </div>
                             <div class="input-group">
                                 <label class="input-label" for="uniform-time-range">Time Range</label>
                                 <div class="time-range-inputs">
-                                    <input type="time" class="schedule-input" name="start_time" id="uniformStart" aria-label="Start time">
+                                    <input type="time" class="schedule-input" name="start_time" id="uniformStart" aria-label="Start time" required>
                                     <span style="margin: 0 8px;">-</span>
-                                    <input type="time" class="schedule-input" name="end_time" id="uniformEnd" aria-label="End time">
+                                    <input type="time" class="schedule-input" name="end_time" id="uniformEnd" aria-label="End time" required>
                                 </div>
                             </div>
                             <div class="input-group">
                                 <label class="input-label" for="uniform-height-range">Height</label>
                                 <div class="height-range-inputs">
-                                    <input type="height" class="schedule-input" id="uniform-height" value="680">
+                                    <input type="height" class="schedule-input" id="uniform-height" value="680" required>
                                 </div>
                             </div>
-                            <div id="uniformDateContainer" style="display: none;">
-                                        <input type="text" id="uniformDate" class="schedule-input" placeholder="Select date">
+                            <div id="uniformDateContainer" class="input-group" style="display: none;">
+                                <input type="text" id="uniformDate" class="schedule-input" placeholder="Select date" required>
                             </div>
                         </div>
 
@@ -77,11 +77,11 @@
                                 </label>
                             </div>
                         </div>
-                        <button type="button" class="schedule-save-btn" id="saveUniformBtn">
+                        <button type="submit" class="schedule-save-btn" id="saveUniformBtn">
                             <span>Save Schedule</span>
                             <span class="material-icons-round">check_circle</span>
                         </button>
-                    </div>
+                    </form>
                     <div id="uniformList">
                     @foreach($uniformSchedules as $schedule)
                         <div class="current-schedule" data-id="{{ $schedule->id }}">
@@ -111,28 +111,28 @@
                         <h2 class="schedule-card-title">Cleaning Schedule</h2>
                     </div>
 
-                    <div class="schedule-form">
+                    <form class="schedule-form">
                         <div class="form-row">
                             <div class="input-group">
                                 <label class="input-label">Title</label>
-                                <input type="text" class="schedule-input" id="cleaning-title" placeholder="Enter title">
+                                <input type="text" class="schedule-input" id="cleaning-title" placeholder="Enter title" required>
                             </div>
                             <div class="input-group">
                                 <label class="input-label" for="uniform-time-range">Time Range</label>
                                 <div class="time-range-inputs">
-                                    <input type="time" class="schedule-input" id="cleaningStart" name="start_time" aria-label="Start time">
+                                    <input type="time" class="schedule-input" id="cleaningStart" name="start_time" aria-label="Start time" required>
                                     <span style="margin: 0 8px;">-</span>
-                                    <input type="time" class="schedule-input" name="end_time" id="cleaningEnd" aria-label="End time">
+                                    <input type="time" class="schedule-input" name="end_time" id="cleaningEnd" aria-label="End time" required>
                                 </div>
                             </div>
                             <div class="input-group">
                                 <label class="input-label" for="cleaning-height-range">Height</label>
                                 <div class="height-range-inputs">
-                                    <input type="height" class="schedule-input" id="cleaning-height" value="1320">
+                                    <input type="height" class="schedule-input" id="cleaning-height" value="1320" required>
                                 </div>
                             </div>
                             <div id="cleaningDateContainer" style="display: none;">
-                                        <input type="text" id="cleaningDate" class="schedule-input" placeholder="Select date">
+                                <input type="text" id="cleaningDate" class="schedule-input" placeholder="Select date" required>
                             </div>
                         </div>
 
@@ -156,11 +156,11 @@
 
                         </div>
 
-                        <button type="button" class="schedule-save-btn" id="saveCleaningBtn">
+                        <button type="submit" class="schedule-save-btn" id="saveCleaningBtn">
                             <span>Save Schedule</span>
                             <span class="material-icons-round">check_circle</span>
                         </button>
-                    </div>
+                    </form>
                     <div id="cleaningList">
                     @foreach($cleaningSchedules as $schedule)
                         <div class="current-schedule" data-id="{{ $schedule->id }}">
