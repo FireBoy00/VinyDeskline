@@ -269,7 +269,7 @@
 .delete-btn {
     background: none;
     border: none;
-    color: black;
+    color: var(--btn-primary-hover);
     cursor: pointer;
     font-size: 20px;
 }
