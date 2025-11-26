@@ -45,7 +45,7 @@
                                 </li>
                             @endif
                             <li>
-                                <a href="#" class="dropdown-item">
+                                <a href="{{ route('settings') }}" class="dropdown-item">
                                     <span class="material-icons-round">settings</span>
                                     <span>Settings</span>
                                 </a>
