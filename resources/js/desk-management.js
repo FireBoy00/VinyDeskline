@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const actionsDropdown = document.getElementById('actions-dropdown');
     const modalPrevBtn = document.getElementById('modal-prev-desk');
     const modalNextBtn = document.getElementById('modal-next-desk');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const lastRefreshText = document.getElementById('last-refresh-text');
     
     let selectedDesks = [];
     let selectMode = false;
@@ -18,6 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
     let allDesks = [];
     let deskDetailsCache = {};
     let loadedDesksCount = 0;
+    let lastRefreshTime = Date.now();
+    let refreshTimerInterval = null;
 
     // API endpoints - adjust these based on your actual routes
     const API_BASE = '/admin/desks';
@@ -36,6 +40,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initialize - Load desks from API
     loadDesks();
+    
+    // Start refresh timer
+    startRefreshTimer();
+    
+    // Refresh button handler
+    refreshBtn.addEventListener('click', function() {
+        if (refreshBtn.disabled) return;
+        
+        // Reset selections when refreshing
+        if (selectMode) {
+            toggleSelectMode();
+        }
+        
+        loadDesks();
+    });
 
     async function loadDesks() {
         try {
@@ -43,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
             loadingContainer.style.display = 'flex';
             selectBtn.disabled = true;
             actionsBtn.disabled = true;
+            refreshBtn.disabled = true;
             
             const response = await fetch(API_BASE);
             if (!response.ok) throw new Error('Failed to fetch desks');
@@ -57,7 +77,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             
-            // Initialize container for progressive rendering
+            // Reset counter and clear container for progressive rendering
+            loadedDesksCount = 0;
             deskRowsContainer.innerHTML = '';
             updateStatusText(`Loading ${allDesks.length} desks...`);
             
@@ -67,11 +88,17 @@ document.addEventListener('DOMContentLoaded', function () {
             updateStatusText(`${loadedDesksCount} desks loaded`);
             selectBtn.disabled = false;
             actionsBtn.disabled = false;
+            refreshBtn.disabled = false;
+            
+            // Update refresh timestamp
+            lastRefreshTime = Date.now();
+            updateRefreshText();
             
         } catch (error) {
             console.error('Error loading desks:', error);
             showError('Failed to load desks. Please try again.');
             updateStatusText('Failed to load desks');
+            refreshBtn.disabled = false;
         }
     }
 
@@ -499,4 +526,35 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     `;
     document.head.appendChild(style);
+    
+    // Refresh timer functions
+    function startRefreshTimer() {
+        // Update immediately
+        updateRefreshText();
+        
+        // Update every second
+        refreshTimerInterval = setInterval(updateRefreshText, 1000);
+    }
+    
+    function updateRefreshText() {
+        const now = Date.now();
+        const secondsAgo = Math.floor((now - lastRefreshTime) / 1000);
+        
+        if (secondsAgo < 60) {
+            lastRefreshText.textContent = secondsAgo === 0 ? 'Just now' : `${secondsAgo}s ago`;
+        } else if (secondsAgo < 3600) {
+            const minutesAgo = Math.floor(secondsAgo / 60);
+            lastRefreshText.textContent = `${minutesAgo}m ago`;
+        } else {
+            const hoursAgo = Math.floor(secondsAgo / 3600);
+            lastRefreshText.textContent = `${hoursAgo}h ago`;
+        }
+    }
+    
+    // Clear interval when page is unloaded
+    window.addEventListener('beforeunload', function() {
+        if (refreshTimerInterval) {
+            clearInterval(refreshTimerInterval);
+        }
+    });
 });
