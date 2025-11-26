@@ -21,7 +21,8 @@ body {
 }
 
 .settings-container {
-    background: linear-gradient(135deg, #DCE5E9 0%, #C6DAE2 100%);    border-radius: 16px;
+    background: var(--bg-card);
+    border-radius: 20px;
     box-shadow: 0 10px 40px rgba(0, 79, 110, 0.15);
     width: 100%;
     max-width: 1000px;
