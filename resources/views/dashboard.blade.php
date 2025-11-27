@@ -16,37 +16,40 @@
         
         <main class="dashboard" id="dashboard">
             <section class="section" id="overview">
-                <h1 class="section-title">Overview</h1>
+                <div class="overview-header">
+                    <h1 class="section-title">Overview</h1>
+                    <div class="overview-last-updated" id="stat-last-updated">Last updated: —</div>
+                </div>
                 <ul class="overview-cards">
                     <li class="overview-card connected">
                         <h2>Total Desks</h2>
                         <div class="card-divider"></div>
-                        <p class="statistic">150</p>
+                        <p class="statistic" id="stat-total">—</p>
                     </li>
                     <li class="overview-card occupied">
                         <h2>Occupied Desks</h2>
                         <div class="card-divider"></div>
-                        <p class="statistic">120</p>
+                        <p class="statistic" id="stat-occupied">—</p>
                     </li>
                     <li class="overview-card available">
                         <h2>Available Desks</h2>
                         <div class="card-divider"></div>
-                        <p class="statistic">30</p>
+                        <p class="statistic" id="stat-available">—</p>
                     </li>
                     <li class="overview-card raised">
                         <h2>Raised Desks</h2>
                         <div class="card-divider"></div>
-                        <p class="statistic">140</p>
+                        <p class="statistic" id="stat-raised">—</p>
                     </li>
                     <li class="overview-card lowered">
                         <h2>Lowered Desks</h2>
                         <div class="card-divider"></div>
-                        <p class="statistic">10</p>
+                        <p class="statistic" id="stat-lowered">—</p>
                     </li>
                     <li class="overview-card faulty">
                         <h2>Faulty Desks</h2>
                         <div class="card-divider"></div>
-                        <p class="statistic">5</p>
+                        <p class="statistic" id="stat-faulty">—</p>
                     </li>
                 </ul>
             </section>
