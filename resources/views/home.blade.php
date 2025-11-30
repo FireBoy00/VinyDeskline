@@ -57,7 +57,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#" class="dropdown-item">
+                                <a href="{{ route('about') }}" class="dropdown-item">
                                     <span class="material-icons-round">info</span>
                                     <span>About</span>
                                 </a>

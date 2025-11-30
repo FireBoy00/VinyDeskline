@@ -21,6 +21,14 @@ Route::middleware('auth')->group(function () {
     
     // Main application routes (all authenticated users)
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    // Main application routes (all authenticated users)
+    Route::get('/home', [HomeController::class, 'index'])->name('home');
+
+    // About page (all authenticated users)
+    Route::get('/about', function () {
+        return view('about');
+    })->name('about');
     
     // Admin-only routes
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
