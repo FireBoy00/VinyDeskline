@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Http;
 use App\Models\Desk; 
+use Illuminate\Support\Facades\Log;
+
 
 
 class DeskController extends Controller
@@ -57,76 +59,139 @@ class DeskController extends Controller
      * - total: total desks tracked in DB
      * - occupied / available / raised / lowered / faulty
      */
-    public function stats()
-    {
-        $total = Desk::count();
 
-        // If the DB has no desks yet, return zeros — admin frontend can trigger a refresh if needed
-        if ($total === 0) {
-            return response()->json([
-                'total' => 0,
-                'occupied' => 0,
-                'available' => 0,
-                'raised' => 0,
-                'lowered' => 0,
-                'faulty' => 0,
-            ]);
+
+public function stats()
+{
+    $apiKey = env('DESKS_API_KEY');
+    $base = rtrim(env('SIMULATOR_BASE_URL', 'http://127.0.0.1:8001'), '/');
+    $listUrl = "{$base}/api/v2/{$apiKey}/desks";
+
+    // Initialize counters
+    $counts = [
+        'seated'   => 0,
+        'standing' => 0,
+        'active'   => 0,
+        'cleaning' => 0,
+        'idle'     => 0,
+    ];
+
+    $totalUsers = 0;
+
+    try {
+        $res = Http::timeout(5)->get($listUrl);
+
+        if ($res->failed()) {
+            Log::warning('DeskController::stats - failed to fetch desk list', ['url' => $listUrl, 'status' => $res->status()]);
+            throw new \Exception('Failed to fetch desk list');
         }
 
-        $statusCounts = ['occupied' => 0, 'available' => 0, 'faulty' => 0, 'unknown' => 0];
-        $positionCounts = ['raised' => 0, 'lowered' => 0, 'normal' => 0, 'unknown' => 0];
+        $ids = $res->json();
+
+        if (!is_array($ids)) {
+            Log::warning('DeskController::stats - desk list not array', ['body' => $res->body()]);
+            throw new \Exception('Invalid desk list format');
+        }
+
+        // For each desk id, fetch the detailed desk object
+        foreach ($ids as $deskId) {
+            try {
+                $deskUrl = "{$base}/api/v2/{$apiKey}/desks/{$deskId}";
+                $dres = Http::timeout(5)->get($deskUrl);
+
+                if ($dres->failed()) {
+                    Log::warning('DeskController::stats - failed to fetch desk', ['desk' => $deskId, 'status' => $dres->status()]);
+                    // treat as idle/missing; continue
+                    $counts['idle']++;
+                    continue;
+                }
+
+                $deskJson = $dres->json();
+
+                // Some simulator variants return the structure directly, others nest under top-level key.
+                // Accept several shapes:
+                // 1) {"config":..., "state":..., "usage":..., "lastErrors":... , "user":"seated"}  <-- unlikely for single-desk endpoint
+                // 2) {"desk_data": {...}, "user":"seated"}  <-- if your simulator returns this
+                // 3) {"desk_data": {...}}  <-- maybe no user
+                // So try to detect user:
+                $user = null;
+                if (isset($deskJson['user'])) {
+                    $user = strtolower(trim($deskJson['user'] ?? ''));
+                } elseif (isset($deskJson['desk_data']) && isset($deskJson['desk_data']['user'])) {
+                    $user = strtolower(trim($deskJson['desk_data']['user'] ?? ''));
+                } elseif (isset($deskJson['desk_data']) && isset($deskJson['desk_data']['state']['user'])) {
+                    $user = strtolower(trim($deskJson['desk_data']['state']['user'] ?? ''));
+                }
+
+                // Many simulator variants don't include `user` per-desk; some include "user" at top-level response.
+                // If not found, try to infer by position_mm and status (best-effort).
+                if (!$user) {
+                    $position = $deskJson['desk_data']['state']['position_mm'] ?? $deskJson['state']['position_mm'] ?? null;
+                    $status = strtolower($deskJson['desk_data']['state']['status'] ?? $deskJson['state']['status'] ?? '');
+                    // If status indicates collision -> treat as active (faulty)
+                    if (str_contains($status, 'collision') || ($deskJson['desk_data']['state']['isAntiCollision'] ?? false)) {
+                        $user = 'active';
+                    } elseif ($position !== null) {
+                        // heuristic: low => seated, high => standing, middle => active/idle
+                        if ($position <= 700) $user = 'seated';
+                        elseif ($position >= 1200) $user = 'standing';
+                        else $user = 'idle';
+                    } else {
+                        $user = 'idle';
+                    }
+                }
+
+                if (isset($counts[$user])) {
+                    $counts[$user]++;
+                } else {
+                    // Unknown state -> classify as idle
+                    $counts['idle']++;
+                }
+
+                $totalUsers++;
+
+            } catch (\Exception $e) {
+                // per-desk failure: log and count as idle
+                Log::warning('DeskController::stats - exception fetching desk', ['desk' => $deskId, 'err' => $e->getMessage()]);
+                $counts['idle']++;
+            }
+        }
+
+    } catch (\Exception $e) {
+        // If API failed entirely, fall back to local DB (Desk::all()) if you have stored state there
+        Log::warning('DeskController::stats - falling back to DB due to API error', ['err' => $e->getMessage()]);
 
         $desks = Desk::all();
-
         foreach ($desks as $desk) {
             $state = $desk->state ?? [];
-
-            $status = isset($state['status']) ? strtolower($state['status']) : null;
-            $position = isset($state['position_mm']) ? (float) $state['position_mm'] : null;
-
-            // Determine mutually-exclusive status bucket (priority: faulty -> occupied -> available -> unknown)
-            if ($status !== null && (str_contains($status, 'collision') || str_contains($status, 'error') || str_contains($status, 'faulty'))) {
-                $statusCounts['faulty']++;
-            } elseif ($status !== null && (str_contains($status, 'moving') || str_contains($status, 'occupied') || str_contains($status, 'in use'))) {
-                $statusCounts['occupied']++;
-            } elseif ($status === null || $status === '' || $status === 'normal' || $status === 'available') {
-                $statusCounts['available']++;
-            } else {
-                $statusCounts['unknown']++;
+            // try to read previously stored 'user' field if saved, else infer from position/status
+            $user = strtolower(trim($state['user'] ?? ($state['status'] ?? 'idle')));
+            if (!isset($counts[$user])) {
+                // infer from position
+                $position = $state['position_mm'] ?? null;
+                if ($position !== null) {
+                    if ($position <= 700) $user = 'seated';
+                    elseif ($position >= 1200) $user = 'standing';
+                    else $user = 'idle';
+                } else {
+                    $user = 'idle';
+                }
             }
-
-            // Determine position bucket (mutually exclusive)
-            if ($position === null) {
-                $positionCounts['unknown']++;
-            } else if ($position >= 1200) {
-                $positionCounts['raised']++;
-            } else if ($position <= 700) {
-                $positionCounts['lowered']++;
-            } else {
-                $positionCounts['normal']++;
-            }
+            $counts[$user] = ($counts[$user] ?? 0) + 1;
+            $totalUsers++;
         }
-
-        // Calculate top-level counts (backwards-compatible) but ensure they are derived from the deterministic buckets
-        $occupied = $statusCounts['occupied'];
-        $available = $statusCounts['available'];
-        $faulty = $statusCounts['faulty'];
-
-        $raised = $positionCounts['raised'];
-        $lowered = $positionCounts['lowered'];
-
-        return response()->json([
-            'total' => $total,
-            // back-compat top-level keys
-            'occupied' => $occupied,
-            'available' => $available,
-            'raised' => $raised,
-            'lowered' => $lowered,
-            'faulty' => $faulty,
-            // more explicit breakdowns
-            'status_counts' => $statusCounts,
-            'position_counts' => $positionCounts,
-            'last_updated' => now()->toIso8601String(),
-        ]);
     }
+
+    // Return normalized response for frontend
+    return response()->json([
+        'total_users' => $totalUsers,
+        'seated'      => $counts['seated'],
+        'standing'    => $counts['standing'],
+        'active'      => $counts['active'],
+        'cleaning'    => $counts['cleaning'],
+        'idle'        => $counts['idle'],
+        'last_updated' => now()->toIso8601String(),
+    ]);
+}
+
 }

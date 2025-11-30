@@ -20,38 +20,43 @@
                     <h1 class="section-title">Overview</h1>
                     <div class="overview-last-updated" id="stat-last-updated">Last updated: —</div>
                 </div>
-                <ul class="overview-cards">
-                    <li class="overview-card connected">
-                        <h2>Total Desks</h2>
-                        <div class="card-divider"></div>
-                        <p class="statistic" id="stat-total">—</p>
-                    </li>
-                    <li class="overview-card occupied">
-                        <h2>Occupied Desks</h2>
-                        <div class="card-divider"></div>
-                        <p class="statistic" id="stat-occupied">—</p>
-                    </li>
-                    <li class="overview-card available">
-                        <h2>Available Desks</h2>
-                        <div class="card-divider"></div>
-                        <p class="statistic" id="stat-available">—</p>
-                    </li>
-                    <li class="overview-card raised">
-                        <h2>Raised Desks</h2>
-                        <div class="card-divider"></div>
-                        <p class="statistic" id="stat-raised">—</p>
-                    </li>
-                    <li class="overview-card lowered">
-                        <h2>Lowered Desks</h2>
-                        <div class="card-divider"></div>
-                        <p class="statistic" id="stat-lowered">—</p>
-                    </li>
-                    <li class="overview-card faulty">
-                        <h2>Faulty Desks</h2>
-                        <div class="card-divider"></div>
-                        <p class="statistic" id="stat-faulty">—</p>
-                    </li>
-                </ul>
+                    <ul class="overview-cards">
+                        <li class="overview-card connected">
+                            <h2>Total Users</h2>
+                            <div class="card-divider"></div>
+                            <p class="statistic" id="stat-total">—</p>
+                        </li>
+
+                        <li class="overview-card sitting">
+                            <h2>Lowered</h2>
+                            <div class="card-divider"></div>
+                            <p class="statistic" id="stat-seated">—</p>
+                        </li>
+
+                        <li class="overview-card standing">
+                            <h2>Raised</h2>
+                            <div class="card-divider"></div>
+                            <p class="statistic" id="stat-standing">—</p>
+                        </li>
+
+                        <li class="overview-card active">
+                            <h2>Active</h2>
+                            <div class="card-divider"></div>
+                            <p class="statistic" id="stat-active">—</p>
+                        </li>
+
+                        <li class="overview-card cleaning">
+                            <h2>Cleaning</h2>
+                            <div class="card-divider"></div>
+                            <p class="statistic" id="stat-cleaning">—</p>
+                        </li>
+
+                        <li class="overview-card idle">
+                            <h2>Idle</h2>
+                            <div class="card-divider"></div>
+                            <p class="statistic" id="stat-idle">—</p>
+                        </li>
+                    </ul>
             </section>
             <section class="section" id="positions">
                 <div class="positions-wrapper">
