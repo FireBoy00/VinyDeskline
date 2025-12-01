@@ -52,7 +52,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="#" class="dropdown-item">
+                                <a href="{{ route('help') }}" class="dropdown-item">
                                     <span class="material-icons-round">help_outline</span>
                                     <span>Help</span>
                                 </a>
