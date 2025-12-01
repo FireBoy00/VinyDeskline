@@ -16,11 +16,14 @@
         
         <main class="dashboard" id="dashboard">
             <section class="section" id="overview">
-                <div class="overview-header">
-                    <h1 class="section-title">Overview</h1>
-                    <div class="overview-last-updated" id="stat-last-updated">Last updated: —</div>
+                <h1 class="section-title">Overview</h1>
+                <div class="overview-last-updated">
+                    <span id="stat-last-updated">10s</span>
+                    <svg id="refresh-icon" class="refresh-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                    </svg>
                 </div>
-                    <ul class="overview-cards">
+                <ul class="overview-cards">
                         <li class="overview-card connected">
                             <h2>Total Users</h2>
                             <div class="card-divider"></div>

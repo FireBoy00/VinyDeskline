@@ -11,9 +11,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const statLowered = document.getElementById('stat-lowered');
     const statFaulty = document.getElementById('stat-faulty');
     const statLastUpdated = document.getElementById('stat-last-updated');
+    const refreshIcon = document.getElementById('refresh-icon');
+
+    // Countdown from 10 to 0
+    let countdown = 10;
 
     // Update the overview card values with data from the API. Uses a fixed polling interval so values feel "real-time".
     async function fetchAndUpdateStats() {
+        // Add spin animation to refresh icon
+        refreshIcon.classList.add('spinning');
+        
         try {
             const res = await fetch('/admin/desks/stats', { cache: 'no-store' });
             if (!res.ok) throw new Error('Failed to fetch dashboard stats');
@@ -27,19 +34,37 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById("stat-cleaning").textContent = json.cleaning;
             document.getElementById("stat-idle").textContent = json.idle;
 
-            const t = new Date(json.last_updated);
-            document.getElementById("stat-last-updated").textContent =
-                `Last updated: ${t.toLocaleString()}`;
+            // Reset countdown to 10 after successful fetch
+            countdown = 10;
+            statLastUpdated.textContent = `${countdown}s`;
 
         } catch (err) {
             console.warn("Dashboard stats fetch error:", err);
         }
+        
+        // Remove spin animation after a short delay
+        setTimeout(() => {
+            refreshIcon.classList.remove('spinning');
+        }, 600);
     }
 
-    // First immediate fetch, then poll every 10 seconds
+    // Countdown timer that ticks every second
+    function tickCountdown() {
+        countdown--;
+        
+        // When countdown reaches 0, fetch immediately and reset
+        if (countdown === 0) {
+            fetchAndUpdateStats();
+        } else {
+            statLastUpdated.textContent = `${countdown}s`;
+        }
+    }
+
+    // First immediate fetch
     fetchAndUpdateStats();
-    const STATS_POLL_MS = 10000;
-    setInterval(fetchAndUpdateStats, STATS_POLL_MS);
+    
+    // Update countdown every second
+    setInterval(tickCountdown, 1000);
 
     // Line chart data and initialization
     const xArray = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
