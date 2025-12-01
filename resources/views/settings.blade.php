@@ -20,7 +20,7 @@
 
             <div class="user-account-card">
                 <div class="user-account-trigger">
-                    <span class="user-name">{{ (Auth::user()->first_name ?? '') . ' ' . (Auth::user()->last_name ?? '') ?: 'User' }}</span>
+                    <span class="user-name">{{ Auth::user()->full_name }}</span>
                     <div class="user-avatar">
                         <span class="material-icons-round">person</span>
                     </div>

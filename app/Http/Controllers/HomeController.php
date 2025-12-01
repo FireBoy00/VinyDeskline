@@ -63,6 +63,7 @@ class HomeController extends Controller
     /**
      * Reset user data (height and age).
      *
+     * This route is protected by Laravel's 'web' middleware, which enforces CSRF validation.
      * @return \Illuminate\Http\JsonResponse
      */
     public function resetUserData()

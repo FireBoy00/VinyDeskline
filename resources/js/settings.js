@@ -7,25 +7,40 @@ document.addEventListener('DOMContentLoaded', function() {
     const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
     const SUCCESS_RELOAD_DELAY = 500; // Delay before reloading page after successful save
 
-    // User Info Form Submission
-    const userInfoForm = document.getElementById('user-info-form');
-    const saveInfoBtn = userInfoForm.querySelector('.save-info-btn');
-    const saveInfoBtnText = saveInfoBtn.querySelector('span:first-child');
-    const saveInfoBtnIcon = saveInfoBtn.querySelector('.material-icons-round');
-    
-    userInfoForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
+    /**
+     * Updates button state
+     * @param {HTMLElement} button - The button element
+     * @param {string} text - The text to display
+     * @param {string} icon - The icon to display
+     * @param {boolean} disabled - Whether the button should be disabled
+     */
+    function updateButtonState(button, text, icon, disabled) {
+        const btnText = button.querySelector('span:first-child');
+        const btnIcon = button.querySelector('.material-icons-round');
         
+        if (btnText) btnText.textContent = text;
+        if (btnIcon) btnIcon.textContent = icon;
+        button.disabled = disabled;
+    }
+
+    /**
+     * Generic form submission handler
+     * @param {HTMLFormElement} form - The form element
+     * @param {HTMLElement} button - The submit button
+     * @param {string} successText - Text to show on success
+     * @param {string} defaultText - Default button text
+     * @param {string} defaultIcon - Default button icon
+     * @param {string} errorPrefix - Prefix for error messages
+     */
+    async function handleFormSubmit(form, button, successText, defaultText, defaultIcon, errorPrefix) {
         // Disable button and show loading state
-        saveInfoBtn.disabled = true;
-        saveInfoBtnText.textContent = 'Saving...';
-        saveInfoBtnIcon.textContent = 'hourglass_empty';
+        updateButtonState(button, 'Saving...', 'hourglass_empty', true);
         
-        const formData = new FormData(this);
+        const formData = new FormData(form);
         const data = Object.fromEntries(formData);
 
         try {
-            const response = await fetch(this.dataset.updateUrl, {
+            const response = await fetch(form.dataset.updateUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -39,76 +54,51 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (response.ok) {
                 // Show success state briefly
-                saveInfoBtnText.textContent = 'Saved!';
-                saveInfoBtnIcon.textContent = 'check_circle';
+                updateButtonState(button, successText, 'check_circle', true);
                 setTimeout(() => window.location.reload(), SUCCESS_RELOAD_DELAY);
             } else {
                 // Reset button state
-                saveInfoBtn.disabled = false;
-                saveInfoBtnText.textContent = 'Save Changes';
-                saveInfoBtnIcon.textContent = 'check_circle';
-                alert(result.message || 'Failed to update user information. Please try again.');
+                updateButtonState(button, defaultText, defaultIcon, false);
+                alert(result.message || `${errorPrefix}. Please try again.`);
             }
         } catch (error) {
             console.error('Error:', error);
             // Reset button state
-            saveInfoBtn.disabled = false;
-            saveInfoBtnText.textContent = 'Save Changes';
-            saveInfoBtnIcon.textContent = 'check_circle';
-            alert(`An error occurred while updating your information: ${error.message}. Please try again. If the problem persists, contact support.`);
+            updateButtonState(button, defaultText, defaultIcon, false);
+            alert(`An error occurred while ${errorPrefix.toLowerCase()}: ${error.message}. Please try again. If the problem persists, contact support.`);
         }
+    }
+
+    // User Info Form Submission
+    const userInfoForm = document.getElementById('user-info-form');
+    const saveInfoBtn = userInfoForm.querySelector('.save-info-btn');
+    
+    userInfoForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await handleFormSubmit(
+            this,
+            saveInfoBtn,
+            'Saved!',
+            'Save Changes',
+            'check_circle',
+            'Failed to update user information'
+        );
     });
 
     // User Settings Form Submission
     const userSettingsForm = document.getElementById('user-settings-form');
     const saveSettingsBtn = userSettingsForm.querySelector('.save-settings-btn');
-    const saveSettingsBtnText = saveSettingsBtn.querySelector('span:first-child');
-    const saveSettingsBtnIcon = saveSettingsBtn.querySelector('.material-icons-round');
     
     userSettingsForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
-        // Disable button and show loading state
-        saveSettingsBtn.disabled = true;
-        saveSettingsBtnText.textContent = 'Saving...';
-        saveSettingsBtnIcon.textContent = 'hourglass_empty';
-        
-        const formData = new FormData(this);
-        const data = Object.fromEntries(formData);
-
-        try {
-            const response = await fetch(this.dataset.updateUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': csrfToken,
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                // Show success state briefly
-                saveSettingsBtnText.textContent = 'Saved!';
-                saveSettingsBtnIcon.textContent = 'check_circle';
-                setTimeout(() => window.location.reload(), SUCCESS_RELOAD_DELAY);
-            } else {
-                // Reset button state
-                saveSettingsBtn.disabled = false;
-                saveSettingsBtnText.textContent = 'Save Settings';
-                saveSettingsBtnIcon.textContent = 'check_circle';
-                alert(result.message || 'Unable to update your settings. Please check your input and try again. If the problem persists, contact support.');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            // Reset button state
-            saveSettingsBtn.disabled = false;
-            saveSettingsBtnText.textContent = 'Save Settings';
-            saveSettingsBtnIcon.textContent = 'check_circle';
-            alert(`An error occurred while updating your settings: ${error.message}. Please try again. If the problem persists, contact support.`);
-        }
+        await handleFormSubmit(
+            this,
+            saveSettingsBtn,
+            'Saved!',
+            'Save Settings',
+            'check_circle',
+            'Unable to update your settings'
+        );
     });
 
     // Reset Data Button
@@ -122,9 +112,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Disable button and show loading state
-        resetBtn.disabled = true;
-        resetBtnText.textContent = 'Resetting...';
-        resetBtnIcon.textContent = 'hourglass_empty';
+        updateButtonState(resetBtn, 'Resetting...', 'hourglass_empty', true);
 
         try {
             const response = await fetch(this.dataset.resetUrl, {
@@ -140,23 +128,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (response.ok) {
                 // Show success state briefly
-                resetBtnText.textContent = 'Reset!';
-                resetBtnIcon.textContent = 'check_circle';
+                updateButtonState(resetBtn, 'Reset!', 'check_circle', true);
                 setTimeout(() => window.location.reload(), SUCCESS_RELOAD_DELAY);
             } else {
                 // Reset button state
-                resetBtn.disabled = false;
-                resetBtnText.textContent = 'Reset Data';
-                resetBtnIcon.textContent = 'delete_forever';
-                alert(result.message || 'Failed to reset data. Please try again. If the problem persists, contact support.');
+                updateButtonState(resetBtn, 'Reset Data', 'delete_forever', false);
+                alert(result.message || `Failed to reset data. Please try again. If the problem persists, contact support.`);
             }
         } catch (error) {
             console.error('Error:', error);
             // Reset button state
-            resetBtn.disabled = false;
-            resetBtnText.textContent = 'Reset Data';
-            resetBtnIcon.textContent = 'delete_forever';
-            alert('Failed to reset data. Please try again. If the problem persists, contact support.');
+            updateButtonState(resetBtn, 'Reset Data', 'delete_forever', false);
+            alert(`Failed to reset data: ${error.message}. Please try again. If the problem persists, contact support.`);
         }
     });
 });
