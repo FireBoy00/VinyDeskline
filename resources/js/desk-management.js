@@ -41,9 +41,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize - Load desks from API
     loadDesks();
     
-    // Start refresh timer
-    startRefreshTimer();
-    
     // Refresh button handler
     refreshBtn.addEventListener('click', function() {
         if (refreshBtn.disabled) return;
@@ -53,6 +50,7 @@ document.addEventListener('DOMContentLoaded', function () {
             toggleSelectMode();
         }
         
+        stopRefreshTimer();
         loadDesks();
     });
 
@@ -90,9 +88,9 @@ document.addEventListener('DOMContentLoaded', function () {
             actionsBtn.disabled = false;
             refreshBtn.disabled = false;
             
-            // Update refresh timestamp
+            // Start refresh timer
             lastRefreshTime = Date.now();
-            updateRefreshText();
+            startRefreshTimer();
             
         } catch (error) {
             console.error('Error loading desks:', error);
@@ -215,28 +213,6 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error(`Error loading desk ${deskId}:`, error);
             return null;
         }
-    }
-
-    function renderDesks() {
-        // This function is no longer used - keeping for compatibility
-        // Progressive loading now happens in loadAllDeskDetailsProgressively()
-    }
-
-    function groupDesksByFloor(deskIds) {
-        // Randomly assign desks to floors 1-10
-        const floors = {};
-        const totalFloors = 10;
-        
-        deskIds.forEach((deskId) => {
-            // Randomly assign to a floor between 1 and 10
-            const floorNum = Math.floor(Math.random() * totalFloors) + 1;
-            if (!floors[floorNum]) {
-                floors[floorNum] = [];
-            }
-            floors[floorNum].push(deskId);
-        });
-        
-        return floors;
     }
 
     function createDeskCard(deskId) {
@@ -534,6 +510,15 @@ document.addEventListener('DOMContentLoaded', function () {
         
         // Update every second
         refreshTimerInterval = setInterval(updateRefreshText, 1000);
+    }
+
+    function stopRefreshTimer() {
+        lastRefreshTime = Date.now();
+        updateRefreshText();
+        if (refreshTimerInterval) {
+            clearInterval(refreshTimerInterval);
+            refreshTimerInterval = null;
+        }
     }
     
     function updateRefreshText() {
