@@ -29,6 +29,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/about', function () {
         return view('about');
     })->name('about');
+
+    Route::get('/help', function () {
+        return view('help');
+    })->name('help');
     
     // Admin-only routes
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
