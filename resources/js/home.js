@@ -1,7 +1,7 @@
 const sensorData = [
-    { id: 'temp', title: 'Temperature', value: '19°C' },
-    { id: 'humid', title: 'Humidity', value: '65%' },
-    { id: 'light', title: 'Light', value: '750 Lux' },
+    { id: 'temp', title: 'Temperature', value: '--', unit: '°C' },
+    { id: 'humid', title: 'Humidity', value: '--', unit: '%' },
+    { id: 'light', title: 'Light', value: '--', unit: ' Lux' },
 ];
 
 let currentSlide = 0;
@@ -74,7 +74,10 @@ function updateCarousel() {
         sensorTitleElement.textContent = currentData.title;
     }
     if (sensorValueElement) {
-        sensorValueElement.textContent = currentData.value;
+        const displayValue = currentData.value !== '--' 
+            ? currentData.value + currentData.unit 
+            : '--';
+        sensorValueElement.textContent = displayValue;
     }
 
     document.querySelectorAll('.dot').forEach((dot, index) => {
@@ -89,3 +92,65 @@ function navigate(direction) {
     currentSlide += direction;
     updateCarousel();
 }
+
+// Function to update sensor data from MQTT
+window.updateSensorData = function(temperature, humidity, light) {
+    if (temperature !== null && temperature !== undefined) {
+        sensorData[0].value = temperature;
+    }
+    if (humidity !== null && humidity !== undefined) {
+        sensorData[1].value = humidity;
+    }
+    if (light !== null && light !== undefined) {
+        sensorData[2].value = light;
+    }
+    
+    // Update the display if we're currently viewing the changed sensor
+    updateCarousel();
+};
+
+   // MQTT Connection for real-time sensor updates
+    const client = mqtt.connect('ws://broker.hivemq.com:8000/mqtt');
+
+    client.on('connect', () => {
+        console.log('✓ MQTT connected to HiveMQ broker');
+        client.subscribe('pico/sensors', (err) => {
+            if (err) {
+                console.error('✗ Subscription error:', err);
+            } else {
+                console.log('✓ Subscribed to pico/sensors topic');
+            }
+        });
+    });
+
+    client.on('error', (err) => {
+        console.error('✗ MQTT connection error:', err);
+    });
+
+    client.on('reconnect', () => {
+        console.log('↻ Reconnecting to MQTT broker...');
+    });
+
+    client.on('offline', () => {
+        console.log('⚠ MQTT client offline');
+    });
+
+    client.on('message', (topic, message) => {
+        try {
+            const data = JSON.parse(message.toString());
+            console.log('📨 Received sensor data:', data);
+
+            // Update the carousel with new sensor values
+            if (typeof window.updateSensorData === 'function') {
+                window.updateSensorData(
+                    data.temperature,
+                    data.humidity,
+                    data.light
+                );
+            }
+
+        } catch (err) {
+            console.error('✗ Invalid MQTT message format:', err);
+        }
+    });
+

@@ -95,7 +95,7 @@
                 </div>
             </section>
 
-          <!-- TEMPERATURE CARD -->
+          <!-- SENSOR READINGS CARD -->
 <section class="card carousel-card">
     <button class="card-help-btn" data-tooltip="Browse through different sensor readings including temperature, humidity, and light levels.">
         <span class="material-icons-round">help_outline</span>
@@ -105,13 +105,11 @@
 
     <div class="carousel-controls">
         <i class="material-icons-round chevron-btn" id="prev-btn">chevron_left</i>
-        <div class="carousel-value" id="sensor-value">19°C</div>
+        <div class="carousel-value" id="sensor-value">--</div>
         <i class="material-icons-round chevron-btn" id="next-btn">chevron_right</i>
     </div>
 
     <div id="pagination-dots" class="carousel-pagination"></div>
-
-
 </section>
 
             <!-- TABLE -->
@@ -204,35 +202,6 @@
                 <div class="feedback-dot"></div>
             </section>
         </main>
-        <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
-
-
-<script>
-    // Connect to HiveMQ public broker (WebSocket)
-    const client = mqtt.connect('ws://broker.hivemq.com:8000/mqtt');
-
-    client.on('connect', () => {
-        console.log('MQTT connected');
-        client.subscribe('pico/sensors');
-    });
-
-    client.on('message', (topic, message) => {
-        try {
-            const data = JSON.parse(message.toString());
-
-            // Update UI
-            document.getElementById('temp').innerText = data.temperature;
-            document.getElementById('hum').innerText = data.humidity;
-            document.getElementById('light').innerText = data.light;
-
-            // Update carousel if you want (optional)
-            document.getElementById('sensor-value').innerText = `${data.temperature}°C`;
-
-        } catch (err) {
-            console.error('Invalid message', err);
-        }
-    });
-</script>
 
     </body>
 </html>
