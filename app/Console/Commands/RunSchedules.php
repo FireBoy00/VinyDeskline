@@ -34,7 +34,8 @@ class RunSchedules extends Command
         $currentTime = $now->format('H:i:s');
         $currentDate = $now->format('Y-m-d');
         $apiKey = env('DESKS_API_KEY');
-        $simulatorUrl = "http://127.0.0.1:8001/api/v2/{$apiKey}/desks";
+        $base = env('API_BASE');
+        $url = "{$base}/{$apiKey}/desks";
 
         $schedules = Schedule::where('start_time', '<=', $currentTime)
             ->where('end_time', '>=', $currentTime)
@@ -53,10 +54,9 @@ class RunSchedules extends Command
         }
         $activeSchedule = $schedules->first();
         $targetHeight = $activeSchedule->height;
-        $apiKey = env('DESKS_API_KEY');
-        $simulatorUrl = "http://127.0.0.1:8001/api/v2/{$apiKey}/desks";
 
-        $response = Http::get($simulatorUrl);
+
+        $response = Http::get($url);
 
         if ($response->failed()) {
             $this->error("Failed to fetch desks from simulator");
@@ -66,11 +66,10 @@ class RunSchedules extends Command
         $deskIds = $response->json();       
 
         foreach ($deskIds as $deskId) {
-            $category = 'state';
-            $url = "{$simulatorUrl}/{$deskId}/{$category}";
+            $putUrl = "{$base}/{$apiKey}/desks/{$deskId}/state";
             
             try {
-                $response = Http::put($url, [
+                $response = Http::put($putUrl, [
                     'position_mm' => $targetHeight
                 ]);
                 
