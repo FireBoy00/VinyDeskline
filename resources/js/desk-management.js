@@ -539,7 +539,6 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 lastRefreshText.textContent = `${hoursAgo} hours ago`;
             }
-            hoursAgo = Math.floor(secondsAgo / 3600);
             lastRefreshText.textContent = hoursAgo === 1 ? '1 hour ago' : `${hoursAgo} hours ago`;
         }
     }
