@@ -134,6 +134,7 @@ nav.navbar .nav-link .nav-icon {
 }
 
 .overview-last-updated {
+    min-width: 62px;
     position: absolute;
     top: 20px;
     right: 24px;
@@ -144,11 +145,10 @@ nav.navbar .nav-link .nav-icon {
     padding: 6px 12px;
     border-radius: 6px;
     box-shadow: 0 2px 4px rgba(0, 79, 110, 0.2);
-    font-family: 'Inter', sans-serif;
     letter-spacing: 0.5px;
-    text-transform: uppercase;
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 6px;
 }
 
