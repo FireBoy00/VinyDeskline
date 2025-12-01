@@ -63,12 +63,12 @@
                         </div>
                         
                         <!-- Right: Refresh Button with Timestamp -->
-                        <div class="refresh-container">
+                        <div class="refresh-container" title="Refresh">
+                            <span class="last-refresh-text" id="last-refresh-text">Just now</span>
                             <button class="action-btn" id="refresh-btn">
                                 <span class="material-icons-round">refresh</span>
-                                <span>Refresh</span>
+                                {{-- <span>Refresh</span> --}}
                             </button>
-                            <span class="last-refresh-text" id="last-refresh-text">Just now</span>
                         </div>
                     </div>
                 </div>

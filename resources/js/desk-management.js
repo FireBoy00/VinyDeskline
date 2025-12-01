@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
     async function loadDesks() {
         try {
             updateStatusText(`Loading desks...`);
-            loadingContainer.style.display = 'flex';
+            loadingContainer.classList.remove('hidden');
             selectBtn.disabled = true;
             actionsBtn.disabled = true;
             refreshBtn.disabled = true;
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
             
             const data = await response.json();
             allDesks = data.desks || [];
-            loadingContainer.style.display = 'none';
+            loadingContainer.classList.add('hidden');
             
             if (allDesks.length === 0) {
                 showError('No desks found');
@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
             startRefreshTimer();
             
         } catch (error) {
+            loadingContainer.classList.add('hidden');
             console.error('Error loading desks:', error);
             showError('Failed to load desks. Please try again.');
             updateStatusText('Failed to load desks');
@@ -422,15 +423,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    function showLoading() {
-        deskRowsContainer.innerHTML = `
-            <div class="loading-container">
-                <div class="loading-spinner"></div>
-                <p>Loading desks...</p>
-            </div>
-        `;
-    }
-
     function showError(message) {
         deskRowsContainer.innerHTML = `
             <div class="error-container">
@@ -526,13 +518,29 @@ document.addEventListener('DOMContentLoaded', function () {
         const secondsAgo = Math.floor((now - lastRefreshTime) / 1000);
         
         if (secondsAgo < 60) {
-            lastRefreshText.textContent = secondsAgo === 0 ? 'Just now' : `${secondsAgo}s ago`;
+            if (secondsAgo === 0) {
+                lastRefreshText.textContent = 'Just now';
+            } else if (secondsAgo === 1) {
+                lastRefreshText.textContent = '1 second ago';
+            } else {
+                lastRefreshText.textContent = `${secondsAgo} seconds ago`;
+            }
         } else if (secondsAgo < 3600) {
             const minutesAgo = Math.floor(secondsAgo / 60);
-            lastRefreshText.textContent = `${minutesAgo}m ago`;
+            if (minutesAgo === 1) {
+                lastRefreshText.textContent = '1 minute ago';
+            } else {
+                lastRefreshText.textContent = `${minutesAgo} minutes ago`;
+            }
         } else {
             const hoursAgo = Math.floor(secondsAgo / 3600);
-            lastRefreshText.textContent = `${hoursAgo}h ago`;
+            if (hoursAgo === 1) {
+                lastRefreshText.textContent = '1 hour ago';
+            } else {
+                lastRefreshText.textContent = `${hoursAgo} hours ago`;
+            }
+            hoursAgo = Math.floor(secondsAgo / 3600);
+            lastRefreshText.textContent = hoursAgo === 1 ? '1 hour ago' : `${hoursAgo} hours ago`;
         }
     }
     
