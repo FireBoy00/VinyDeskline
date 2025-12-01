@@ -32,6 +32,10 @@ export default defineConfig({
                 // Personalize
                 'resources/css/personalize.css',
 
+                // Settings
+                'resources/css/settings.css',
+                'resources/js/settings.js',
+
                 // Schedules
                 'resources/css/schedules.css',
 
