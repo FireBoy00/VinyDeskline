@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", () =>
 {
     //initial_position=680, min_position=680, max_position=1320
-    const saveUniformBtn= document.getElementById("saveUniformBtn");
-    const saveCleaningBtn= document.getElementById("saveCleaningBtn");
+    const uniformForm = document.getElementById("uniformForm"); 
+    const cleaningForm = document.getElementById("cleaningForm");
 
     const uniformDateContainer = document.getElementById("uniformDateContainer");
     const uniformDateInput = document.getElementById("uniformDate");
@@ -40,7 +40,9 @@ document.addEventListener("DOMContentLoaded", () =>
         });
     });
 
-    function sendSchedule(type) {
+    function sendSchedule(e, type) {
+
+        e.preventDefault();
         
         const title = document.getElementById(`${type}-title`).value.trim();
         const start = document.getElementById(`${type}Start`).value;
@@ -71,29 +73,39 @@ document.addEventListener("DOMContentLoaded", () =>
         })
         .then(res => res.json())
         .then(data => {
+            const schedulesArray = data.schedules;
             const list = document.getElementById(type + 'List');
-            const schedule = data.schedule;
+            schedulesArray.forEach(schedule => {
+                let displayDate = schedule.frequency;
+                if (schedule.frequency === 'daily') {
+                    displayDate = 'Daily';
+                } else if (schedule.date) {
+                    displayDate = schedule.date; 
+                }
 
-            const div = document.createElement('div');
+                const div = document.createElement('div');
             
-            div.classList.add('current-schedule');
-            div.dataset.id =schedule.id;
-            div.innerHTML = `
-                <div class="current-schedule-info">
-                    <span class="schedule-label">${schedule.title}:</span>
-                    <span class="schedule-date">${schedule.frequency}</span>
-                    <span class="schedule-height">${schedule.height }</span>
-                    <span class="schedule-time">${schedule.start} - ${schedule.end}</span>
-                </div>
-                <button class="delete-btn material-icons-round">delete</button>
-            `;
-            list.appendChild(div);
+                div.classList.add('current-schedule');
+                div.dataset.id =schedule.id;
+                div.innerHTML = `
+                    <div class="current-schedule-info">
+                        <span class="material-icons-round">schedule</span>
+                        <span class="schedule-label">${schedule.title}:</span>
+                        <span class="schedule-date">${displayDate}</span>
+                        <span class="schedule-height">${schedule.height }mm</span>
+                        <span class="schedule-time">${schedule.start_time} - ${schedule.end_time}</span>
+                    </div>
+                    <button class="delete-btn material-icons-round">delete</button>
+                `;
+                list.appendChild(div);
+            });
+            e.target.reset();
         });
     }
 
     
-    saveUniformBtn.addEventListener("click", () => sendSchedule('uniform'));
-    saveCleaningBtn.addEventListener("click", () => sendSchedule('cleaning'));
+    uniformForm.addEventListener("submit", (e) => sendSchedule(e, 'uniform'));
+    cleaningForm.addEventListener("submit", (e) => sendSchedule(e, 'cleaning'));
 
     document.addEventListener("click", (e) => {
         if (e.target.classList.contains("delete-btn")) {

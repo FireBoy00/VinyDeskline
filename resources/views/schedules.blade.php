@@ -34,7 +34,7 @@
                         <h2 class="schedule-card-title">Uniform Schedule</h2>
                     </div>
 
-                    <form class="schedule-form">
+                    <form class="schedule-form" id="uniformForm">
                         <div class="form-row">
                             <div class="input-group">
                                 <label class="input-label" for="uniform-title">Title</label>
@@ -51,11 +51,11 @@
                             <div class="input-group">
                                 <label class="input-label" for="uniform-height-range">Height</label>
                                 <div class="height-range-inputs">
-                                    <input type="height" class="schedule-input" id="uniform-height" value="680" required>
+                                    <input type="number" class="schedule-input" id="uniform-height" value="680" min="680" max="1320" required>
                                 </div>
                             </div>
                             <div id="uniformDateContainer" class="input-group" style="display: none;">
-                                <input type="text" id="uniformDate" class="schedule-input" placeholder="Select date" required>
+                                <input type="text" id="uniformDate" name="uniform_dates" class="schedule-input" placeholder="Select date">
                             </div>
                         </div>
 
@@ -111,7 +111,7 @@
                         <h2 class="schedule-card-title">Cleaning Schedule</h2>
                     </div>
 
-                    <form class="schedule-form">
+                    <form class="schedule-form" id="cleaningForm">
                         <div class="form-row">
                             <div class="input-group">
                                 <label class="input-label">Title</label>
@@ -128,11 +128,11 @@
                             <div class="input-group">
                                 <label class="input-label" for="cleaning-height-range">Height</label>
                                 <div class="height-range-inputs">
-                                    <input type="height" class="schedule-input" id="cleaning-height" value="1320" required>
+                                    <input type="number" class="schedule-input" id="cleaning-height" value="1320" min="680" max="1320" required>
                                 </div>
                             </div>
                             <div id="cleaningDateContainer" style="display: none;">
-                                <input type="text" id="cleaningDate" class="schedule-input" placeholder="Select date" required>
+                                <input type="text" id="cleaningDate" name="cleaning_dates" class="schedule-input" placeholder="Select date">
                             </div>
                         </div>
 
