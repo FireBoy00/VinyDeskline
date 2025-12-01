@@ -53,11 +53,19 @@ class RunSchedules extends Command
         }
         $activeSchedule = $schedules->first();
         $targetHeight = $activeSchedule->height;
-        $desks = Desk::all();         
+        $apiKey = env('DESKS_API_KEY');
+        $simulatorUrl = "http://127.0.0.1:8001/api/v2/{$apiKey}/desks";
 
-        foreach ($desks as $desk) {
+        $response = Http::get($simulatorUrl);
 
-            $deskId = $desk->desk_id;
+        if ($response->failed()) {
+            $this->error("Failed to fetch desks from simulator");
+            return Command::FAILURE;
+        }
+
+        $deskIds = $response->json();       
+
+        foreach ($deskIds as $deskId) {
             $category = 'state';
             $url = "{$simulatorUrl}/{$deskId}/{$category}";
             
