@@ -76,10 +76,10 @@
         </header>
 
         <main class="settings-layout">
-            <div class="settings-container">
+            <section class="section settings-section">
                 <div class="settings-content">
                     <!-- LEFT COLUMN: USER INFORMATION -->
-                    <div class="settings-column">
+                    <div class="settings-column settings-user-info">
                         <h2 class="settings-subtitle">User Information</h2>
 
                         @if(session('success'))
@@ -134,8 +134,27 @@
                                 >
                             </div>
 
+                            <button type="submit" class="primary-btn save-info-btn">
+                                <span>Save Changes</span>
+                                <span class="material-icons-round">check_circle</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- RIGHT COLUMN: USER SETTINGS -->
+                    <div class="settings-column settings-user-settings">
+                        <div class="settings-actions-header">
+                            <h2 class="settings-subtitle">User Settings</h2>
+                            <button type="button" class="danger-btn reset-btn" id="reset-btn" data-reset-url="{{ route('settings.reset-data') }}">
+                                <span class="material-icons-round">delete_forever</span>
+                                <span>Reset Data</span>
+                            </button>
+                        </div>
+
+                        <form class="settings-form" id="user-settings-form" data-update-url="{{ route('settings.update-info') }}">
+                            @csrf
                             <div class="form-row">
-                                <label for="height">Height</label>
+                                <label for="height">Height (cm)</label>
                                 <input
                                     type="number"
                                     id="height"
@@ -161,22 +180,14 @@
                                 >
                             </div>
 
-                            <button type="submit" class="primary-btn save-btn">
-                                <span>Save</span>
+                            <button type="submit" class="primary-btn save-settings-btn">
+                                <span>Save Settings</span>
+                                <span class="material-icons-round">check_circle</span>
                             </button>
                         </form>
                     </div>
-
-                    <!-- RIGHT COLUMN: USER SETTINGS -->
-                    <div class="settings-column">
-                        <h2 class="settings-subtitle">User Settings</h2>
-
-                        <button type="button" class="danger-btn reset-btn" id="reset-btn" data-reset-url="{{ route('settings.reset-data') }}">
-                            <span>Reset Data</span>
-                        </button>
-                    </div>
                 </div>
-            </div>
+            </section>
         </main>
     </body>
 </html>

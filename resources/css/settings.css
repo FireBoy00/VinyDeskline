@@ -6,72 +6,44 @@
 /* Override body layout for settings page */
 body {
     background: var(--bg-page);
-    min-height: 100vh;
+    /* min-height: 100vh; */
     display: flex;
     flex-direction: column;
 }
 
 /* Settings Layout */
 .settings-layout {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 92%;
+    max-width: 1500px;
+    margin: auto;
     padding-bottom: var(--general-margin);
-    flex: 1;
 }
 
-.settings-container {
-    background: var(--bg-card);
-    border-radius: 20px;
-    box-shadow: 0 10px 40px rgba(0, 79, 110, 0.15);
-    width: 100%;
-    max-width: 1000px;
-    padding: 40px;
-    animation: slideIn 0.4s ease-out;
+/* Settings Main Section */
+.settings-section {
+    padding: var(--spacing-base);
+    background-color: transparent !important;
 }
 
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Settings Header */
-.settings-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-bottom: 30px;
-    border-bottom: 2px solid rgba(4, 133, 185, 0.1);
-    margin-bottom: 35px;
-}
-
-.settings-page-title {
-    font-size: 2rem !important;
-}
-
-/* Settings Content Layout */
 .settings-content {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 35px;
+    display: flex;
+    gap: var(--general-margin);
+    margin-top: 0;
 }
 
 .settings-column {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    background: var(--bg-card);
+    padding: var(--spacing-base);
+    border-radius: var(--general-border-radius);
+    flex: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .settings-subtitle {
     font-size: 1.3rem;
     font-weight: 600;
     color: var(--text-dark);
+    margin-bottom: 1.5rem;
     padding-bottom: 12px;
     border-bottom: 2px solid rgba(4, 133, 185, 0.1);
 }
@@ -86,7 +58,7 @@ body {
 .form-row {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .form-row label {
@@ -101,35 +73,41 @@ body {
 }
 
 .form-row input {
-    padding: 14px 16px;
+    padding: 12px 16px;
     border-radius: 10px;
-    border: 2px solid var(--border-light);
-    background-color: #F9FAFB;
+    border: 1px solid rgba(4, 133, 185, 0.2);
+    background-color: rgba(198, 218, 226, 0.3);
     font-size: 1rem;
     color: var(--text-dark);
-    font-family: var(--font-family);
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
 .form-row input:focus {
     outline: none;
     border-color: var(--btn-primary-hover);
-    background-color: white;
-    box-shadow: 0 0 0 3px rgba(4, 133, 185, 0.1);
+    background-color: rgba(198, 218, 226, 0.5);
 }
 
 .form-row input::placeholder {
-    color: #9CA3AF;
+    color: rgba(0, 79, 110, 0.5);
 }
 
-/* Primary Button (Save) */
+/* Settings Actions Header */
+.settings-actions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Primary Button */
 .primary-btn {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 10px;
     padding: 14px 24px;
-    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--accent-dark) 100%);
+    background: linear-gradient(135deg, #66dd8a 0%, #4CAF50 100%);
     border: none;
     border-radius: 10px;
     color: white;
@@ -137,13 +115,14 @@ body {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(4, 133, 185, 0.25);
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
     margin-top: 8px;
+    width: fit-content;
 }
 
 .primary-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(4, 133, 185, 0.35);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
 }
 
 .primary-btn:active:not(:disabled) {
@@ -159,32 +138,24 @@ body {
     font-size: 20px;
 }
 
-/* Danger Button (Reset Data) */
+/* Danger Button */
 .danger-btn {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
-    padding: 14px 24px;
-    background-color: #DC2626;
-    color: white;
-    border: none;
-    border-radius: 10px;
+    padding: 10px 16px;
+    background-color: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 8px;
     font-weight: 600;
-    font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+    transition: all 0.2s ease;
 }
 
 .danger-btn:hover:not(:disabled) {
-    background-color: #B91C1C;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.35);
-}
-
-.danger-btn:active:not(:disabled) {
-    transform: translateY(0);
+    background-color: rgba(255, 107, 107, 0.2);
+    border-color: #ff6b6b;
 }
 
 .danger-btn:disabled {
@@ -201,51 +172,55 @@ body {
 .error-message {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     padding: 12px 16px;
     border-radius: 10px;
-    font-size: 14px;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
+    font-weight: 500;
 }
 
 .success-message {
-    background-color: #D1FAE5;
-    color: #065F46;
-    border-left: 4px solid #10B981;
+    background-color: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    color: #2e7d32;
+}
+
+.success-message .material-icons-round {
+    color: #4CAF50;
+    font-size: 20px;
 }
 
 .error-message {
-    background-color: #FEE2E2;
-    color: #991B1B;
-    border-left: 4px solid #DC2626;
+    background-color: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    color: #c62828;
 }
 
-.success-message .material-icons-round,
 .error-message .material-icons-round {
+    color: #ff6b6b;
     font-size: 20px;
 }
 
 /* Responsive Design */
 @media (max-width: 900px) {
     .settings-content {
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
     
-    .settings-container {
-        padding: 30px 24px;
+    .settings-actions-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    
+    .danger-btn {
+        width: 100%;
+        justify-content: center;
     }
 }
 
 @media (max-width: 640px) {
-    .settings-container {
-        padding: 24px 16px;
-    }
-
-    .settings-page-title {
-        font-size: 1.5rem !important;
-    }
-
-    .settings-subtitle {
-        font-size: 1.1rem;
+    .settings-layout {
+        width: 95%;
     }
 }
