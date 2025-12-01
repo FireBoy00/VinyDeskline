@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
         
         // Admin desk management
         Route::get('/desks', [DeskController::class, 'index'])->name('desks');
+        Route::get('/desks/stats', [DeskController::class, 'stats'])->name('desks.stats');
         Route::get('/desks/{desk_id}', [DeskController::class, 'state'])->name('desks.state');
     });
     
