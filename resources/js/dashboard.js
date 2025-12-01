@@ -5,11 +5,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Cache DOM elements for live updates
     const statTotal = document.getElementById('stat-total');
-    const statOccupied = document.getElementById('stat-occupied');
-    const statAvailable = document.getElementById('stat-available');
-    const statRaised = document.getElementById('stat-raised');
-    const statLowered = document.getElementById('stat-lowered');
-    const statFaulty = document.getElementById('stat-faulty');
+
+
+
+
+
     const statLastUpdated = document.getElementById('stat-last-updated');
     const refreshIcon = document.getElementById('refresh-icon');
 
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
         refreshIcon.classList.add('spinning');
         
         try {
-            const res = await fetch('/admin/desks/stats', { cache: 'no-store' });
+            const res = await fetch(STATS_API, { cache: 'no-store' });
             if (!res.ok) throw new Error('Failed to fetch dashboard stats');
 
             const json = await res.json();
