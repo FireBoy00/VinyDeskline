@@ -22,6 +22,9 @@ Route::middleware('auth')->group(function () {
     
     // Main application routes (all authenticated users)
     Route::get('/home', [HomeController::class, 'index'])->name('home');
+    Route::get('/settings', [HomeController::class, 'settings'])->name('settings');
+    Route::post('/settings/update-info', [HomeController::class, 'updateUserInfo'])->name('settings.update-info');
+    Route::post('/settings/reset-data', [HomeController::class, 'resetUserData'])->name('settings.reset-data');
     
     // Admin-only routes
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
@@ -32,8 +35,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/arrangement', [AdminController::class, 'arrangement'])->name('arrangement');
         Route::get('/account', [AdminController::class, 'account'])->name('account');
         
+        // Account management routes
+        Route::post('/account/update-info', [AdminController::class, 'updateUserInfo'])->name('account.update-info');
+        Route::post('/account/update-settings', [AdminController::class, 'updateUserSettings'])->name('account.update-settings');
+        Route::post('/account/reset-settings', [AdminController::class, 'resetUserSettings'])->name('account.reset-settings');
+        
         // Admin desk management
         Route::get('/desks', [DeskController::class, 'index'])->name('desks');
+        Route::get('/desks/stats', [DeskController::class, 'stats'])->name('desks.stats');
         Route::get('/desks/{desk_id}', [DeskController::class, 'state'])->name('desks.state');
     });
     

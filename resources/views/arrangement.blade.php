@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @vite(['resources/css/dashboard.css'])
+        @vite(['resources/css/general-admin.css'])
         @vite(['resources/css/desk-management.css', 'resources/js/desk-management.js'])
         
         <title>VinyDeskline - Desk Management</title>
@@ -31,14 +31,9 @@
                             <span>Select</span>
                         </button>
                         
-                        <!-- Middle: Status Text -->
-                        <div class="desk-status-text" id="desk-status-text">
-                            Loading desks...
-                        </div>
-                        
-                        <!-- Right: Actions Menu Button -->
+                        <!-- Actions Menu Button (next to select) -->
                         <div class="actions-menu-container">
-                            <button class="action-btn" id="actions-btn" style="display: none;">
+                            <button class="action-btn hidden" id="actions-btn">
                                 <span class="material-icons-round">more_vert</span>
                             </button>
                             <!-- Actions dropdown menu -->
@@ -61,6 +56,20 @@
                                 </button>
                             </div>
                         </div>
+                        
+                        <!-- Middle: Status Text -->
+                        <div class="desk-status-text" id="desk-status-text">
+                            Loading desks...
+                        </div>
+                        
+                        <!-- Right: Refresh Button with Timestamp -->
+                        <div class="refresh-container" title="Refresh">
+                            <span class="last-refresh-text" id="last-refresh-text">Just now</span>
+                            <button class="action-btn" id="refresh-btn">
+                                <span class="material-icons-round">refresh</span>
+                                {{-- <span>Refresh</span> --}}
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div class="loading-container">
@@ -76,11 +85,11 @@
             <div class="desk-modal" id="desk-modal">
                 <div class="desk-modal-content">
                     <div class="modal-header">
-                        <button class="modal-nav-btn" id="modal-prev-desk" style="display: none;">
+                        <button class="modal-nav-btn hidden" id="modal-prev-desk">
                             <span class="material-icons-round">chevron_left</span>
                         </button>
                         <h2 class="modal-title">Desk Details</h2>
-                        <button class="modal-nav-btn" id="modal-next-desk" style="display: none;">
+                        <button class="modal-nav-btn hidden" id="modal-next-desk">
                             <span class="material-icons-round">chevron_right</span>
                         </button>
                         <button class="modal-close" id="modal-close">

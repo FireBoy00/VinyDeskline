@@ -6,8 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @vite(['resources/css/admin-pages.css'])
-        @vite(['resources/css/dashboard.css'])
+        @vite(['resources/css/general-admin.css'])
         @vite(['resources/css/schedules.css'])
 
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">

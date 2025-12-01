@@ -36,7 +36,7 @@
             <li>
                 <a href="{{ route('admin.account') }}" class="nav-link nav-account {{ $active === 'account' ? 'active' : '' }}">
                     <span class="material-icons-round nav-icon icon">account_circle</span>
-                    <span class="nav-text">{{ Auth::user()->name ?? 'User' }}</span>
+                    <span class="nav-text">{{ Auth::user()->full_name }}</span>
                 </a>
             </li>
             <li>

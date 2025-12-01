@@ -6,7 +6,8 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @vite(['resources/css/dashboard.css', 'resources/js/dashboard.js', 'resources/js/plotly.js'])
+        @vite(['resources/css/general-admin.css', 'resources/js/plotly.js'])
+        @vite(['resources/css/dashboard.css', 'resources/js/dashboard.js'])
         
         <title>VinyDeskline</title>
     </head>
@@ -16,38 +17,49 @@
         <main class="dashboard" id="dashboard">
             <section class="section" id="overview">
                 <h1 class="section-title">Overview</h1>
+                <div class="overview-last-updated">
+                    <span id="stat-last-updated">10s</span>
+                    <svg id="refresh-icon" class="refresh-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                    </svg>
+                </div>
                 <ul class="overview-cards">
-                    <li class="overview-card connected">
-                        <h2>Total Desks</h2>
-                        <div class="card-divider"></div>
-                        <p class="statistic">150</p>
-                    </li>
-                    <li class="overview-card occupied">
-                        <h2>Occupied Desks</h2>
-                        <div class="card-divider"></div>
-                        <p class="statistic">120</p>
-                    </li>
-                    <li class="overview-card available">
-                        <h2>Available Desks</h2>
-                        <div class="card-divider"></div>
-                        <p class="statistic">30</p>
-                    </li>
-                    <li class="overview-card raised">
-                        <h2>Raised Desks</h2>
-                        <div class="card-divider"></div>
-                        <p class="statistic">140</p>
-                    </li>
-                    <li class="overview-card lowered">
-                        <h2>Lowered Desks</h2>
-                        <div class="card-divider"></div>
-                        <p class="statistic">10</p>
-                    </li>
-                    <li class="overview-card faulty">
-                        <h2>Faulty Desks</h2>
-                        <div class="card-divider"></div>
-                        <p class="statistic">5</p>
-                    </li>
-                </ul>
+                        <li class="overview-card connected">
+                            <h2>Total Users</h2>
+                            <div class="card-divider"></div>
+                            <p class="statistic" id="stat-total">—</p>
+                        </li>
+
+                        <li class="overview-card sitting">
+                            <h2>Lowered</h2>
+                            <div class="card-divider"></div>
+                            <p class="statistic" id="stat-seated">—</p>
+                        </li>
+
+                        <li class="overview-card standing">
+                            <h2>Raised</h2>
+                            <div class="card-divider"></div>
+                            <p class="statistic" id="stat-standing">—</p>
+                        </li>
+
+                        <li class="overview-card active">
+                            <h2>Active</h2>
+                            <div class="card-divider"></div>
+                            <p class="statistic" id="stat-active">—</p>
+                        </li>
+
+                        <li class="overview-card cleaning">
+                            <h2>Cleaning</h2>
+                            <div class="card-divider"></div>
+                            <p class="statistic" id="stat-cleaning">—</p>
+                        </li>
+
+                        <li class="overview-card idle">
+                            <h2>Idle</h2>
+                            <div class="card-divider"></div>
+                            <p class="statistic" id="stat-idle">—</p>
+                        </li>
+                    </ul>
             </section>
             <section class="section" id="positions">
                 <div class="positions-wrapper">

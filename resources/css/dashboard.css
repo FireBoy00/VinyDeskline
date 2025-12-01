@@ -130,6 +130,43 @@ nav.navbar .nav-link .nav-icon {
 .section#overview {
     width: 100%;
     height: fit-content;
+    position: relative;
+}
+
+.overview-last-updated {
+    min-width: 62px;
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--accent-dark) 100%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 79, 110, 0.2);
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.refresh-icon {
+    transition: transform 0.3s ease;
+}
+
+.refresh-icon.spinning {
+    animation: spin 0.6s linear;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .section-title {
@@ -205,7 +242,6 @@ nav.navbar .nav-link .nav-icon {
     list-style: none;
     width: 100%;
     gap: var(--general-margin);
-    padding-top: var(--general-margin);
 }
 
 /* containers */

@@ -46,15 +46,14 @@ class UserFactory extends Factory
     {
         $firstName = fake()->randomElement(self::$firstNames);
         $lastName = fake()->randomElement(self::$lastNames);
-        $name = $firstName . ' ' . $lastName;
         
         // Generate email: first letter of first name + first 4 letters of last name (or all if shorter)
-        //? Suggestion: Should we use a template literal or interpolation here for clarity? For example, would strtolower("{$firstName[0]}" . substr($lastName, 0, min(4, strlen($lastName)))) improve readability?
         $emailPrefix = strtolower(substr($firstName, 0, 1) . substr($lastName, 0, min(4, strlen($lastName))));
         $email = $emailPrefix . '@vinydeskline.com';
 
         return [
-            'name' => $name,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
             'email' => $email,
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),

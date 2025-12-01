@@ -19,7 +19,7 @@
 
             <div class="user-account-card">
                 <div class="user-account-trigger">
-                    <span class="user-name">{{ Auth::user()->name ?? 'User' }}</span>
+                    <span class="user-name">{{ (Auth::user()->first_name ?? '') . ' ' . (Auth::user()->last_name ?? '') ?: 'User' }}</span>
                     <div class="user-avatar">
                         <span class="material-icons-round">person</span>
                     </div>
@@ -30,7 +30,7 @@
                                 <span class="material-icons-round">person</span>
                             </div>
                             <div class="user-info">
-                                <span class="dropdown-user-name">{{ Auth::user()->name }}</span>
+                                <span class="dropdown-user-name">{{ Auth::user()->full_name }}</span>
                                 <span class="dropdown-user-email">{{ Auth::user()->email }}</span>
                             </div>
                         </div>
@@ -45,7 +45,7 @@
                                 </li>
                             @endif
                             <li>
-                                <a href="#" class="dropdown-item">
+                                <a href="{{ route('settings') }}" class="dropdown-item">
                                     <span class="material-icons-round">settings</span>
                                     <span>Settings</span>
                                 </a>
@@ -78,8 +78,11 @@
 
             <!-- DAILY BRIEFING -->
             <section class="card briefing-card">
+                <button class="card-help-btn" data-tooltip="View your daily briefing with important updates and information about your desk usage.">
+                    <span class="material-icons-round">help_outline</span>
+                </button>
                 <h2 class="accent-title"><span>Daily</span> <span>Briefing</span></h2>
-
+ 
                 <div class="brief-row">
                     <span class="brief-text">
                         This is
@@ -92,6 +95,9 @@
 
             <!-- TEMPERATURE CARD -->
             <section class="card carousel-card">
+                <button class="card-help-btn" data-tooltip="Browse through different sensor readings including temperature, humidity, and light levels.">
+                    <span class="material-icons-round">help_outline</span>
+                </button>
                 <h2 class="accent-title"><span id="sensor-title">Temperature</span></h2>
                 <div class="carousel-controls">
                     <i class="material-icons-round chevron-btn" id="prev-btn">chevron_left</i>
@@ -104,12 +110,18 @@
 
             <!-- TABLE -->
             <section class="card table-card">
+                <button class="card-help-btn" data-tooltip="Visual representation of your desk.">
+                    <span class="material-icons-round">help_outline</span>
+                </button>
                 <h2 class="accent-title"><span>Your</span> <span>Table</span></h2>
                 <img src="{{ asset('assets/user_main_page_icons/table.png') }}" alt="Work Desk Layout">
             </section>
 
             <!-- OPTIMAL POSITIONS -->
             <section class="card optimal-card">
+                <button class="card-help-btn" data-tooltip="Set and save your optimal standing and sitting desk heights for quick access.">
+                    <span class="material-icons-round">help_outline</span>
+                </button>
                 <h2 class="accent-title"><span>Optimal</span> <span>Positions</span></h2>
                 <div class="item">
                     <p class="accent"><span>Standing</span></p>
@@ -130,6 +142,9 @@
 
             <!-- CUSTOM POSITIONS -->
             <section class="card custom-card">
+                <button class="card-help-btn" data-tooltip="Create custom desk height presets with personalized names for different tasks or preferences.">
+                    <span class="material-icons-round">help_outline</span>
+                </button>
                 <h2 class="accent-title"><span>Custom</span> <span>Positions</span></h2>
                 <div class="pos-row">
                     <input type="text" placeholder="Give it a name">
@@ -145,6 +160,9 @@
 
             <!-- STATISTICS -->
             <section class="card stats-card">
+                <button class="card-help-btn" data-tooltip="View your desk usage statistics and track time spent in different positions throughout the day.">
+                    <span class="material-icons-round">help_outline</span>
+                </button>
                 <h2 class="accent-title"><span>Your</span> <span>Statistics</span></h2>
 
                 <div id="myPlot"></div>
@@ -171,6 +189,9 @@
 
             <!-- FEEDBACK -->
             <section class="card feedback-card">
+                <button class="card-help-btn" data-tooltip="Get a feedback recommendation based on your desk usage.">
+                    <span class="material-icons-round">help_outline</span>
+                </button>
                 <h2 class="accent-title"><span>Feedback</span></h2>
                 <div class="feedback-dot"></div>
                 <div class="feedback-dot"></div>

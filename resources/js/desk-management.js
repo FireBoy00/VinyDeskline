@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const actionsDropdown = document.getElementById('actions-dropdown');
     const modalPrevBtn = document.getElementById('modal-prev-desk');
     const modalNextBtn = document.getElementById('modal-next-desk');
+    const refreshBtn = document.getElementById('refresh-btn');
+    const lastRefreshText = document.getElementById('last-refresh-text');
     
     let selectedDesks = [];
     let selectMode = false;
@@ -18,38 +20,54 @@ document.addEventListener('DOMContentLoaded', function () {
     let allDesks = [];
     let deskDetailsCache = {};
     let loadedDesksCount = 0;
+    let lastRefreshTime = Date.now();
+    let refreshTimerInterval = null;
 
     // API endpoints - adjust these based on your actual routes
     const API_BASE = '/admin/desks';
 
     // Status mapping from API to display
     const statusMap = {
-        'Normal': 'Available',
-        'normal': 'Available',
+        'Normal': 'Normal',
+        'normal': 'Normal',
         'Moving': 'In Use',
         'moving': 'In Use',
-        'Error': 'Faulty',
-        'error': 'Faulty',
+        'Collision': 'Faulty',
+        'collision': 'Faulty',
         'Occupied': 'Occupied',
         'occupied': 'Occupied'
     };
 
     // Initialize - Load desks from API
     loadDesks();
+    
+    // Refresh button handler
+    refreshBtn.addEventListener('click', function() {
+        if (refreshBtn.disabled) return;
+        
+        // Reset selections when refreshing
+        if (selectMode) {
+            toggleSelectMode();
+        }
+        
+        stopRefreshTimer();
+        loadDesks();
+    });
 
     async function loadDesks() {
         try {
             updateStatusText(`Loading desks...`);
-            loadingContainer.style.display = 'flex';
+            loadingContainer.classList.remove('hidden');
             selectBtn.disabled = true;
             actionsBtn.disabled = true;
+            refreshBtn.disabled = true;
             
             const response = await fetch(API_BASE);
             if (!response.ok) throw new Error('Failed to fetch desks');
             
             const data = await response.json();
             allDesks = data.desks || [];
-            loadingContainer.style.display = 'none';
+            loadingContainer.classList.add('hidden');
             
             if (allDesks.length === 0) {
                 showError('No desks found');
@@ -57,7 +75,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
             
-            // Initialize container for progressive rendering
+            // Reset counter and clear container for progressive rendering
+            loadedDesksCount = 0;
             deskRowsContainer.innerHTML = '';
             updateStatusText(`Loading ${allDesks.length} desks...`);
             
@@ -67,11 +86,18 @@ document.addEventListener('DOMContentLoaded', function () {
             updateStatusText(`${loadedDesksCount} desks loaded`);
             selectBtn.disabled = false;
             actionsBtn.disabled = false;
+            refreshBtn.disabled = false;
+            
+            // Start refresh timer
+            lastRefreshTime = Date.now();
+            startRefreshTimer();
             
         } catch (error) {
+            loadingContainer.classList.add('hidden');
             console.error('Error loading desks:', error);
             showError('Failed to load desks. Please try again.');
             updateStatusText('Failed to load desks');
+            refreshBtn.disabled = false;
         }
     }
 
@@ -190,28 +216,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    function renderDesks() {
-        // This function is no longer used - keeping for compatibility
-        // Progressive loading now happens in loadAllDeskDetailsProgressively()
-    }
-
-    function groupDesksByFloor(deskIds) {
-        // Randomly assign desks to floors 1-10
-        const floors = {};
-        const totalFloors = 10;
-        
-        deskIds.forEach((deskId) => {
-            // Randomly assign to a floor between 1 and 10
-            const floorNum = Math.floor(Math.random() * totalFloors) + 1;
-            if (!floors[floorNum]) {
-                floors[floorNum] = [];
-            }
-            floors[floorNum].push(deskId);
-        });
-        
-        return floors;
-    }
-
     function createDeskCard(deskId) {
         const card = document.createElement('div');
         card.className = 'desk-card';
@@ -233,7 +237,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getStatusClass(status) {
         const normalized = status.toLowerCase();
-        if (normalized.includes('error') || normalized.includes('faulty')) return 'faulty';
+        if (normalized.includes('error') || normalized.includes('collision')) return 'faulty';
         if (normalized.includes('moving') || normalized.includes('use')) return 'occupied';
         if (normalized.includes('cleaning')) return 'cleaning';
         return 'available';
@@ -419,15 +423,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    function showLoading() {
-        deskRowsContainer.innerHTML = `
-            <div class="loading-container">
-                <div class="loading-spinner"></div>
-                <p>Loading desks...</p>
-            </div>
-        `;
-    }
-
     function showError(message) {
         deskRowsContainer.innerHTML = `
             <div class="error-container">
@@ -499,4 +494,59 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     `;
     document.head.appendChild(style);
+    
+    // Refresh timer functions
+    function startRefreshTimer() {
+        // Update immediately
+        updateRefreshText();
+        
+        // Update every second
+        refreshTimerInterval = setInterval(updateRefreshText, 1000);
+    }
+
+    function stopRefreshTimer() {
+        lastRefreshTime = Date.now();
+        updateRefreshText();
+        if (refreshTimerInterval) {
+            clearInterval(refreshTimerInterval);
+            refreshTimerInterval = null;
+        }
+    }
+    
+    function updateRefreshText() {
+        const now = Date.now();
+        const secondsAgo = Math.floor((now - lastRefreshTime) / 1000);
+        
+        if (secondsAgo < 60) {
+            if (secondsAgo === 0) {
+                lastRefreshText.textContent = 'Just now';
+            } else if (secondsAgo === 1) {
+                lastRefreshText.textContent = '1 second ago';
+            } else {
+                lastRefreshText.textContent = `${secondsAgo} seconds ago`;
+            }
+        } else if (secondsAgo < 3600) {
+            const minutesAgo = Math.floor(secondsAgo / 60);
+            if (minutesAgo === 1) {
+                lastRefreshText.textContent = '1 minute ago';
+            } else {
+                lastRefreshText.textContent = `${minutesAgo} minutes ago`;
+            }
+        } else {
+            const hoursAgo = Math.floor(secondsAgo / 3600);
+            if (hoursAgo === 1) {
+                lastRefreshText.textContent = '1 hour ago';
+            } else {
+                lastRefreshText.textContent = `${hoursAgo} hours ago`;
+            }
+            lastRefreshText.textContent = hoursAgo === 1 ? '1 hour ago' : `${hoursAgo} hours ago`;
+        }
+    }
+    
+    // Clear interval when page is unloaded
+    window.addEventListener('beforeunload', function() {
+        if (refreshTimerInterval) {
+            clearInterval(refreshTimerInterval);
+        }
+    });
 });

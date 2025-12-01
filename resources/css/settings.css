@@ -1,0 +1,226 @@
+/* ========================================= */
+/* SETTINGS PAGE STYLES                      */
+/* User settings page specific styles        */
+/* ========================================= */
+
+/* Override body layout for settings page */
+body {
+    background: var(--bg-page);
+
+    display: flex;
+    flex-direction: column;
+}
+
+/* Settings Layout */
+.settings-layout {
+    width: 92%;
+    max-width: 1500px;
+    margin: auto;
+    padding-bottom: var(--general-margin);
+}
+
+/* Settings Main Section */
+.settings-section {
+    padding: var(--spacing-base);
+    background-color: transparent !important;
+}
+
+.settings-content {
+    display: flex;
+    gap: var(--general-margin);
+    margin-top: 0;
+}
+
+.settings-column {
+    background: var(--bg-card);
+    padding: var(--spacing-base);
+    border-radius: var(--general-border-radius);
+    flex: 1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.settings-subtitle {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(4, 133, 185, 0.1);
+}
+
+/* Settings Form Styles */
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-row label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.form-row .required {
+    color: #ff6b6b;
+    font-weight: 700;
+}
+
+.form-row input {
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(4, 133, 185, 0.2);
+    background-color: rgba(198, 218, 226, 0.3);
+    font-size: 1rem;
+    color: var(--text-dark);
+    transition: all 0.2s ease;
+}
+
+.form-row input:focus {
+    outline: none;
+    border-color: var(--btn-primary-hover);
+    background-color: rgba(198, 218, 226, 0.5);
+}
+
+.form-row input::placeholder {
+    color: rgba(0, 79, 110, 0.5);
+}
+
+/* Settings Actions Header */
+.settings-actions-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Primary Button */
+.primary-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: linear-gradient(135deg, #66dd8a 0%, #4CAF50 100%);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+    margin-top: 8px;
+    width: fit-content;
+}
+
+.primary-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+}
+
+.primary-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.primary-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.primary-btn .material-icons-round {
+    font-size: 20px;
+}
+
+/* Danger Button */
+.danger-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background-color: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.danger-btn:hover:not(:disabled) {
+    background-color: rgba(255, 107, 107, 0.2);
+    border-color: #ff6b6b;
+}
+
+.danger-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.danger-btn .material-icons-round {
+    font-size: 20px;
+}
+
+/* Success and Error Messages */
+.success-message,
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin-bottom: 16px;
+    font-weight: 500;
+}
+
+.success-message {
+    background-color: rgba(76, 175, 80, 0.1);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    color: #2e7d32;
+}
+
+.success-message .material-icons-round {
+    color: #4CAF50;
+    font-size: 20px;
+}
+
+.error-message {
+    background-color: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    color: #c62828;
+}
+
+.error-message .material-icons-round {
+    color: #ff6b6b;
+    font-size: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 900px) {
+    .settings-content {
+        flex-direction: column;
+    }
+    
+    .settings-actions-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    
+    .danger-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 640px) {
+    .settings-layout {
+        width: 95%;
+    }
+}

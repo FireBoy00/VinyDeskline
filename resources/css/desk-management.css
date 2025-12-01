@@ -251,6 +251,20 @@
     align-items: center;
 }
 
+/* Refresh Container */
+.refresh-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.last-refresh-text {
+    font-size: 0.85rem;
+    color: rgba(0, 79, 110, 0.6);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
 /* Action Buttons */
 .action-btn {
     display: flex;
@@ -621,4 +635,9 @@
     .modal-action-btn {
         width: 100%;
     }
+}
+
+/* Hidden Element */
+.hidden {
+    display: none;
 }
