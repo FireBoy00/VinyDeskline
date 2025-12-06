@@ -26,6 +26,12 @@ class User extends Authenticatable
         'age',
         'needs_personalization',
         'is_admin',
+        'desk_id',
+        'optimal_sitting_height',
+        'optimal_standing_height',
+        'custom_sitting_height',
+        'custom_standing_height',
+
     ];
 
     /**

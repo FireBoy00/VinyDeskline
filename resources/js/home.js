@@ -89,3 +89,41 @@ function navigate(direction) {
     currentSlide += direction;
     updateCarousel();
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const buttons = document.querySelectorAll('.save-icon');
+    const deskId = document.querySelector('meta[name="desk-id"]').getAttribute('content');
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+
+    buttons.forEach(button => {
+        button.addEventListener('click', async () => {
+            const height = button.getAttribute('data-id');
+            const heightMm = height * 10;
+            
+            try {
+                const response = await fetch(`/desks/${deskId}/set-height`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: JSON.stringify({
+                        position_mm: heightMm
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`Height set to ${height} cm!`);
+                } else {
+                    alert(`Failed to set height. Status: ${data.status}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while setting height.');
+            }
+        });
+    });
+});

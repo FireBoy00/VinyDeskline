@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', [HomeController::class, 'settings'])->name('settings');
     Route::post('/settings/update-info', [HomeController::class, 'updateUserInfo'])->name('settings.update-info');
     Route::post('/settings/reset-data', [HomeController::class, 'resetUserData'])->name('settings.reset-data');
+    Route::put('/desks/{desk_id}/set-height', [DeskController::class, 'set_hight'])->name('desk.set-height');
     
     // Admin-only routes
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {

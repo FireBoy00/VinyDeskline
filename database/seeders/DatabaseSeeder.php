@@ -34,6 +34,23 @@ class DatabaseSeeder extends Seeder
             ->needsPersonalization()
             ->create();
 
+        //TODO: Remove test user
+        User::factory()
+            ->create([
+                'first_name' => 'Ola',
+                'last_name' => 'test',
+                'email' => 'otest@vinydeskline.com',
+                'desk_id' => '00:ec:eb:50:c2:c8',
+                'optimal_sitting_height'=> 75,
+                'optimal_standing_height'=> 115,
+                'is_admin' => false,
+                'needs_personalization' => false,
+                'height' => 175,
+                'age' => 20,
+                'password' => 'password',
+
+            ]);
+
         // Note: All users have password: "password"
         // Emails follow pattern: {firstLetter}{first4LettersLastName}@vinydeskline.com
     }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\Desk;
+use Illuminate\Http\Request;
 
 class DeskController extends Controller
 {
@@ -192,6 +193,45 @@ class DeskController extends Controller
             'idle'        => $counts['idle'],
             'last_updated' => now()->toIso8601String(),
         ]);
+    }
+
+    public function set_hight(Request $request, $desk_id)
+    {
+        $apiKey = env('DESKS_API_KEY');
+        $base = env('API_BASE');
+
+        if (!$desk_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Desk ID not provided'
+            ], 400);
+        }
+        $url = "{$base}/{$apiKey}/desks/{$desk_id}/state";
+        $targetHeight = $request->input('position_mm'); 
+
+        if (!$targetHeight) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No target height provided'
+        ], 400);
+        } 
+            
+        try {
+            $response = Http::put($url, [
+            'position_mm' => $targetHeight
+        ]);
+        }catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Simulator API error: ' . $e->getMessage()
+            ], 500);
+        }
+        
+        return response()->json([
+        'success' => true,
+        'position_mm' => $request->input('position_mm') 
+    ]);
+
     }
 
 }

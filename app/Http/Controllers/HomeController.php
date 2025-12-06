@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Models\User;
 
 
 class HomeController extends Controller
@@ -15,7 +16,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $user = Auth::user();
+        return view('home', ['user' => $user]);
     }
 
     /**
@@ -42,6 +44,11 @@ class HomeController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
             'height' => ['nullable', 'numeric', 'min:100', 'max:250'],
             'age' => ['nullable', 'integer', 'min:18', 'max:120'],
+            'optimal_sitting_height' => ['nullable', 'integer', 'min:680', 'max:1320'],
+            'optimal_standing_height' => ['nullable', 'integer', 'min:680', 'max:1320'],
+            'custom_sitting_height' => ['nullable', 'integer', 'min:680', 'max:1320'],
+            'custom_standing_height' => ['nullable', 'integer', 'min:680', 'max:1320'],    
+            'desk_id' => ['nullable', 'string', 'max:255'],
         ]);
 
         if ($validator->fails()) {

@@ -4,6 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="desk-id" content="{{ $user->desk_id ?? '' }}">
         <title>VinyDeskline</title>
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -126,16 +128,16 @@
                 <div class="item">
                     <p class="accent"><span>Standing</span></p>
                     <div class="pos-group">
-                        <button class="pos-btn">114 CM</button>
-                        <i class="material-icons-round save-icon">save</i>
+                        <button class="pos-btn" data-id={{ $user->optimal_standing_height }}>{{ $user->optimal_standing_height ?? '—' }} CM</button>
+                        <i class="material-icons-round save-icon" data-id={{ $user->optimal_standing_height }}>save</i>
                     </div>
                 </div>
 
                 <div class="item">
                     <p class="accent"><span>Sitting</span></p>
                     <div class="pos-group">
-                        <button class="pos-btn">70 CM</button>
-                        <i class="material-icons-round save-icon">save</i>
+                        <button class="pos-btn" data-id={{ $user->optimal_sitting_height }}>{{ $user->optimal_sitting_height ?? '—' }} CM</button>
+                        <i class="material-icons-round save-icon" data-id={{ $user->optimal_sitting_height }}>save</i>
                     </div>
                 </div>
             </section>
