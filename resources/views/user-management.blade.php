@@ -28,11 +28,12 @@
             <div class="um-row" data-id="{{ $u->id }}">
                 <span class="um-name">{{ $u->name }}</span>
                 <div class="um-divider"></div>
-                <div class="um-pill-group">
-                    <button class="um-pill">{{ $u->desk_id }}</button>
-                    <button class="um-pill">{{ $u->status }}</button>
-                    <button class="um-pill">{{ $u->height }}</button>
-                </div>
+              <div class="um-pill-group">
+    <button class="um-pill">ID: {{ $u->desk_id }}</button>
+    <button class="um-pill">Status: {{ $u->status }}</button>
+    <button class="um-pill">Height: {{ $u->height }}</button>
+</div>
+
                 <button class="um-remove">Remove</button>
             </div>
             @endforeach
