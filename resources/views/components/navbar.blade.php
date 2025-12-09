@@ -30,6 +30,12 @@
                     <span class="nav-text">Schedules</span>
                 </a>
             </li>
+<a href="{{ route('admin.user-management') }}" class="nav-link {{ $active === 'user-management' ? 'active' : '' }}">
+    <span class="material-icons-round nav-icon">group</span>
+    <span class="nav-text">User Management</span>
+</a>
+
+
         </ul>
 
         <ul class="nav-links nav-bottom">

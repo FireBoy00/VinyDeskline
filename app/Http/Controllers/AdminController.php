@@ -48,6 +48,11 @@ class AdminController extends Controller
         return view('admin-account');
     }
 
+    public function userManagement()
+{
+    return view('user-management');
+}
+
     /**
      * Update user information (first_name, last_name, email).
      *
