@@ -128,16 +128,16 @@
                 <div class="item">
                     <p class="accent"><span>Standing</span></p>
                     <div class="pos-group">
-                        <button class="pos-btn" data-id={{ $user->optimal_standing_height }}>{{ $user->optimal_standing_height ?? '—' }} CM</button>
-                        <i class="material-icons-round save-icon" data-id={{ $user->optimal_standing_height }}>save</i>
+                        <button class="pos-btn" data-height={{ $user->optimal_standing_height }}>{{ $user->optimal_standing_height ?? '—' }} CM</button>
+                        <i class="material-icons-round save-icon" data-height={{ $user->optimal_standing_height }}>save</i>
                     </div>
                 </div>
 
                 <div class="item">
                     <p class="accent"><span>Sitting</span></p>
                     <div class="pos-group">
-                        <button class="pos-btn" data-id={{ $user->optimal_sitting_height }}>{{ $user->optimal_sitting_height ?? '—' }} CM</button>
-                        <i class="material-icons-round save-icon" data-id={{ $user->optimal_sitting_height }}>save</i>
+                        <button class="pos-btn" data-height={{ $user->optimal_sitting_height }}>{{ $user->optimal_sitting_height ?? '—' }} CM</button>
+                        <i class="material-icons-round save-icon" data-height={{ $user->optimal_sitting_height }}>save</i>
                     </div>
                 </div>
             </section>
@@ -148,16 +148,16 @@
                     <span class="material-icons-round">help_outline</span>
                 </button>
                 <h2 class="accent-title"><span>Custom</span> <span>Positions</span></h2>
-                <div class="pos-row">
-                    <input type="text" placeholder="Give it a name">
-                    <input type="number" placeholder="Height">
-                    <i class="material-icons-round save-icon">save</i>
-                </div>
-                <div class="pos-row">
-                    <input type="text" placeholder="Give it a name">
-                    <input type="number" placeholder="Height">
-                    <i class="material-icons-round save-icon">save</i>
-                </div>
+                <form class="pos-row">
+                    <input type="text" class="custom-name" placeholder= 'Give it a name' value={{ $user->custom_name_1}}>
+                    <input type="number" class="custom-height" placeholder='Height in cm' value={{ $user->custom_height_1/10 ? $user->custom_height_1/10 : ''}}>
+                    <i data-position="1" class="material-icons-round save-icon" data-height={{ $user->custom_height_1}}>save</i>
+                </form>
+                <form class="pos-row">
+                    <input type="text"  class="custom-name" placeholder="Give it a name" value={{ $user->custom_name_2}}>
+                    <input type="number" class="custom-height" placeholder='Height in cm' value={{ $user->custom_height_2/10 ? $user->custom_height_2/10 : ''}}>
+                    <i  data-position="2"  class="material-icons-round save-icon" data-height={{ $user->custom_height_2}}>save</i>
+                </form>
             </section>
 
             <!-- STATISTICS -->

@@ -91,16 +91,56 @@ function navigate(direction) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+    
     const buttons = document.querySelectorAll('.save-icon');
     const deskId = document.querySelector('meta[name="desk-id"]').getAttribute('content');
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    
+    let height;
 
     buttons.forEach(button => {
         button.addEventListener('click', async () => {
-            const height = button.getAttribute('data-id');
-            const heightMm = height * 10;
-            
+   
+            const parentRow = button.closest('.pos-row');
+            const positionIndex = button.getAttribute('data-position');
+            if (positionIndex && parentRow) {
+                const nameInput = parentRow.querySelector('.custom-name');
+                const heightInput = parentRow.querySelector('.custom-height');
+
+                const customName = nameInput.value;
+                const customHeight = heightInput.value;
+
+                try {
+                    const response = await fetch(`/home/${deskId}/${positionIndex}/updateCustom`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken
+                        },
+                        body: JSON.stringify({
+                            index: positionIndex,
+                            name: customName,
+                            position_mm: customHeight *10,
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        height =(data.height)/10;
+                        alert(`Height and name updated!`);
+                        
+                    } else {
+                        alert(`Error: ${data.message}` || `Error updating height.`);
+                    }
+                } catch (error) {
+                    console.error('Error:', error); 
+                    alert('An error occurred while setting height.');
+                }
+            } 
+            else
+            {
+                height = button.getAttribute('data-height');
+            }
             try {
                 const response = await fetch(`/desks/${deskId}/set-height`, {
                     method: 'PUT',
@@ -108,21 +148,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': csrfToken
                     },
-                    body: JSON.stringify({
-                        position_mm: heightMm
-                    })
+                    body: JSON.stringify({ position_mm: height * 10 })
                 });
 
                 const data = await response.json();
-
-                if (data.success) {
-                    alert(`Height set to ${height} cm!`);
-                } else {
-                    alert(`Failed to set height. Status: ${data.status}`);
-                }
+                if (data.success) alert("Height updated!");
+                else alert(`Desk Error : ${data.message}` || `Error updating height.`);
             } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while setting height.');
+                console.error(error);
+                alert('Desk error:  An error occurred while setting height.');
             }
         });
     });

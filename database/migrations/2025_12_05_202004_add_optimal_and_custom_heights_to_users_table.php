@@ -15,8 +15,10 @@ return new class extends Migration
             $table->string('desk_id')->nullable()->after('is_admin');
             $table->integer('optimal_sitting_height')->nullable()->after('desk_id');
             $table->integer('optimal_standing_height')->nullable()->after('optimal_sitting_height');
-            $table->integer('custom_sitting_height')->nullable()->after('optimal_standing_height');
-            $table->integer('custom_standing_height')->nullable()->after('custom_sitting_height');
+            $table->string('custom_name_1')->nullable()->after('optimal_standing_height');
+            $table->integer('custom_height_1')->nullable()->after('custom_name_1');
+            $table->string('custom_name_2')->nullable()->after('custom_height_1');
+            $table->integer('custom_height_2')->nullable()->after('custom_name_2');
         });
     }
 
@@ -26,7 +28,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['optimal_sitting_height', 'optimal_standing_height', 'custom_sitting_height', 'custom_standing_height']);
+            $table->dropColumn(['optimal_sitting_height', 'optimal_standing_height', 'custom_name_1', 'custom_name_2', 'custom_height_1', 'custom_height_2', 'desk_id']);
         });
     }
 };

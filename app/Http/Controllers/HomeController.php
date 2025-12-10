@@ -46,8 +46,8 @@ class HomeController extends Controller
             'age' => ['nullable', 'integer', 'min:18', 'max:120'],
             'optimal_sitting_height' => ['nullable', 'integer', 'min:680', 'max:1320'],
             'optimal_standing_height' => ['nullable', 'integer', 'min:680', 'max:1320'],
-            'custom_sitting_height' => ['nullable', 'integer', 'min:680', 'max:1320'],
-            'custom_standing_height' => ['nullable', 'integer', 'min:680', 'max:1320'],    
+            'custom_height_1' => ['nullable', 'integer', 'min:680', 'max:1320'],
+            'custom_height_2' => ['nullable', 'integer', 'min:680', 'max:1320'],    
             'desk_id' => ['nullable', 'string', 'max:255'],
         ]);
 
@@ -86,4 +86,51 @@ class HomeController extends Controller
             'user' => $user
         ]);
     }
+
+    /**
+     * Update user's custom desk position.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+
+    public function updateCustom(Request $request)
+    {
+        $user = auth()->user();
+
+        $index = $request->index;
+        $nameField = "custom_name_$index";
+        $heightField = "custom_height_$index";
+
+        if ($request->position_mm == '' || $request->position_mm == null) 
+        {
+            return response()->json(['success' => false, 'message' => 'Height cannot be empty'], 400);
+            
+        }
+        else if($request->position_mm > 1320)
+        {
+            return response()->json(['success' => false, 'message' => 'Height over 132cm'], 400);
+        }
+        else if($request->position_mm < 680)
+        {
+            return response()->json(['success' => false, 'message' => 'Given height is under 68cm'], 400);
+        }
+
+
+        $request->validate([
+            'index' => 'required|in:1,2',
+            'name' => 'nullable|string|max:255',
+            'position_mm' => 'nullable|numeric|min:680|max:1320',
+        ]);
+
+        $user->$nameField = $request->name;
+        $user->$heightField = $request->position_mm;
+        $user->save();
+
+        
+        return response()->json(['success' => true,
+        'height' => $user->$heightField]);
+    }
+
+    
 }
