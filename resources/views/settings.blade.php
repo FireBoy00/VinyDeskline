@@ -7,25 +7,80 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        @vite(['resources/css/general-admin.css'])
-        @vite(['resources/css/admin-account.css', 'resources/js/admin-account.js'])
+        @vite(['resources/css/home.css', 'resources/css/settings.css', 'resources/js/settings.js'])
         
-        <title>VinyDeskline - Account Settings</title>
+        <title>VinyDeskline - Settings</title>
     </head>
     <body>
-        <x-navbar active="account" />
-        
-        <main class="dashboard">
-            <section class="section account-header">
-                <h1 class="section-title"><span>A</span>ccount Settings</h1>
-            </section>
+        <header class="page-header">
+            <h1 class="accent-title">
+                <span>Viny</span>
+                <span>Deskline</span>
+            </h1>
 
-            <section class="section account-section">
+            <div class="user-account-card">
+                <div class="user-account-trigger">
+                    <span class="user-name">{{ Auth::user()->full_name }}</span>
+                    <div class="user-avatar">
+                        <span class="material-icons-round">person</span>
+                    </div>
+                </div>
+                <div class="user-dropdown">
+                    <div class="dropdown-header">
+                        <div class="user-avatar-large">
+                            <span class="material-icons-round">person</span>
+                        </div>
+                        <div class="user-info">
+                            <span class="dropdown-user-name">{{ Auth::user()->full_name }}</span>
+                            <span class="dropdown-user-email">{{ Auth::user()->email }}</span>
+                        </div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <ul class="dropdown-menu">
+                        @if (Auth::user()->is_admin)
+                            <li>
+                                <a href="{{ route('admin.dashboard') }}" class="dropdown-item">
+                                    <span class="material-icons-round">dashboard</span>
+                                    <span>Admin Dashboard</span>
+                                </a>
+                            </li>
+                        @endif
+                        <li>
+                            <a href="{{ route('home') }}" class="dropdown-item">
+                                <span class="material-icons-round">home</span>
+                                <span>Home</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="dropdown-item">
+                                <span class="material-icons-round">help_outline</span>
+                                <span>Help</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="dropdown-item">
+                                <span class="material-icons-round">info</span>
+                                <span>About</span>
+                            </a>
+                        </li>
+                        <li class="dropdown-divider-small"></li>
+                        <li>
+                            <a href="{{ route('logout') }}" class="dropdown-item logout-item">
+                                <span class="material-icons-round">logout</span>
+                                <span>Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </header>
 
-                <div class="account-layout">
+        <main class="settings-layout">
+            <section class="section settings-section">
+                <div class="settings-content">
                     <!-- LEFT COLUMN: USER INFORMATION -->
-                    <div class="account-column account-user-info">
-                        <h2 class="account-subtitle">User Information</h2>
+                    <div class="settings-column settings-user-info">
+                        <h2 class="settings-subtitle">User Information</h2>
 
                         @if(session('success'))
                             <div class="success-message">
@@ -41,7 +96,7 @@
                             </div>
                         @endif
 
-                        <form class="account-form" id="user-info-form" data-update-url="{{ route('admin.account.update-info') }}">
+                        <form class="settings-form" id="user-info-form" data-update-url="{{ route('settings.update-info') }}">
                             @csrf
                             <div class="form-row">
                                 <label for="first_name">Name <span class="required">*</span></label>
@@ -79,7 +134,7 @@
                                 >
                             </div>
 
-                            <button type="submit" class="primary-btn save-account-btn">
+                            <button type="submit" class="primary-btn save-info-btn">
                                 <span>Save Changes</span>
                                 <span class="material-icons-round">check_circle</span>
                             </button>
@@ -87,10 +142,10 @@
                     </div>
 
                     <!-- RIGHT COLUMN: USER SETTINGS -->
-                    <div class="account-column account-user-settings">
-                        <h2 class="account-subtitle">User Settings</h2>
+                    <div class="settings-column settings-user-settings">
+                        <h2 class="settings-subtitle">User Settings</h2>
 
-                        <form class="account-form" id="user-settings-form" data-update-url="{{ route('admin.account.update-settings') }}">
+                        <form class="settings-form" id="user-settings-form" data-update-url="{{ route('settings.update-info') }}">
                             @csrf
                             <div class="form-row">
                                 <label for="height">Height (cm)</label>
@@ -124,9 +179,9 @@
                                     <span>Save Settings</span>
                                     <span class="material-icons-round">check_circle</span>
                                 </button>
-                                <button type="button" class="danger-btn reset-account-btn" id="reset-btn" data-reset-url="{{ route('admin.account.reset-settings') }}">
-                                    <span class="material-icons-round">delete_forever</span>
+                                <button type="button" class="danger-btn reset-btn" id="reset-btn" data-reset-url="{{ route('settings.reset-data') }}">
                                     <span>Reset Data</span>
+                                    <span class="material-icons-round">delete_forever</span>
                                 </button>
                             </div>
                         </form>
