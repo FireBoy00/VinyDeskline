@@ -867,6 +867,104 @@
     display: block;
 }
 
+/* Pagination Controls */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 2px solid rgba(4, 133, 185, 0.1);
+}
+
+.pagination-info {
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    opacity: 0.8;
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-btn {
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(102, 178, 208, 0.3);
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    color: var(--text-dark);
+}
+
+.pagination-btn:not(:disabled):hover {
+    background-color: rgba(4, 133, 185, 0.1);
+    border-color: var(--btn-primary-hover);
+}
+
+.pagination-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.pagination-btn .material-icons-round {
+    font-size: 20px;
+}
+
+.pagination-pages {
+    display: flex;
+    gap: 4px;
+    margin: 0 8px;
+}
+
+.pagination-page {
+    min-width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid rgba(102, 178, 208, 0.3);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.pagination-page:hover {
+    background-color: rgba(4, 133, 185, 0.1);
+    border-color: var(--btn-primary-hover);
+}
+
+.pagination-page.active {
+    background: linear-gradient(
+        135deg,
+        var(--btn-primary-hover),
+        var(--accent-dark)
+    );
+    color: white;
+    border-color: var(--btn-primary-hover);
+    cursor: default;
+}
+
+.pagination-page.active:hover {
+    background: linear-gradient(
+        135deg,
+        var(--btn-primary-hover),
+        var(--accent-dark)
+    );
+}
+
 /* Responsive Design */
 @media (max-width: 1024px) {
     .user-row {
@@ -896,5 +994,20 @@
     .user-actions-btn {
         grid-column: 2;
         grid-row: 1;
+    }
+
+    .pagination-container {
+        flex-direction: column;
+        gap: 16px;
+        align-items: center;
+    }
+
+    .pagination-info {
+        order: 2;
+        text-align: center;
+    }
+
+    .pagination-controls {
+        order: 1;
     }
 }

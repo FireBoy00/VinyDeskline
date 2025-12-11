@@ -24,7 +24,7 @@
                 <div class="user-list-header">
                     <h2 class="user-list-title">
                         Registered Users
-                        <span class="user-count-badge" id="user-count">{{ $users->count() }}</span>
+                        <span class="user-count-badge" id="user-count">{{ $users->total() }}</span>
                     </h2>
                     <div class="header-actions">
                         <button class="toggle-filters-btn" id="toggle-filters-btn">
@@ -42,69 +42,134 @@
                 <div class="search-filter-section">
                     <div class="search-container">
                         <input type="text" class="search-input" id="search-input"
-                            placeholder="Search by name or email...">
+                            placeholder="Search by name or email..." value="{{ request('search', '') }}">
                     </div>
                     <div class="filter-controls hidden" id="filter-controls">
                         <div class="filter-group">
                             <label class="filter-label">User Type:</label>
                             <div class="custom-select" data-name="filter-user-type">
-                                <div class="select-selected">All Users</div>
+                                <div class="select-selected">
+                                    @if (request('user_type') === 'admin')
+                                        Admins Only
+                                    @elseif(request('user_type') === 'regular')
+                                        Regular Users
+                                    @else
+                                        All Users
+                                    @endif
+                                </div>
                                 <div class="select-items hidden">
-                                    <div data-value="all" class="selected">All Users</div>
-                                    <div data-value="admin">Admins Only</div>
-                                    <div data-value="regular">Regular Users</div>
+                                    <div data-value="all"
+                                        class="{{ request('user_type', 'all') === 'all' ? 'selected' : '' }}">All Users
+                                    </div>
+                                    <div data-value="admin"
+                                        class="{{ request('user_type') === 'admin' ? 'selected' : '' }}">Admins Only
+                                    </div>
+                                    <div data-value="regular"
+                                        class="{{ request('user_type') === 'regular' ? 'selected' : '' }}">Regular Users
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="filter-group">
                             <label class="filter-label">Personalization:</label>
                             <div class="custom-select" data-name="filter-personalization">
-                                <div class="select-selected">All</div>
+                                <div class="select-selected">
+                                    @if (request('personalization') === 'completed')
+                                        Completed
+                                    @elseif(request('personalization') === 'needs')
+                                        Needs Personalization
+                                    @else
+                                        All
+                                    @endif
+                                </div>
                                 <div class="select-items hidden">
-                                    <div data-value="all" class="selected">All</div>
-                                    <div data-value="completed">Completed</div>
-                                    <div data-value="needs">Needs Personalization</div>
+                                    <div data-value="all"
+                                        class="{{ request('personalization', 'all') === 'all' ? 'selected' : '' }}">All
+                                    </div>
+                                    <div data-value="completed"
+                                        class="{{ request('personalization') === 'completed' ? 'selected' : '' }}">
+                                        Completed</div>
+                                    <div data-value="needs"
+                                        class="{{ request('personalization') === 'needs' ? 'selected' : '' }}">Needs
+                                        Personalization</div>
                                 </div>
                             </div>
                         </div>
                         <div class="filter-group">
                             <label class="filter-label">Age:</label>
                             <div class="custom-select" data-name="filter-age-comparison">
-                                <div class="select-selected">Any</div>
+                                <div class="select-selected">
+                                    @if (request('age_comparison') === 'equal')
+                                        Equal to
+                                    @elseif(request('age_comparison') === 'above')
+                                        Above
+                                    @elseif(request('age_comparison') === 'below')
+                                        Below
+                                    @else
+                                        Any
+                                    @endif
+                                </div>
                                 <div class="select-items hidden">
-                                    <div data-value="any" class="selected">Any</div>
-                                    <div data-value="equal">Equal to</div>
-                                    <div data-value="above">Above</div>
-                                    <div data-value="below">Below</div>
+                                    <div data-value="any"
+                                        class="{{ request('age_comparison', 'any') === 'any' ? 'selected' : '' }}">Any
+                                    </div>
+                                    <div data-value="equal"
+                                        class="{{ request('age_comparison') === 'equal' ? 'selected' : '' }}">Equal to
+                                    </div>
+                                    <div data-value="above"
+                                        class="{{ request('age_comparison') === 'above' ? 'selected' : '' }}">Above
+                                    </div>
+                                    <div data-value="below"
+                                        class="{{ request('age_comparison') === 'below' ? 'selected' : '' }}">Below
+                                    </div>
                                 </div>
                             </div>
                             <input type="number" class="filter-input" id="filter-age-value" placeholder="Age"
-                                min="0" disabled>
+                                min="0" value="{{ request('age_value', '') }}"
+                                {{ request('age_comparison', 'any') === 'any' ? 'disabled' : '' }}>
                         </div>
                         <div class="filter-group">
                             <label class="filter-label">Height:</label>
                             <div class="custom-select" data-name="filter-height-comparison">
-                                <div class="select-selected">Any</div>
+                                <div class="select-selected">
+                                    @if (request('height_comparison') === 'equal')
+                                        Equal to
+                                    @elseif(request('height_comparison') === 'above')
+                                        Above
+                                    @elseif(request('height_comparison') === 'below')
+                                        Below
+                                    @else
+                                        Any
+                                    @endif
+                                </div>
                                 <div class="select-items hidden">
-                                    <div data-value="any" class="selected">Any</div>
-                                    <div data-value="equal">Equal to</div>
-                                    <div data-value="above">Above</div>
-                                    <div data-value="below">Below</div>
+                                    <div data-value="any"
+                                        class="{{ request('height_comparison', 'any') === 'any' ? 'selected' : '' }}">
+                                        Any</div>
+                                    <div data-value="equal"
+                                        class="{{ request('height_comparison') === 'equal' ? 'selected' : '' }}">Equal
+                                        to</div>
+                                    <div data-value="above"
+                                        class="{{ request('height_comparison') === 'above' ? 'selected' : '' }}">Above
+                                    </div>
+                                    <div data-value="below"
+                                        class="{{ request('height_comparison') === 'below' ? 'selected' : '' }}">Below
+                                    </div>
                                 </div>
                             </div>
                             <input type="number" class="filter-input" id="filter-height-value" placeholder="cm"
-                                min="0" disabled>
+                                min="0" value="{{ request('height_value', '') }}"
+                                {{ request('height_comparison', 'any') === 'any' ? 'disabled' : '' }}>
                         </div>
                         <button class="clear-filters-btn" id="clear-filters-btn">Clear Filters</button>
                     </div>
                 </div>
 
-                <div class="no-results-message" id="no-results-message">No users match the current filters.</div>
-
                 <div class="user-rows" id="user-rows">
-                    @foreach ($users as $user)
+                    @forelse ($users as $user)
                         <div class="user-row" data-id="{{ $user->id }}"
-                            data-name="{{ strtolower($user->full_name) }}" data-email="{{ strtolower($user->email) }}"
+                            data-name="{{ strtolower($user->full_name) }}"
+                            data-email="{{ strtolower($user->email) }}"
                             data-is-admin="{{ $user->is_admin ? 'true' : 'false' }}"
                             data-needs-personalization="{{ $user->needs_personalization ? 'true' : 'false' }}"
                             data-age="{{ $user->age ?? '' }}" data-height="{{ $user->height ?? '' }}"
@@ -146,10 +211,57 @@
                                 </button>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <div class="no-results-message active">
+                            No users match the current filters.
+                        </div>
+                    @endforelse
                 </div>
-            </section>
-        </div>
+
+                <!-- Pagination Controls -->
+                @if ($users->hasPages())
+                    <div class="pagination-container">
+                        <div class="pagination-info">
+                            Showing {{ $users->firstItem() ?? 0 }} to {{ $users->lastItem() ?? 0 }} of
+                            {{ $users->total() }} users
+                        </div>
+                        <div class="pagination-controls">
+                            {{-- Previous Button --}}
+                            @if ($users->onFirstPage())
+                                <button class="pagination-btn" disabled>
+                                    <span class="material-icons-round">chevron_left</span>
+                                </button>
+                            @else
+                                <a href="{{ $users->previousPageUrl() }}" class="pagination-btn">
+                                    <span class="material-icons-round">chevron_left</span>
+                                </a>
+                            @endif
+
+                            {{-- Page Numbers --}}
+                            <div class="pagination-pages">
+                                @foreach ($users->getUrlRange(1, $users->lastPage()) as $page => $url)
+                                    @if ($page == $users->currentPage())
+                                        <span class="pagination-page active">{{ $page }}</span>
+                                    @else
+                                        <a href="{{ $url }}"
+                                            class="pagination-page">{{ $page }}</a>
+                                    @endif
+                                @endforeach
+                            </div>
+
+                            {{-- Next Button --}}
+                            @if ($users->hasMorePages())
+                                <a href="{{ $users->nextPageUrl() }}" class="pagination-btn">
+                                    <span class="material-icons-round">chevron_right</span>
+                                </a>
+                            @else
+                                <button class="pagination-btn" disabled>
+                                    <span class="material-icons-round">chevron_right</span>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
+                @endif
     </main>
 
     <!-- Edit/Add User Modal -->

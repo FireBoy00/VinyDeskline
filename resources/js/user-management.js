@@ -21,20 +21,48 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterAgeValue = document.getElementById("filter-age-value");
     const filterHeightValue = document.getElementById("filter-height-value");
     const clearFiltersBtn = document.getElementById("clear-filters-btn");
-    const userRows = document.querySelectorAll(".user-row");
+    let userRows = document.querySelectorAll(".user-row");
     const noResultsMessage = document.getElementById("no-results-message");
     const userCountBadge = document.getElementById("user-count");
+    const totalUsers = userRows.length;
 
     let isEditMode = false; // Track if we're editing or creating
 
+    // Initialize filter values from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const customSelectValues = {
+        "filter-user-type": urlParams.get("user_type") || "all",
+        "filter-personalization": urlParams.get("personalization") || "all",
+        "filter-age-comparison": urlParams.get("age_comparison") || "any",
+        "filter-height-comparison": urlParams.get("height_comparison") || "any",
+    };
+
+    // Check if any filters are active
+    const hasActiveFilters =
+        urlParams.get("search") ||
+        urlParams.get("user_type") ||
+        urlParams.get("personalization") ||
+        urlParams.get("age_comparison") ||
+        urlParams.get("height_comparison");
+
+    // Keep filters open if any filters are active
+    if (hasActiveFilters) {
+        filterControls.classList.remove("hidden");
+        toggleFiltersBtn.classList.add("active");
+    }
+
+    // Restore focus to search input if search was active
+    if (urlParams.get("search")) {
+        setTimeout(() => {
+            searchInput.focus();
+            // Move cursor to end of input
+            const length = searchInput.value.length;
+            searchInput.setSelectionRange(length, length);
+        }, 100);
+    }
+
     // Initialize custom selects
     const customSelects = document.querySelectorAll(".custom-select");
-    const customSelectValues = {
-        "filter-user-type": "all",
-        "filter-personalization": "all",
-        "filter-age-comparison": "any",
-        "filter-height-comparison": "any",
-    };
 
     customSelects.forEach((select) => {
         const selected = select.querySelector(".select-selected");
@@ -75,8 +103,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 select.classList.remove("active");
                 items.classList.add("hidden");
 
-                // Trigger filter
-                applyFilters();
+                // Handle age/height comparison changes
+                if (name === "filter-age-comparison") {
+                    filterAgeValue.disabled = value === "any";
+                    if (filterAgeValue.disabled) {
+                        filterAgeValue.value = "";
+                        applyServerFilters(); // Only trigger when clearing
+                    }
+                    // Otherwise wait for user to enter value
+                } else if (name === "filter-height-comparison") {
+                    filterHeightValue.disabled = value === "any";
+                    if (filterHeightValue.disabled) {
+                        filterHeightValue.value = "";
+                        applyServerFilters(); // Only trigger when clearing
+                    }
+                    // Otherwise wait for user to enter value
+                } else {
+                    // For other filters, trigger immediately
+                    applyServerFilters();
+                }
             });
         });
     });
@@ -189,6 +234,87 @@ document.addEventListener("DOMContentLoaded", () => {
             deleteUser(userId);
         });
     });
+
+    // Function to reinitialize user row event listeners after pagination
+    function initializeUserRows() {
+        userRows = document.querySelectorAll(".user-row");
+
+        // Reinitialize action buttons
+        const newActionButtons = document.querySelectorAll(".user-actions-btn");
+        const newActionMenus = document.querySelectorAll(".user-actions-menu");
+
+        newActionButtons.forEach((button) => {
+            button.addEventListener("click", (e) => {
+                e.stopPropagation();
+                const userId = button.dataset.userId;
+                const userRow = button.closest(".user-row");
+                const isCurrentUser = userRow?.dataset.isCurrentUser === "true";
+
+                if (isCurrentUser) {
+                    return;
+                }
+
+                const menu = document.getElementById(`user-actions-${userId}`);
+
+                newActionMenus.forEach((m) => {
+                    if (m !== menu) {
+                        m.classList.remove("active");
+                        const parentRow = m.closest(".user-row");
+                        if (parentRow) {
+                            parentRow.classList.remove("menu-active");
+                        }
+                    }
+                });
+
+                menu.classList.toggle("active");
+                if (menu.classList.contains("active")) {
+                    userRow.classList.add("menu-active");
+                } else {
+                    userRow.classList.remove("menu-active");
+                }
+            });
+        });
+
+        // Reinitialize edit/delete buttons
+        const newEditButtons = document.querySelectorAll(
+            ".user-action-item.edit"
+        );
+        const newDeleteButtons = document.querySelectorAll(
+            ".user-action-item.delete"
+        );
+
+        newEditButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const userId = button.dataset.userId;
+                const userRow = document.querySelector(
+                    `.user-row[data-id="${userId}"]`
+                );
+                const isCurrentUser = userRow?.dataset.isCurrentUser === "true";
+
+                if (isCurrentUser) {
+                    return;
+                }
+
+                openEditModal(userId);
+            });
+        });
+
+        newDeleteButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                const userId = button.dataset.userId;
+                const userRow = document.querySelector(
+                    `.user-row[data-id="${userId}"]`
+                );
+                const isCurrentUser = userRow?.dataset.isCurrentUser === "true";
+
+                if (isCurrentUser) {
+                    return;
+                }
+
+                deleteUser(userId);
+            });
+        });
+    }
 
     // Disable edit/delete buttons and action button for current user
     userRows.forEach((row) => {
@@ -451,194 +577,67 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    // Search and Filter Functionality
-    function applyFilters() {
-        const searchTerm = searchInput.value.toLowerCase().trim();
+    // Server-side filtering - reload page with query parameters
+    function applyServerFilters() {
+        const params = new URLSearchParams();
+
+        // Add search parameter
+        const searchTerm = searchInput.value.trim();
+        if (searchTerm) {
+            params.set("search", searchTerm);
+        }
+
+        // Add user type filter
         const userType = customSelectValues["filter-user-type"];
+        if (userType && userType !== "all") {
+            params.set("user_type", userType);
+        }
+
+        // Add personalization filter
         const personalization = customSelectValues["filter-personalization"];
+        if (personalization && personalization !== "all") {
+            params.set("personalization", personalization);
+        }
+
+        // Add age filter
         const ageComparison = customSelectValues["filter-age-comparison"];
-        const ageValue = parseInt(filterAgeValue.value) || null;
+        const ageValue = filterAgeValue.value.trim();
+        if (ageComparison && ageComparison !== "any" && ageValue) {
+            params.set("age_comparison", ageComparison);
+            params.set("age_value", ageValue);
+        }
+
+        // Add height filter
         const heightComparison = customSelectValues["filter-height-comparison"];
-        const heightValue = parseInt(filterHeightValue.value) || null;
-
-        let visibleCount = 0;
-
-        userRows.forEach((row) => {
-            let show = true;
-
-            // Search by name or email
-            if (searchTerm) {
-                const name = row.dataset.name || "";
-                const email = row.dataset.email || "";
-                if (!name.includes(searchTerm) && !email.includes(searchTerm)) {
-                    show = false;
-                }
-            }
-
-            // Filter by user type
-            if (userType !== "all") {
-                const isAdmin = row.dataset.isAdmin === "true";
-                if (userType === "admin" && !isAdmin) show = false;
-                if (userType === "regular" && isAdmin) show = false;
-            }
-
-            // Filter by personalization status
-            if (personalization !== "all") {
-                const needsPersonalization =
-                    row.dataset.needsPersonalization === "true";
-                if (personalization === "completed" && needsPersonalization)
-                    show = false;
-                if (personalization === "needs" && !needsPersonalization)
-                    show = false;
-            }
-
-            // Filter by age
-            if (ageComparison !== "any" && ageValue !== null) {
-                const userAge = parseInt(row.dataset.age) || null;
-                if (userAge === null) {
-                    show = false;
-                } else {
-                    if (ageComparison === "equal" && userAge !== ageValue)
-                        show = false;
-                    if (ageComparison === "above" && userAge <= ageValue)
-                        show = false;
-                    if (ageComparison === "below" && userAge >= ageValue)
-                        show = false;
-                }
-            }
-
-            // Filter by height
-            if (heightComparison !== "any" && heightValue !== null) {
-                const userHeight = parseInt(row.dataset.height) || null;
-                if (userHeight === null) {
-                    show = false;
-                } else {
-                    if (
-                        heightComparison === "equal" &&
-                        userHeight !== heightValue
-                    )
-                        show = false;
-                    if (
-                        heightComparison === "above" &&
-                        userHeight <= heightValue
-                    )
-                        show = false;
-                    if (
-                        heightComparison === "below" &&
-                        userHeight >= heightValue
-                    )
-                        show = false;
-                }
-            }
-
-            // Show or hide the row
-            if (show) {
-                row.style.display = "";
-                visibleCount++;
-            } else {
-                row.style.display = "none";
-            }
-        });
-
-        // Show no results message if no users are visible
-        if (visibleCount === 0) {
-            noResultsMessage.classList.add("active");
-        } else {
-            noResultsMessage.classList.remove("active");
+        const heightValue = filterHeightValue.value.trim();
+        if (heightComparison && heightComparison !== "any" && heightValue) {
+            params.set("height_comparison", heightComparison);
+            params.set("height_value", heightValue);
         }
 
-        updateUserCount(visibleCount);
+        // Reload page with filters
+        const queryString = params.toString();
+        window.location.href = queryString
+            ? `?${queryString}`
+            : window.location.pathname;
     }
 
-    // Update user count badge
-    function updateUserCount(count = null) {
-        if (count === null) {
-            count = document.querySelectorAll(
-                ".user-row:not([style*='display: none'])"
-            ).length;
-        }
-        const totalCount = userRows.length;
-        if (count === totalCount) {
-            userCountBadge.textContent = totalCount;
-        } else {
-            userCountBadge.textContent = `${count} / ${totalCount}`;
-        }
-    }
-
-    // Clear all filters
+    // Clear all filters and reload
     function clearFilters() {
-        searchInput.value = "";
-
-        // Reset custom selects
-        customSelects.forEach((select) => {
-            const name = select.dataset.name;
-            const items = select.querySelector(".select-items");
-            const firstItem = items.querySelector("div[data-value]");
-            const selected = select.querySelector(".select-selected");
-
-            if (firstItem) {
-                customSelectValues[name] = firstItem.dataset.value;
-                selected.textContent = firstItem.textContent;
-                items
-                    .querySelectorAll("div")
-                    .forEach((i) => i.classList.remove("selected"));
-                firstItem.classList.add("selected");
-            }
-        });
-
-        filterAgeValue.value = "";
-        filterAgeValue.disabled = true;
-        filterHeightValue.value = "";
-        filterHeightValue.disabled = true;
-        applyFilters();
-    }
-
-    // Enable/disable age and height input based on comparison selection
-    function updateAgeInput() {
-        const comparison = customSelectValues["filter-age-comparison"];
-        filterAgeValue.disabled = comparison === "any";
-        if (filterAgeValue.disabled) {
-            filterAgeValue.value = "";
-        }
-        applyFilters();
-    }
-
-    function updateHeightInput() {
-        const comparison = customSelectValues["filter-height-comparison"];
-        filterHeightValue.disabled = comparison === "any";
-        if (filterHeightValue.disabled) {
-            filterHeightValue.value = "";
-        }
-        applyFilters();
-    }
-
-    // Override the custom select behavior for age and height comparisons
-    const ageComparisonSelect = document.querySelector(
-        '[data-name="filter-age-comparison"]'
-    );
-    const heightComparisonSelect = document.querySelector(
-        '[data-name="filter-height-comparison"]'
-    );
-
-    if (ageComparisonSelect) {
-        const items = ageComparisonSelect.querySelectorAll(".select-items div");
-        items.forEach((item) => {
-            item.addEventListener("click", updateAgeInput);
-        });
-    }
-
-    if (heightComparisonSelect) {
-        const items =
-            heightComparisonSelect.querySelectorAll(".select-items div");
-        items.forEach((item) => {
-            item.addEventListener("click", updateHeightInput);
-        });
+        window.location.href = window.location.pathname;
     }
 
     // Attach event listeners for filtering
-    searchInput.addEventListener("input", applyFilters);
-    filterAgeValue.addEventListener("input", applyFilters);
-    filterHeightValue.addEventListener("input", applyFilters);
+    let searchTimeout;
+    searchInput.addEventListener("input", () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            applyServerFilters();
+        }, 500); // Debounce search for 500ms
+    });
+
+    filterAgeValue.addEventListener("change", applyServerFilters);
+    filterHeightValue.addEventListener("change", applyServerFilters);
     clearFiltersBtn.addEventListener("click", clearFilters);
 
     // Handle mutual exclusion between needs_personalization and height/age

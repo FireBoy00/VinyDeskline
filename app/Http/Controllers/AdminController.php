@@ -53,10 +53,72 @@ class AdminController extends Controller
      *
      * @return \Illuminate\Contracts\View\View
      */
-    public function userManagement()
+    public function userManagement(Request $request)
     {
-        $users = \App\Models\User::all();
+        $query = \App\Models\User::query();
+
+        // Search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereRaw('LOWER(CONCAT(first_name, " ", last_name)) LIKE ?', ['%' . strtolower($search) . '%'])
+                  ->orWhereRaw('LOWER(email) LIKE ?', ['%' . strtolower($search) . '%']);
+            });
+        }
+
+        // User type filter
+        if ($request->filled('user_type') && $request->user_type !== 'all') {
+            if ($request->user_type === 'admin') {
+                $query->where('is_admin', true);
+            } elseif ($request->user_type === 'regular') {
+                $query->where('is_admin', false);
+            }
+        }
+
+        // Personalization filter
+        if ($request->filled('personalization') && $request->personalization !== 'all') {
+            if ($request->personalization === 'completed') {
+                $query->where('needs_personalization', false);
+            } elseif ($request->personalization === 'needs') {
+                $query->where('needs_personalization', true);
+            }
+        }
+
+        // Age filter
+        if ($request->filled('age_comparison') && $request->age_comparison !== 'any' && $request->filled('age_value')) {
+            $ageValue = (int) $request->age_value;
+            switch ($request->age_comparison) {
+                case 'equal':
+                    $query->where('age', $ageValue);
+                    break;
+                case 'above':
+                    $query->where('age', '>', $ageValue);
+                    break;
+                case 'below':
+                    $query->where('age', '<', $ageValue);
+                    break;
+            }
+        }
+
+        // Height filter
+        if ($request->filled('height_comparison') && $request->height_comparison !== 'any' && $request->filled('height_value')) {
+            $heightValue = (int) $request->height_value;
+            switch ($request->height_comparison) {
+                case 'equal':
+                    $query->where('height', $heightValue);
+                    break;
+                case 'above':
+                    $query->where('height', '>', $heightValue);
+                    break;
+                case 'below':
+                    $query->where('height', '<', $heightValue);
+                    break;
+            }
+        }
+
+        $users = $query->paginate(10)->appends($request->except('page'));
         $currentUserId = Auth::id();
+        
         return view('user-management', compact('users', 'currentUserId'));
     }
 
