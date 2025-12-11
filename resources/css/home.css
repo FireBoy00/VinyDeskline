@@ -1,204 +1,6 @@
-body {
-    flex-direction: column;
-    margin: 0;
-    background: var(--bg-page);
-    font-family: "Inter", Arial, sans-serif;
-    color: var(--text-dark);
-}
-
-/* HEADER */
-.page-header {
-    width: 92%;
-    max-width: 1500px;
-    text-align: center;
-    padding: 28px 0;
-    position: relative;
-    margin: auto;
-}
-
-.page-header h1 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 32px;
-    font-weight: 600;
-}
-
-.page-header span {
-    display: inline-block;
-}
-
-/* USER ACCOUNT CARD */
-.user-account-card {
-    position: absolute;
-    top: 28px;
-    right: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.user-account-trigger {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    padding: 8px 16px;
-    background: white;
-    border-radius: 50px;
-    box-shadow: 0 2px 8px rgba(0, 79, 110, 0.1);
-    transition: all 0.3s ease;
-}
-
-.user-account-trigger:hover {
-    box-shadow: 0 4px 12px rgba(0, 79, 110, 0.2);
-    transform: translateY(-1px);
-}
-
-.user-name {
-    font-size: 14px;
-    color: var(--text-dark);
-    font-weight: 600;
-}
-
-.user-avatar {
-    width: 36px;
-    height: 36px;
-    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--accent-dark) 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.user-avatar .material-icons-round {
-    color: white;
-    font-size: 24px;
-}
-
-.user-dropdown {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 79, 110, 0.15);
-    min-width: 280px;
-    margin-top: 4px;
-    opacity: 0;
-    visibility: hidden;
-    max-height: 0;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    z-index: 1000;
-}
- 
-.user-account-card:hover .user-dropdown {
-    opacity: 1;
-    visibility: visible;
-    max-height: 500px;
-}
-
-.dropdown-header {
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.user-avatar-large {
-    width: 48px;
-    height: 48px;
-    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--accent-dark) 100%);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.user-avatar-large .material-icons-round {
-    color: white;
-    font-size: 28px;
-}
-
-.user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-    overflow: hidden;
-}
-
-.dropdown-user-name {
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text-dark);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.dropdown-user-email {
-    font-size: 12px;
-    color: #6B7280;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.dropdown-divider {
-    height: 1px;
-    background: #E5E7EB;
-    margin: 0 12px;
-}
-
-.dropdown-divider-small {
-    height: 1px;
-    background: #E5E7EB;
-    margin: 4px 12px;
-}
-
-.dropdown-menu {
-    list-style: none;
-    padding: 8px;
-    margin: 0;
-}
-
-.dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 14px;
-    color: var(--text-dark);
-    text-decoration: none;
-    border-radius: 8px;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    width: 100%;
-    border: none;
-    background: none;
-    text-align: left;
-}
-
-.dropdown-item:hover {
-    background: rgba(4, 133, 185, 0.1);
-}
-
-.dropdown-item .material-icons-round {
-    font-size: 20px;
-    color: var(--btn-primary-hover);
-}
-
-.logout-item {
-    color: #DC2626;
-}
-
-.logout-item .material-icons-round {
-    color: #DC2626;
-}
-
-.logout-item:hover {
-    background: rgba(220, 38, 38, 0.1);
-}
+/* ========================================= */
+/* HOME PAGE SPECIFIC STYLES                 */
+/* ========================================= */
 
 /* GRID LAYOUT */
 .layout {
@@ -211,71 +13,7 @@ body {
     gap: 35px;
 }
 
-/* CARD BASE */
-.card {
-    background: var(--bg-card);
-    border-radius: 18px;
-    padding: 28px;
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
-    position: relative;
-}
-
-/* CARD HELP BUTTON */
-.card-help-btn {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: var(--bg-page);
-    border: none;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 1;
-}
-
-.card-help-btn .material-icons-round {
-    font-size: 20px;
-    color: var(--btn-primary-hover);
-}
-
-.card-help-btn:hover {
-    background: rgba(4, 133, 185, 0.2);
-    transform: scale(1.1);
-}
-
-.card-help-btn::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-size: 13px;
-    line-height: 1.4;
-    white-space: normal;
-    width: 250px;
-    text-align: left;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    pointer-events: none;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-}
-
-.card-help-btn:hover::after {
-    opacity: 1;
-    visibility: visible;
-}
-
-/* CARD POSITIONING */
+/* DAILY BRIEFING */
 .briefing-card {
     grid-column: 1;
     text-align: center;
@@ -316,40 +54,6 @@ body {
     padding-bottom: 20px;
 }
 
-/* TITLES (Accent Style) */
-.accent-title {
-    font-weight: 400;
-    color: var(--text-dark);
-    text-align: center;
-    padding-top: 20px;
-    padding-bottom: 20px;
-}
-
-.accent-title span {
-    display: inline-block;
-    color: #000000;
-    font-weight: 500;
-}
-
-.accent-title span:first-letter,
-.accent span:first-letter,
-.footer-col strong::first-letter {
-    color: var(--text-dark);
-    font-weight: 700;
-}
-
-/* SIMPLE ACCENT TEXT (non-headings) */
-.accent {
-    font-weight: 300;
-    color: var(--text-dark);
-    text-align: center;
-}
-
-.accent span {
-    color: #000000;
-    font-weight: 400;
-}
-
 /* DAILY BRIEFING */
 .brief-row {
     display: flex;
@@ -375,19 +79,17 @@ body {
     border: none;
     background: none;
     font-size: 30px;
-    color: var(--accent-dark); 
+    color: var(--accent-dark);
     cursor: pointer;
     transition: color 0.2s;
     padding-left: 20px;
     padding-right: 20px;
 }
 
-
-
 .carousel-value {
     padding: 12px 38px;
     border-radius: 12px;
-    background: #C6DAE2;
+    background: #c6dae2;
     font-size: 16px;
     flex-shrink: 0;
 }
@@ -411,16 +113,16 @@ body {
 }
 
 .dot.active {
-    box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(0, 0, 0, 0.2); 
-    border: 1px solid white; 
-    background-color: var(--accent-dark); 
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(0, 0, 0, 0.2);
+    border: 1px solid white;
+    background-color: var(--accent-dark);
 }
 
 /* TABLE CARD */
 .table-card img {
     width: 60%;
     display: block;
-    margin: auto ;
+    margin: auto;
 }
 .table-card {
     text-align: center;
@@ -498,7 +200,7 @@ body {
     flex: 1;
     padding: 12px;
     border-radius: 12px;
-    background: #C6DAE2;
+    background: #c6dae2;
     margin-left: 10px;
     margin-right: 10px;
     margin-bottom: 20px;
@@ -507,7 +209,7 @@ body {
 }
 
 .custom-card .pos-row input:first-child {
-    background: #66B2D0;
+    background: #66b2d0;
     font-weight: 0;
     border: none;
     padding: 12px 18px;
@@ -516,17 +218,16 @@ body {
 }
 
 .custom-card .pos-row input:last-child {
-    background: #66B2D0;
+    background: #66b2d0;
     font-weight: 600;
 }
 
 .custom-card .pos-row input::placeholder {
-    color: #004F6E;
+    color: #004f6e;
     font-weight: 600;
     text-align: center;
     font-size: 16px;
 }
-
 
 .custom-card h2 {
     margin-top: 0px;
@@ -564,13 +265,5 @@ button.action-btn:hover,
 @media (max-width: 900px) {
     .layout {
         grid-template-columns: 1fr;
-    }
-    
-    .user-account-card {
-        right: 20px;
-    }
-    
-    .user-name {
-        display: none;
     }
 }

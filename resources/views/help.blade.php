@@ -8,6 +8,7 @@
     <title>VinyDeskline</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/general-user.css'])
     @vite(['resources/css/home.css', 'resources/js/home.js', 'resources/js/plotly.js'])
     @vite(['resources/css/about.css']) {{-- reuse about layout/styles --}}
 </head>
