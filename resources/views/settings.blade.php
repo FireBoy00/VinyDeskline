@@ -143,13 +143,7 @@
 
                     <!-- RIGHT COLUMN: USER SETTINGS -->
                     <div class="settings-column settings-user-settings">
-                        <div class="settings-actions-header">
-                            <h2 class="settings-subtitle">User Settings</h2>
-                            <button type="button" class="danger-btn reset-btn" id="reset-btn" data-reset-url="{{ route('settings.reset-data') }}">
-                                <span class="material-icons-round">delete_forever</span>
-                                <span>Reset Data</span>
-                            </button>
-                        </div>
+                        <h2 class="settings-subtitle">User Settings</h2>
 
                         <form class="settings-form" id="user-settings-form" data-update-url="{{ route('settings.update-info') }}">
                             @csrf
@@ -180,10 +174,16 @@
                                 >
                             </div>
 
-                            <button type="submit" class="primary-btn save-settings-btn">
-                                <span>Save Settings</span>
-                                <span class="material-icons-round">check_circle</span>
-                            </button>
+                            <div class="form-actions">
+                                <button type="submit" class="primary-btn save-settings-btn">
+                                    <span>Save Settings</span>
+                                    <span class="material-icons-round">check_circle</span>
+                                </button>
+                                <button type="button" class="danger-btn reset-btn" id="reset-btn" data-reset-url="{{ route('settings.reset-data') }}">
+                                    <span>Reset Data</span>
+                                    <span class="material-icons-round">delete_forever</span>
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
