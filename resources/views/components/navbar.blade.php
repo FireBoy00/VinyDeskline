@@ -49,12 +49,6 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('home') }}" class="nav-link nav-home">
-                    <span class="material-icons-round nav-icon icon">home</span>
-                    <span class="nav-text">User Home</span>
-                </a>
-            </li>
-            <li>
                 <a href="{{ route('admin.account') }}"
                     class="nav-link nav-account {{ $active === 'account' ? 'active' : '' }}">
                     <span class="material-icons-round nav-icon icon">account_circle</span>
