@@ -9,7 +9,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @vite(['resources/css/general-user.css'])
-    @vite(['resources/css/home.css', 'resources/css/settings.css', 'resources/js/settings.js'])
+    @vite(['resources/css/settings.css', 'resources/js/settings.js'])
 
     <title>VinyDeskline - Settings</title>
 </head>

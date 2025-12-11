@@ -10,6 +10,7 @@ export default defineConfig({
                 "resources/js/app.js",
                 "resources/js/bootstrap.js",
                 "resources/css/general-admin.css",
+                "resources/css/general-user.css",
 
                 // Plotly (for charts)
                 "resources/js/plotly.js",
@@ -31,6 +32,9 @@ export default defineConfig({
 
                 // Personalize
                 "resources/css/personalize.css",
+
+                // About & Help
+                "resources/css/about.css",
 
                 // Settings
                 "resources/css/settings.css",
