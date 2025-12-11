@@ -56,7 +56,8 @@ class AdminController extends Controller
     public function userManagement()
     {
         $users = \App\Models\User::all();
-        return view('user-management', compact('users'));
+        $currentUserId = Auth::id();
+        return view('user-management', compact('users', 'currentUserId'));
     }
 
     /**

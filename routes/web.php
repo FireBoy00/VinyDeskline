@@ -3,6 +3,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DeskController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Guest routes (only accessible when not logged in)
@@ -43,6 +44,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/desks', [DeskController::class, 'index'])->name('desks');
         Route::get('/desks/stats', [DeskController::class, 'stats'])->name('desks.stats');
         Route::get('/desks/{desk_id}', [DeskController::class, 'state'])->name('desks.state');
+    });
+    
+    // API routes for user management (admin only)
+    Route::middleware('admin')->prefix('api')->name('api.')->group(function () {
+        Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
+        Route::post('/users', [UserController::class, 'store'])->name('users.store');
+        Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
     });
     
     // Logout (support both GET and POST for simplicity)
