@@ -23,6 +23,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/settings', [HomeController::class, 'settings'])->name('settings');
     Route::post('/settings/update-info', [HomeController::class, 'updateUserInfo'])->name('settings.update-info');
+    Route::post('/settings/update-settings', [HomeController::class, 'updateUserSettings'])->name('settings.update-settings');
     Route::post('/settings/reset-data', [HomeController::class, 'resetUserData'])->name('settings.reset-data');
     Route::get('/about', [HomeController::class, 'about'])->name('about');
     Route::get('/help', [HomeController::class, 'help'])->name('help');

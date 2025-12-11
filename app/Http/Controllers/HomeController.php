@@ -60,6 +60,33 @@ class HomeController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = Auth::user();
+        $user->update($validator->validated());
+
+        return response()->json([
+            'message' => 'User information updated successfully',
+            'user' => $user
+        ]);
+    }
+
+    /**
+     * Update user settings (height and age).
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateUserSettings(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
             'height' => ['nullable', 'numeric', 'min:100', 'max:250'],
             'age' => ['nullable', 'integer', 'min:18', 'max:120'],
         ]);
@@ -75,7 +102,7 @@ class HomeController extends Controller
         $user->update($validator->validated());
 
         return response()->json([
-            'message' => 'User information updated successfully',
+            'message' => 'User settings updated successfully',
             'user' => $user
         ]);
     }

@@ -78,7 +78,7 @@
                     <h2 class="settings-subtitle">User Settings</h2>
 
                     <form class="settings-form" id="user-settings-form"
-                        data-update-url="{{ route('settings.update-info') }}">
+                        data-update-url="{{ route('settings.update-settings') }}">
                         @csrf
                         <div class="form-row">
                             <label for="height">Height (cm)</label>
