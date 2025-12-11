@@ -1,5 +1,4 @@
 <?php
-use App\Http\Controllers\DeskUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\HomeController;
@@ -30,10 +29,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
         Route::get('/schedules', [AdminController::class, 'schedules'])->name('schedules');
         Route::get('/arrangement', [AdminController::class, 'arrangement'])->name('arrangement');
+        Route::get('/user-management', [AdminController::class, 'userManagement'])->name('user-management');
         Route::get('/account', [AdminController::class, 'account'])->name('account');
-        Route::get('/user-management', [DeskUserController::class, 'index'])->name('user-management');
-        Route::post('/user-management/store', [DeskUserController::class, 'store']);
-        Route::delete('/user-management/{deskUser}', [DeskUserController::class, 'destroy']);
 
 
         

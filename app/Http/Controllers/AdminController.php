@@ -48,10 +48,16 @@ class AdminController extends Controller
         return view('admin-account');
     }
 
+    /**
+     * Display the user management page.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
     public function userManagement()
-{
-    return view('user-management');
-}
+    {
+        $users = \App\Models\User::all();
+        return view('user-management', compact('users'));
+    }
 
     /**
      * Update user information (first_name, last_name, email).
