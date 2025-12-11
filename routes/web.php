@@ -24,6 +24,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/settings', [HomeController::class, 'settings'])->name('settings');
     Route::post('/settings/update-info', [HomeController::class, 'updateUserInfo'])->name('settings.update-info');
     Route::post('/settings/reset-data', [HomeController::class, 'resetUserData'])->name('settings.reset-data');
+    Route::get('/about', [HomeController::class, 'about'])->name('about');
+    Route::get('/help', [HomeController::class, 'help'])->name('help');
     
     // Admin-only routes
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
