@@ -24,7 +24,7 @@
                 <div class="user-list-header">
                     <h2 class="user-list-title">
                         Registered Users
-                        <span class="user-count-badge" id="user-count">{{ count($users) }}</span>
+                        <span class="user-count-badge" id="user-count">{{ $users->count() }}</span>
                     </h2>
                     <div class="header-actions">
                         <button class="toggle-filters-btn" id="toggle-filters-btn">

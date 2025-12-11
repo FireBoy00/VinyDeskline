@@ -11,15 +11,16 @@ use Illuminate\Validation\Rule;
 class UserController extends Controller
 {
     /**
+     * Note: Authorization is handled at the route level via middleware.
+     * All routes in this controller are protected by 'auth' and 'admin' middleware
+     * as defined in routes/web.php, eliminating the need for duplicate checks.
+     */
+
+    /**
      * Get a specific user's data
      */
     public function show($id)
     {
-        // Check if user is admin
-        if (!Auth::check() || !Auth::user()->is_admin) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
         $user = User::findOrFail($id);
         
         return response()->json([
@@ -39,11 +40,6 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        // Check if user is admin
-        if (!Auth::check() || !Auth::user()->is_admin) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
         // Validate the request
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
@@ -82,11 +78,6 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // Check if user is admin
-        if (!Auth::check() || !Auth::user()->is_admin) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
         $user = User::findOrFail($id);
 
         // Validate the request
@@ -135,11 +126,6 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        // Check if user is admin
-        if (!Auth::check() || !Auth::user()->is_admin) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
         $user = User::findOrFail($id);
 
         // Prevent deleting yourself

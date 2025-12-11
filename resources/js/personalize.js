@@ -5,6 +5,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const saveBtn = document.querySelector(".save-btn");
     const form = document.querySelector(".personalize-form");
 
+    // Function to show notification toast
+    function showNotification(message) {
+        // Remove any existing notification
+        const existingNotification = document.querySelector(
+            ".notification-toast"
+        );
+        if (existingNotification) {
+            existingNotification.remove();
+        }
+
+        // Create notification element
+        const notification = document.createElement("div");
+        notification.className = "notification-toast";
+        notification.innerHTML = `
+            <span class="material-icons-round">error_outline</span>
+            <span>${message}</span>
+        `;
+
+        // Add to body
+        document.body.appendChild(notification);
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            notification.classList.add("hidden");
+            setTimeout(() => notification.remove(), 300);
+        }, 5000);
+    }
+
     // Function to check if inputs are valid
     function validateInputs() {
         const heightValue = heightInput.value.trim();
@@ -42,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", (e) => {
         if (!validateInputs()) {
             e.preventDefault();
-            alert(
+            showNotification(
                 "Please enter both height (100-250 cm) and age (18+ years) to save your preferences. Otherwise, use the Skip button."
             );
         }
