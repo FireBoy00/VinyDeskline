@@ -31,12 +31,7 @@
                             <span>Select</span>
                         </button>
                         
-                        <!-- Middle: Status Text -->
-                        <div class="desk-status-text" id="desk-status-text">
-                            Loading desks...
-                        </div>
-                        
-                        <!-- Right: Actions Menu Button -->
+                        <!-- Actions Menu Button (next to select) -->
                         <div class="actions-menu-container">
                             <button class="action-btn hidden" id="actions-btn">
                                 <span class="material-icons-round">more_vert</span>
@@ -60,6 +55,20 @@
                                     <span>Mark as Faulty</span>
                                 </button>
                             </div>
+                        </div>
+                        
+                        <!-- Middle: Status Text -->
+                        <div class="desk-status-text" id="desk-status-text">
+                            Loading desks...
+                        </div>
+                        
+                        <!-- Right: Refresh Button with Timestamp -->
+                        <div class="refresh-container" title="Refresh">
+                            <span class="last-refresh-text" id="last-refresh-text">Just now</span>
+                            <button class="action-btn" id="refresh-btn">
+                                <span class="material-icons-round">refresh</span>
+                                {{-- <span>Refresh</span> --}}
+                            </button>
                         </div>
                     </div>
                 </div>
