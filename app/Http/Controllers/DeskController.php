@@ -195,7 +195,7 @@ class DeskController extends Controller
         ]);
     }
 
-    public function set_hight(Request $request, $desk_id)
+    public function set_height(Request $request, $desk_id)
     {
         $apiKey = env('DESKS_API_KEY');
         $base = env('API_BASE');
