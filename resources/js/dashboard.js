@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
             refreshIcon.classList.remove('spinning');
         }, 600);
     }
-
+    
     // Countdown timer that ticks every second
     function tickCountdown() {
         countdown--;
@@ -104,4 +104,49 @@ document.addEventListener('DOMContentLoaded', function () {
             plot_bgcolor: 'transparent'
         }, { responsive: true });
     }
+
+    fetch('/admin/next-schedules',
+        {
+            headers: {
+                'Accept': 'application/json',
+            },
+        })
+        .then(r => r.json())
+        .then(data => {
+            console.log(data);
+
+            if (data.next_cleaning) {
+                const c = data.next_cleaning;
+
+                const dateStr = c.frequency === 'daily'
+                    ? c.next_datetime
+                    : `${c.date}T${c.start_time}`;
+
+                const dt = new Date(dateStr);
+
+                document.getElementById('cleaning_date').innerText =
+                    dt.toISOString().slice(0,10);
+
+                document.getElementById('cleaning_time').innerText =
+                    c.start_time;
+            }
+
+            if (data.next_uniform) {
+                const u = data.next_uniform;
+
+                const dateStr = u.frequency === 'daily'
+                    ? u.next_datetime
+                    : `${u.date}T${u.start_time}`;
+
+                const dt = new Date(dateStr);
+
+                document.getElementById('uniform_date').innerText =
+                    dt.toISOString().slice(0,10);
+
+                document.getElementById('uniform_time').innerText =
+                    u.start_time;
+            }
+        })
+        .catch(console.error);
 });
+

@@ -46,7 +46,7 @@ class DatabaseSeeder extends Seeder
                 'custom_height_1'=> null,
                 'custom_name_1'=> 'bajojajo',
                 'custom_name_2'=> null,
-                'is_admin' => false,
+                'is_admin' => true,
                 'needs_personalization' => false,
                 'height' => 175,
                 'age' => 20,

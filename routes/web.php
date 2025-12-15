@@ -37,7 +37,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
         Route::get('/arrangement', [AdminController::class, 'arrangement'])->name('arrangement');
         Route::get('/account', [AdminController::class, 'account'])->name('account');
-        
+        Route::get('/next-schedules', [AdminController::class, 'nextSchedules']);
+
         // Account management routes
         Route::post('/account/update-info', [AdminController::class, 'updateUserInfo'])->name('account.update-info');
         Route::post('/account/update-settings', [AdminController::class, 'updateUserSettings'])->name('account.update-settings');
