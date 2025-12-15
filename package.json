@@ -5,7 +5,8 @@
     "scripts": {
         "dev": "composer run dev",
         "build": "vite build",
-        "laravel": "php artisan serve"
+        "laravel": "php artisan serve",
+        "scheduler": "php artisan schedule:work"
     },
     "devDependencies": {
         "axios": "^1.11.0",
