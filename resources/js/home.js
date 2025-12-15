@@ -345,6 +345,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         `Desk Error : ${data.message}` ||
                             `Error updating height.`
                     );
+                height = null;
             } catch (error) {
                 console.error(error);
                 alert("Desk error:  An error occurred while setting height.");
