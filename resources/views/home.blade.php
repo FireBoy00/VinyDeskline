@@ -158,7 +158,8 @@
                 <span class="material-icons-round">help_outline</span>
             </button>
             <h2 class="accent-title"><span>Desk</span> <span>Height</span> <span>Across</span> <span>One</span>
-                <span>Day</span></h2>
+                <span>Day</span>
+            </h2>
             <div id="heightPlot"></div>
         </section>
 
