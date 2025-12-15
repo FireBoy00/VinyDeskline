@@ -88,13 +88,7 @@
 
                     <!-- RIGHT COLUMN: USER SETTINGS -->
                     <div class="account-column account-user-settings">
-                        <div class="account-settings-header">
-                            <h2 class="account-subtitle">User Settings</h2>
-                            <button type="button" class="danger-btn reset-account-btn" id="reset-btn" data-reset-url="{{ route('admin.account.reset-settings') }}">
-                                <span class="material-icons-round">delete_forever</span>
-                                <span>Reset Data</span>
-                            </button>
-                        </div>
+                        <h2 class="account-subtitle">User Settings</h2>
 
                         <form class="account-form" id="user-settings-form" data-update-url="{{ route('admin.account.update-settings') }}">
                             @csrf
@@ -125,10 +119,16 @@
                                 >
                             </div>
 
-                            <button type="submit" class="primary-btn save-settings-btn">
-                                <span>Save Settings</span>
-                                <span class="material-icons-round">check_circle</span>
-                            </button>
+                            <div class="form-actions">
+                                <button type="submit" class="primary-btn save-settings-btn">
+                                    <span>Save Settings</span>
+                                    <span class="material-icons-round">check_circle</span>
+                                </button>
+                                <button type="button" class="danger-btn reset-account-btn" id="reset-btn" data-reset-url="{{ route('admin.account.reset-settings') }}">
+                                    <span class="material-icons-round">delete_forever</span>
+                                    <span>Reset Data</span>
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

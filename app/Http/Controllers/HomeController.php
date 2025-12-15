@@ -31,6 +31,26 @@ class HomeController extends Controller
     }
 
     /**
+     * Display the about page.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function about()
+    {
+        return view('about');
+    }
+
+    /**
+     * Display the help page.
+     *
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function help()
+    {
+        return view('help');
+    }
+
+    /**
      * Update user information (name, surname, email, height, age).
      *
      * @param Request $request
@@ -42,6 +62,33 @@ class HomeController extends Controller
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $user = Auth::user();
+        $user->update($validator->validated());
+
+        return response()->json([
+            'message' => 'User information updated successfully',
+            'user' => $user
+        ]);
+    }
+
+    /**
+     * Update user settings (height and age).
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateUserSettings(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
             'height' => ['nullable', 'numeric', 'min:100', 'max:250'],
             'age' => ['nullable', 'integer', 'min:18', 'max:120'],
             'optimal_sitting_height' => ['nullable', 'integer', 'min:680', 'max:1320'],
@@ -62,7 +109,7 @@ class HomeController extends Controller
         $user->update($validator->validated());
 
         return response()->json([
-            'message' => 'User information updated successfully',
+            'message' => 'User settings updated successfully',
             'user' => $user
         ]);
     }
