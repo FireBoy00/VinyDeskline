@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
             refreshIcon.classList.remove('spinning');
         }, 600);
     }
-
+    
     // Countdown timer that ticks every second
     function tickCountdown() {
         countdown--;
@@ -459,6 +459,86 @@ function renderTemperatureChart() {
     };
     
     if (window.Plotly) {
+        window.Plotly.newPlot("myPlot", [{
+            x: xArray,
+            y: yArray,
+            mode: "lines",
+            line: { color: '#004F6E' }
+        }], {
+            autosize: true,
+            xaxis: { title: "Square Meters" },
+            yaxis: { title: "Price in Millions" },
+            margin: { t: 20, b: 40, l: 60, r: 20 },
+            plot_bgcolor: 'transparent',
+            paper_bgcolor: 'transparent',
+            showlegend: false
+        }, { responsive: true });
+
+        // Pie chart data and initialization
+        const pieValues = [40, 30, 20, 10];
+        const pieLabels = ['Sitting', 'Standing', 'Cleaning', 'Lowered'];
+        const pieColors = ['#0485B9', '#004F6E', '#66B2D0', '#0485B9'];
+
+        window.Plotly.newPlot('piePlot', [{
+            values: pieValues,
+            labels: pieLabels,
+            type: 'pie',
+            marker: { colors: pieColors, line: { color: '#ffffff', width: 2 } },
+            hoverinfo: 'label+percent'
+        }], {
+            margin: { t: 10, b: 10, l: 10, r: 10 },
+            showlegend: false,
+            paper_bgcolor: 'transparent',
+            plot_bgcolor: 'transparent'
+        }, { responsive: true });
+    }
+
+    fetch('/admin/next-schedules',
+        {
+            headers: {
+                'Accept': 'application/json',
+            },
+        })
+        .then(r => r.json())
+        .then(data => {
+            console.log(data);
+
+            if (data.next_cleaning) {
+                const c = data.next_cleaning;
+
+                const dateStr = c.frequency === 'daily'
+                    ? c.next_datetime
+                    : `${c.date}T${c.start_time}`;
+
+                const dt = new Date(dateStr);
+
+                document.getElementById('cleaning_date').innerText =
+                    dt.toISOString().slice(0,10);
+
+                document.getElementById('cleaning_time').innerText =
+                    c.start_time;
+            }
+
+            if (data.next_uniform) {
+                const u = data.next_uniform;
+
+                const dateStr = u.frequency === 'daily'
+                    ? u.next_datetime
+                    : `${u.date}T${u.start_time}`;
+
+                const dt = new Date(dateStr);
+
+                document.getElementById('uniform_date').innerText =
+                    dt.toISOString().slice(0,10);
+
+                document.getElementById('uniform_time').innerText =
+                    u.start_time;
+            }
+        })
+        .catch(console.error);
+});
+
+
         window.Plotly.newPlot(CHART_CONTAINER_IDS.temperature, [mainTrace, lowerBound, upperBound], layout, { responsive: true, displayModeBar: false });
     }
 }

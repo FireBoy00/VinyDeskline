@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\Desk;
+use Illuminate\Http\Request;
 
 class DeskController extends Controller
 {
@@ -15,8 +16,8 @@ class DeskController extends Controller
     public function index()
     {
         $apiKey = env('DESKS_API_KEY');
-        // TODO: Move URL to .env
-        $url = "http://127.0.0.1:8001/api/v2/{$apiKey}/desks";
+        $base = env('API_BASE');
+        $url = "{$base}/{$apiKey}/desks";
 
         $response = Http::get($url);
 
@@ -41,8 +42,8 @@ class DeskController extends Controller
     public function state($desk_id)
     {
         $apiKey = env('DESKS_API_KEY');
-        // TODO: Move URL to .env
-        $url = "http://127.0.0.1:8001/api/v2/{$apiKey}/desks/{$desk_id}";
+        $base = env('API_BASE');
+        $url = "{$base}/{$apiKey}/desks/{$desk_id}";
 
         $response = Http::get($url);
 
@@ -64,8 +65,8 @@ class DeskController extends Controller
     public function stats()
     {
         $apiKey = env('DESKS_API_KEY');
-        $base = rtrim(env('SIMULATOR_BASE_URL', 'http://127.0.0.1:8001'), '/');
-        $listUrl = "{$base}/api/v2/{$apiKey}/desks";
+        $base = env('API_BASE');
+        $listUrl = "{$base}/{$apiKey}/desks";
 
         // Initialize counters
         $counts = [
@@ -96,7 +97,7 @@ class DeskController extends Controller
             // For each desk id, fetch the detailed desk object
             foreach ($ids as $deskId) {
                 try {
-                    $deskUrl = "{$base}/api/v2/{$apiKey}/desks/{$deskId}";
+                    $deskUrl = "{$base}/{$apiKey}/desks/{$deskId}";
                     $dres = Http::timeout(5)->get($deskUrl);
 
                     if ($dres->failed()) {
@@ -192,6 +193,45 @@ class DeskController extends Controller
             'idle'        => $counts['idle'],
             'last_updated' => now()->toIso8601String(),
         ]);
+    }
+
+    public function set_height(Request $request, $desk_id)
+    {
+        $apiKey = env('DESKS_API_KEY');
+        $base = env('API_BASE');
+
+        if (!$desk_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Desk ID not provided'
+            ], 400);
+        }
+        $url = "{$base}/{$apiKey}/desks/{$desk_id}/state";
+        $targetHeight = $request->input('position_mm'); 
+
+        if (!$targetHeight) {
+        return response()->json([
+            'success' => false,
+            'message' => 'No target height provided'
+        ], 400);
+        } 
+            
+        try {
+            $response = Http::put($url, [
+            'position_mm' => $targetHeight
+        ]);
+        }catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Simulator API error: ' . $e->getMessage()
+            ], 500);
+        }
+        
+        return response()->json([
+        'success' => true,
+        'position_mm' => $request->input('position_mm') 
+    ]);
+
     }
 
 }

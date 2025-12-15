@@ -66,16 +66,16 @@
                     <div class="position-box">
                         <span class="position-label">Cleaning Schedule</span>
                         <div class="position-badges">
-                            <span class="badge">in 3h</span>
-                            <span class="badge">17–19 pm</span>
+                            <span class="badge" id="cleaning_date">--</span>
+                            <span class="badge" id="cleaning_time">--</span>
                         </div>
                     </div>
 
                     <div class="position-box">
                         <span class="position-label">Uniform Schedule</span>
                         <div class="position-badges">
-                            <span class="badge">in 3h</span>
-                            <span class="badge">17–19 pm</span>
+                            <span class="badge" id="uniform_date">--</span>
+                            <span class="badge" id="uniform_time" >--</span>
                         </div>
                     </div>
                 </div>

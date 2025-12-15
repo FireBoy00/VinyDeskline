@@ -1,7 +1,7 @@
 const sensorData = [
-    { id: 'temp', title: 'Temperature', value: '19°C' },
-    { id: 'humid', title: 'Humidity', value: '65%' },
-    { id: 'light', title: 'Light', value: '750 Lux' },
+    { id: "temp", title: "Temperature", value: "19°C" },
+    { id: "humid", title: "Humidity", value: "65%" },
+    { id: "light", title: "Light", value: "750 Lux" },
 ];
 
 let currentSlide = 0;
@@ -12,10 +12,9 @@ let myPlotElement;
 
 // Global chart container IDs
 const chartContainers = {
-    dailyUsage: 'myPlot',
-    heightHistory: 'heightPlot'
+    dailyUsage: "myPlot",
+    heightHistory: "heightPlot",
 };
-
 
 // --- Data Randomization Functions ---
 
@@ -26,10 +25,18 @@ const chartContainers = {
 function generateDailyDurations() {
     const maxWorkMinutes = 480; // Total time (8 hours) to distribute
 
-    let sitting = Math.floor(Math.random() * (maxWorkMinutes * 0.6 - maxWorkMinutes * 0.2 + 1)) + (maxWorkMinutes * 0.3);
-    let standing = Math.floor(Math.random() * (maxWorkMinutes * 0.4 - maxWorkMinutes * 0. + 1)) + (maxWorkMinutes * 0.1);
-    let cleaning = Math.floor(Math.random() * 80); 
-    let uniform = Math.floor(Math.random() * 60); 
+    let sitting =
+        Math.floor(
+            Math.random() * (maxWorkMinutes * 0.6 - maxWorkMinutes * 0.2 + 1)
+        ) +
+        maxWorkMinutes * 0.3;
+    let standing =
+        Math.floor(
+            Math.random() * (maxWorkMinutes * 0.4 - maxWorkMinutes * 0 + 1)
+        ) +
+        maxWorkMinutes * 0.1;
+    let cleaning = Math.floor(Math.random() * 80);
+    let uniform = Math.floor(Math.random() * 60);
 
     const total = sitting + standing + cleaning + uniform;
     if (total > maxWorkMinutes) {
@@ -44,13 +51,13 @@ function generateDailyDurations() {
         Sitting: Math.round(sitting),
         Standing: Math.round(standing),
         Cleaning: Math.round(cleaning),
-        Uniform: Math.round(uniform) 
+        Uniform: Math.round(uniform),
     };
 }
 
 /**
  * Generates time-series data for the Desk Height vs. Time line chart.
- * Simulates movement between Sitting (~700mm) and Standing (~1100mm) 
+ * Simulates movement between Sitting (~700mm) and Standing (~1100mm)
  */
 function generateHeightHistory() {
     const data = { x: [], y: [] };
@@ -59,25 +66,28 @@ function generateHeightHistory() {
     startTime.setHours(8, 0, 0, 0); // Start at 8:00 AM
     let currentTime = new Date(startTime);
     let currentHeight = 700;
-    let position = 'Sitting';
+    let position = "Sitting";
 
     const totalDurationHours = 8;
-    const totalSteps = totalDurationHours * 60 / 10; 
+    const totalSteps = (totalDurationHours * 60) / 10;
 
     for (let i = 0; i < totalSteps; i++) {
-        currentTime = new Date(startTime.getTime() + i * 10 * 60000); 
+        currentTime = new Date(startTime.getTime() + i * 10 * 60000);
         data.x.push(new Date(currentTime));
-        data.y.push(currentHeight + Math.floor(Math.random() * 10) - 5); 
+        data.y.push(currentHeight + Math.floor(Math.random() * 10) - 5);
 
         if (i > 0 && i % 9 === 0) {
-            const newPosition = (position === 'Sitting') ? 'Standing' : 'Sitting';
-            const newHeight = (newPosition === 'Standing') ? 1100 : 700;
+            const newPosition = position === "Sitting" ? "Standing" : "Sitting";
+            const newHeight = newPosition === "Standing" ? 1100 : 700;
             const transitionDuration = 3 * 60000; // 3 minutes for transition
 
             const steps = 3;
             for (let j = 1; j <= steps; j++) {
-                const stepTime = new Date(currentTime.getTime() + j / steps * transitionDuration);
-                const stepHeight = currentHeight + (newHeight - currentHeight) * (j / steps);
+                const stepTime = new Date(
+                    currentTime.getTime() + (j / steps) * transitionDuration
+                );
+                const stepHeight =
+                    currentHeight + (newHeight - currentHeight) * (j / steps);
                 data.x.push(stepTime);
                 data.y.push(stepHeight + Math.floor(Math.random() * 5) - 2);
             }
@@ -88,14 +98,13 @@ function generateHeightHistory() {
 
             currentHeight = newHeight;
             position = newPosition;
-            
-            i += Math.floor(transitionDuration / (10 * 60000)); 
+
+            i += Math.floor(transitionDuration / (10 * 60000));
         }
     }
 
-    return { x: data.x, y: data.y, annotations: [] }; 
+    return { x: data.x, y: data.y, annotations: [] };
 }
-
 
 // --- Plotly Render Functions ---
 
@@ -103,122 +112,129 @@ function generateHeightHistory() {
  * Daily Desk Usage Duration (Stacked Bar Chart).
  */
 function renderDailyUsageChart() {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
     const dataByDay = days.map(generateDailyDurations);
 
-    const sittingTimes = dataByDay.map(d => d.Sitting);
-    const standingTimes = dataByDay.map(d => d.Standing);
-    const cleaningTimes = dataByDay.map(d => d.Cleaning);
-    const uniformTimes = dataByDay.map(d => d.Uniform);
+    const sittingTimes = dataByDay.map((d) => d.Sitting);
+    const standingTimes = dataByDay.map((d) => d.Standing);
+    const cleaningTimes = dataByDay.map((d) => d.Cleaning);
+    const uniformTimes = dataByDay.map((d) => d.Uniform);
 
     const simpleHoverTemplate = "%{y}<extra></extra>";
 
     const sittingTrace = {
         x: days,
         y: sittingTimes,
-        name: 'Sitting',
-        type: 'bar',
-        marker: { color: '#004F6E' }, 
-        hovertemplate: simpleHoverTemplate
+        name: "Sitting",
+        type: "bar",
+        marker: { color: "#004F6E" },
+        hovertemplate: simpleHoverTemplate,
     };
 
     const standingTrace = {
         x: days,
         y: standingTimes,
-        name: 'Standing',
-        type: 'bar',
-        marker: { color: '#0485B9' },
-        hovertemplate: simpleHoverTemplate
+        name: "Standing",
+        type: "bar",
+        marker: { color: "#0485B9" },
+        hovertemplate: simpleHoverTemplate,
     };
 
     const cleaningTrace = {
         x: days,
         y: cleaningTimes,
-        name: 'Cleaning',
-        type: 'bar',
-        marker: { color: '#66B2D0' },
-        hovertemplate: simpleHoverTemplate
+        name: "Cleaning",
+        type: "bar",
+        marker: { color: "#66B2D0" },
+        hovertemplate: simpleHoverTemplate,
     };
 
-    const uniformTrace = { 
+    const uniformTrace = {
         x: days,
-        y: uniformTimes, 
-        name: 'Uniform', 
-        type: 'bar',
-        marker: { color: '#C6DAE2' }, 
-        hovertemplate: simpleHoverTemplate
+        y: uniformTimes,
+        name: "Uniform",
+        type: "bar",
+        marker: { color: "#C6DAE2" },
+        hovertemplate: simpleHoverTemplate,
     };
 
-    const data = [sittingTrace, standingTrace, cleaningTrace, uniformTrace]; 
+    const data = [sittingTrace, standingTrace, cleaningTrace, uniformTrace];
 
     const layout = {
-        barmode: 'stack',
-        title: 'Daily Desk Usage Duration (Minutes)',
-        xaxis: { title: 'Day of Week' },
-        yaxis: { title: 'Duration (Minutes)' },
+        barmode: "stack",
+        title: "Daily Desk Usage Duration (Minutes)",
+        xaxis: { title: "Day of Week" },
+        yaxis: { title: "Duration (Minutes)" },
         margin: { t: 50, b: 50, l: 50, r: 20 },
-        showlegend: false, 
-        plot_bgcolor: '#dce5e9',
-        paper_bgcolor: '#dce5e9'
+        showlegend: false,
+        plot_bgcolor: "#dce5e9",
+        paper_bgcolor: "#dce5e9",
     };
 
     if (window.Plotly) {
-        window.Plotly.newPlot(chartContainers.dailyUsage, data, layout, { responsive: true, displayModeBar: false });
+        window.Plotly.newPlot(chartContainers.dailyUsage, data, layout, {
+            responsive: true,
+            displayModeBar: false,
+        });
     }
 }
-
 
 /**
  * Desk Height vs. Time (Line Chart).
  */
 function renderHeightHistoryChart() {
-    const { x, y } = generateHeightHistory(); 
+    const { x, y } = generateHeightHistory();
 
     const trace = {
         x: x,
         y: y,
-        mode: 'lines',
-        name: 'Desk Height',
+        mode: "lines",
+        name: "Desk Height",
         line: {
-            color: '#000000ff',
-            width: 3
+            color: "#000000ff",
+            width: 3,
         },
-        hovertemplate: '<b>Time:</b> %{x|%I:%M %p}<br><b>Height:</b> %{y} mm<extra></extra>'
+        hovertemplate:
+            "<b>Time:</b> %{x|%I:%M %p}<br><b>Height:</b> %{y} mm<extra></extra>",
     };
 
     const layout = {
-        title: 'Desk Height Across One Day',
+        title: "Desk Height Across One Day",
         xaxis: {
-            title: 'Time of Day',
-            type: 'date',
-            tickformat: '%I:%M %p' // Format time as HH:MM AM/PM
+            title: "Time of Day",
+            type: "date",
+            tickformat: "%I:%M %p", // Format time as HH:MM AM/PM
         },
         yaxis: {
-            title: 'Height (mm)',
-            range: [650, 1150]
+            title: "Height (mm)",
+            range: [650, 1150],
         },
-        annotations: [], 
+        annotations: [],
         margin: { t: 50, b: 50, l: 50, r: 20 },
-        plot_bgcolor: '#dce5e9',
-        paper_bgcolor: '#dce5e9'
+        plot_bgcolor: "#dce5e9",
+        paper_bgcolor: "#dce5e9",
     };
 
     if (window.Plotly) {
-        window.Plotly.newPlot(chartContainers.heightHistory, [trace], layout, { responsive: true, displayModeBar: false });
+        window.Plotly.newPlot(chartContainers.heightHistory, [trace], layout, {
+            responsive: true,
+            displayModeBar: false,
+        });
     }
 }
 
-
-// --- Carousel Functions 
+// --- Carousel Functions
 
 function renderCarousel() {
     if (paginationDotsContainer) {
-        paginationDotsContainer.innerHTML = sensorData.map((_, index) => 
-            `<span class="dot" data-index="${index}"></span>`
-        ).join('');
+        paginationDotsContainer.innerHTML = sensorData
+            .map(
+                (_, index) => `<span class="dot" data-index="${index}"></span>`
+            )
+            .join("");
 
-        document.querySelectorAll('.dot').forEach(dot => {
-            dot.addEventListener('click', (e) => {
+        document.querySelectorAll(".dot").forEach((dot) => {
+            dot.addEventListener("click", (e) => {
                 currentSlide = parseInt(e.target.dataset.index);
                 updateCarousel();
             });
@@ -244,10 +260,10 @@ function updateCarousel() {
         sensorValueElement.textContent = currentData.value;
     }
 
-    document.querySelectorAll('.dot').forEach((dot, index) => {
-        dot.classList.remove('active');
+    document.querySelectorAll(".dot").forEach((dot, index) => {
+        dot.classList.remove("active");
         if (index === currentSlide) {
-            dot.classList.add('active');
+            dot.classList.add("active");
         }
     });
 }
@@ -257,21 +273,105 @@ function navigate(direction) {
     updateCarousel();
 }
 
+document.addEventListener("DOMContentLoaded", function () {
+    const buttons = document.querySelectorAll(".save-icon");
+    const deskId = document
+        .querySelector('meta[name="desk-id"]')
+        .getAttribute("content");
+    const csrfToken = document
+        .querySelector('meta[name="csrf-token"]')
+        .getAttribute("content");
+    let height;
+
+    buttons.forEach((button) => {
+        button.addEventListener("click", async () => {
+            const parentRow = button.closest(".pos-row");
+            const positionIndex = button.getAttribute("data-position");
+            if (positionIndex && parentRow) {
+                const nameInput = parentRow.querySelector(".custom-name");
+                const heightInput = parentRow.querySelector(".custom-height");
+
+                const customName = nameInput.value;
+                const customHeight = heightInput.value;
+
+                try {
+                    const response = await fetch(
+                        `/home/${deskId}/${positionIndex}/updateCustom`,
+                        {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": csrfToken,
+                            },
+                            body: JSON.stringify({
+                                index: positionIndex,
+                                name: customName,
+                                position_mm: customHeight * 10,
+                            }),
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        height = data.height / 10;
+                        alert(`Height and name updated!`);
+                    } else {
+                        alert(
+                            `Error: ${data.message}` || `Error updating height.`
+                        );
+                    }
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("An error occurred while setting height.");
+                }
+            } else {
+                height = button.getAttribute("data-height");
+            }
+            try {
+                const response = await fetch(`/desks/${deskId}/set-height`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": csrfToken,
+                    },
+                    body: JSON.stringify({ position_mm: height * 10 }),
+                });
+
+                const data = await response.json();
+                if (data.success) alert("Height updated!");
+                else
+                    alert(
+                        `Desk Error : ${data.message}` ||
+                            `Error updating height.`
+                    );
+            } catch (error) {
+                console.error(error);
+                alert("Desk error:  An error occurred while setting height.");
+            }
+        });
+    });
+});
 
 // --- DOM Initialization ---
 
-document.addEventListener('DOMContentLoaded', () => {
-  
-    paginationDotsContainer = document.getElementById('pagination-dots');
-    sensorTitleElement = document.getElementById('sensor-title');
-    sensorValueElement = document.getElementById('sensor-value');
-    myPlotElement = document.getElementById('myPlot'); 
+document.addEventListener("DOMContentLoaded", () => {
+    paginationDotsContainer = document.getElementById("pagination-dots");
+    sensorTitleElement = document.getElementById("sensor-title");
+    sensorValueElement = document.getElementById("sensor-value");
+    myPlotElement = document.getElementById("myPlot");
 
-    document.getElementById('next-btn').addEventListener('click', () => navigate(1));
-    document.getElementById('prev-btn').addEventListener('click', () => navigate(-1));
+    document
+        .getElementById("next-btn")
+        .addEventListener("click", () => navigate(1));
+    document
+        .getElementById("prev-btn")
+        .addEventListener("click", () => navigate(-1));
 
-    if (typeof window.Plotly === 'undefined') {
-        console.error("Plotly.js is not loaded. Please ensure it is linked in your HTML.");
+    if (typeof window.Plotly === "undefined") {
+        console.error(
+            "Plotly.js is not loaded. Please ensure it is linked in your HTML."
+        );
         return;
     }
 
