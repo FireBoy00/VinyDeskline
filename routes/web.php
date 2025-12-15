@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DeskController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ScheduleController;
 
 // Guest routes (only accessible when not logged in)
 Route::middleware('guest')->group(function () {
@@ -25,6 +26,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/settings/update-info', [HomeController::class, 'updateUserInfo'])->name('settings.update-info');
     Route::post('/settings/update-settings', [HomeController::class, 'updateUserSettings'])->name('settings.update-settings');
     Route::post('/settings/reset-data', [HomeController::class, 'resetUserData'])->name('settings.reset-data');
+    Route::put('/desks/{desk_id}/set-height', [DeskController::class, 'set_height'])->name('desk.set-height');
+    Route::put('/home/{deskId}/{positionIndex}/updateCustom', [HomeController::class, 'updateCustom']);
     Route::get('/about', [HomeController::class, 'about'])->name('about');
     Route::get('/help', [HomeController::class, 'help'])->name('help');
     
@@ -32,12 +35,15 @@ Route::middleware('auth')->group(function () {
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
         Route::get('/schedules', [AdminController::class, 'schedules'])->name('schedules');
+        Route::post('/schedules', [ScheduleController::class, 'store']);
+        Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
         Route::get('/arrangement', [AdminController::class, 'arrangement'])->name('arrangement');
         Route::get('/user-management', [AdminController::class, 'userManagement'])->name('user-management');
         Route::get('/account', [AdminController::class, 'account'])->name('account');
+        Route::get('/next-schedules', [AdminController::class, 'nextSchedules']);
 
 
-        
+
         // Account management routes
         Route::post('/account/update-info', [AdminController::class, 'updateUserInfo'])->name('account.update-info');
         Route::post('/account/update-settings', [AdminController::class, 'updateUserSettings'])->name('account.update-settings');

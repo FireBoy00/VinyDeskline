@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Schedule;
+use Carbon\Carbon;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +27,10 @@ class AdminController extends Controller
      */
     public function schedules()
     {
-        return view('schedules');
+        $uniformSchedules = Schedule::where('type', 'uniform')->get();
+        $cleaningSchedules = Schedule::where('type', 'cleaning')->get();
+
+        return view('schedules', compact('uniformSchedules','cleaningSchedules'));
     }
 
     /**
@@ -197,6 +202,44 @@ class AdminController extends Controller
         return response()->json([
             'message' => 'User settings reset successfully',
             'user' => $user
+        ]);
+    }
+
+    public function nextSchedules(){
+        $now = Carbon::now();
+        $getNext = function ($type) use ($now){
+            $schedules = Schedule::where('type', $type) -> get();
+            $nextSchedule = null;
+            $nextDateTime = null;
+
+            foreach($schedules as $schedule){
+                if ($schedule->frequency ==='daily'){
+                    $datetime = Carbon::today()->setTimeFromTimeString($schedule->start_time);
+                    if ($datetime->lt($now)){
+                        $datetime->addDay();
+                    }
+                } else {
+                    if(!$schedule->date){
+                        continue;
+                    }
+                    $datetime = Carbon::parse($schedule->date. ' ' . $schedule->start_time);
+
+                    if ($datetime->lt($now)){
+                        continue;
+                    }
+                    
+                }
+                if (!$nextDateTime || $datetime->lt($nextDateTime)) {
+                    $nextDateTime = $datetime;
+                    $schedule->next_datetime = $datetime->format('Y-m-d\TH:i');
+                    $nextSchedule = $schedule;
+                }
+            }
+            return $nextSchedule;
+        };
+        return response()->json([
+            'next_uniform'  => $getNext('uniform'),
+            'next_cleaning' => $getNext('cleaning'),
         ]);
     }
 }

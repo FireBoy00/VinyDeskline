@@ -42,6 +42,7 @@ export default defineConfig({
 
                 // Schedules
                 "resources/css/schedules.css",
+                "resources/js/schedules.js",
 
                 // Desk Management
                 "resources/css/desk-management.css",
