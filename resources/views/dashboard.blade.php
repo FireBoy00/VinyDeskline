@@ -80,61 +80,48 @@
                     </div>
                 </div>
             </section>
-
-            <div class="graphs-row">
-                <section class="section" id="line-graph">
-                    <h1 class="section-title"><span>Overall</span> <span>Statistics</span></h1>
-
-                    <div class="plot-wrap">
-                        <div id="myPlot"></div>
-                    </div>
-                    <div class="stats-legend">
-                        <div class="legend-item">
-                            <span class="legend-dot sitting"></span>
-                            <span class="legend-label">Sitting</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-dot standing"></span>
-                            <span class="legend-label">Standing</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-dot cleaning"></span>
-                            <span class="legend-label">Cleaning</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-dot lowered"></span>
-                            <span class="legend-label">Lowered</span>
-                        </div>
-                    </div>
-                </section>
-                <section class="section" id="pie-graph">
-                    <h1 class="section-title"><span>T</span>able positions</h1>
-
+            <section class="section" id="timeline-card">
+                <h1 class="section-title"><span>Sit</span>/<span>Stand</span> <span>Timeline</span></h1>
+                <div class="plot-wrap">
+                    <div id="timelinePlot"></div>
+                </div>
+            </section>
+            <section class="graphs-row">
+                <section class="section" id="standing-percentage-card">
+                    <h1 class="section-title"><span>S</span>it/<span>Stand</span> Percentage</h1>
                     <div class="pie-wrap">
                         <div id="piePlot"></div>
-
-                        <div class="pie-legend card-legend">
-                            <div class="legend-item">
-                                <span class="legend-dot sitting"></span>
-                                <span class="legend-label">Sitting</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-dot standing"></span>
-                                <span class="legend-label">Standing</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-dot cleaning"></span>
-                                <span class="legend-label">Cleaning</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-dot lowered"></span>
-                                <span class="legend-label">Lowered</span>
-                            </div>
-                        </div>
                     </div>
                 </section>
+                
+                <section class="section" id="desk-state-card">
+                    <h1 class="section-title"><span>D</span>esk <span>S</span>tate <span>O</span>verview</h1>
+                    <div class="pie-wrap">
+                        <div id="deskStatePlot"></div>
+                    </div>
+                </section>
+            </section>
+            <section class="section" id="daily-usage-card">
+                <h1 class="section-title">Daily Desk Usage Duration</h1>
+                <div class="plot-wrap">
+                    <div id="dailyUsagePlot"></div>
+                </div>
+            </section>
+            <section class="section" id="environment-card">
+                <h1 class="section-title">Environmental Data Overview</h1>
+                
+                <div class="chart-navigation" style="padding: 10px 20px 0;">
+                    <button class="nav-button active" data-chart="tempPlot">Temperature</button>
+                    <button class="nav-button" data-chart="lightPlot">Light</button>
+                    <button class="nav-button" data-chart="humidityPlot">Humidity</button>
+                </div>
 
-            </div>
+                <div class="plot-container" style="height: 400px; padding: 20px;">
+                    <div id="tempPlot" class="chart-plot active-chart"></div>
+                    <div id="lightPlot" class="chart-plot hidden-chart"></div>
+                    <div id="humidityPlot" class="chart-plot hidden-chart"></div>
+                </div>
+            </section>
         </main>
     </body>
 </html>

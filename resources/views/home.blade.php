@@ -147,9 +147,20 @@
                 </div>
                 <div class="legend-item">
                     <span class="legend-dot lowered"></span>
-                    <span class="legend-label">Lowered</span>
+                    <span class="legend-label">Uniform</span>
                 </div>
             </div>
+        </section>
+
+        <section class="card stats-card" style="grid-column: 1; grid-row: 9 / span 2;">
+            <button class="card-help-btn"
+                data-tooltip="Track the height of your desk over time, showing transitions between standing and sitting positions.">
+                <span class="material-icons-round">help_outline</span>
+            </button>
+            <h2 class="accent-title"><span>Desk</span> <span>Height</span> <span>Across</span> <span>One</span>
+                <span>Day</span>
+            </h2>
+            <div id="heightPlot"></div>
         </section>
 
         <!-- FEEDBACK -->
