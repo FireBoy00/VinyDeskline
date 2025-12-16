@@ -185,6 +185,12 @@
                             </div>
                             <div class="user-divider"></div>
                             <div class="user-pill-group">
+                                @if ($user->desk_id)
+                                    <span class="user-pill desk">
+                                        <span class="material-icons-round">desk</span>
+                                        Desk: {{ $user->desk->name ?? $user->desk_id }}
+                                    </span>
+                                @endif
                                 @if ($user->needs_personalization)
                                     <span class="user-pill needs-personalization">Needs Personalization</span>
                                 @elseif (!$user->height && !$user->age)
@@ -311,6 +317,14 @@
                         <label class="form-label">Age</label>
                         <input type="number" class="form-input" id="edit-age" min="0"
                             placeholder="Optional">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Assigned Desk</label>
+                        <select class="form-input" id="edit-desk">
+                            <option value="">No Desk Assigned</option>
+                            <!-- Will be populated dynamically via JavaScript -->
+                        </select>
                     </div>
 
                     <div class="form-group">

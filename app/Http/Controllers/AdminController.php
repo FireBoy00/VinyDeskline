@@ -60,7 +60,7 @@ class AdminController extends Controller
      */
     public function userManagement(Request $request)
     {
-        $query = \App\Models\User::query();
+        $query = \App\Models\User::with('desk');
 
         // Search filter
         if ($request->filled('search')) {
