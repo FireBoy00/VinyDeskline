@@ -214,6 +214,19 @@ class OfficeManagementController extends Controller
     // ===== Desk Location Assignment =====
 
     /**
+     * Get all desks
+     */
+    public function getDesks()
+    {
+        $desks = Desk::with(['floor', 'room', 'user'])->where('is_removed_from_api', false)->get();
+        
+        return response()->json([
+            'success' => true,
+            'desks' => $desks
+        ]);
+    }
+
+    /**
      * Assign desk to floor and/or room
      */
     public function assignDeskLocation(Request $request, $deskId)

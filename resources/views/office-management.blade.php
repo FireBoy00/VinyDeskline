@@ -95,13 +95,17 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div class="error-message" id="floor-error-message">
+                    <span class="material-icons-round">error</span>
+                    <span id="floor-error-text"></span>
+                </div>
                 <form id="floor-form">
                     <input type="hidden" id="floor-id">
 
                     <div class="form-group">
-                        <label class="form-label">Floor Name</label>
-                        <input type="text" class="form-input" id="floor-name" placeholder="e.g., Ground Floor"
-                            required>
+                        <label class="form-label">Floor Name (Optional)</label>
+                        <input type="text" class="form-input" id="floor-name"
+                            placeholder="Leave empty to auto-generate">
                     </div>
 
                     <div class="form-group">
@@ -112,6 +116,39 @@
                     <div class="form-group">
                         <label class="form-label">Description (Optional)</label>
                         <textarea class="form-input" id="floor-description" placeholder="Optional description" rows="3"></textarea>
+                    </div>
+
+                    <!-- Only show these sections when editing -->
+                    <div id="floor-management-sections" style="display: none;">
+                        <!-- Rooms on this floor -->
+                        <div class="form-group">
+                            <label class="form-label">Rooms on this Floor</label>
+                            <div class="desk-list" id="floor-rooms-list">
+                                <p style="text-align: center; color: rgba(0, 79, 110, 0.6); padding: 20px;">No rooms
+                                    assigned</p>
+                            </div>
+                            <div class="add-desk-section">
+                                <button type="button" class="add-desk-btn" id="add-room-to-floor-btn">
+                                    <span class="material-icons-round">add</span>
+                                    <span>Add Room to Floor</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Desks on this floor -->
+                        <div class="form-group">
+                            <label class="form-label">Desks on this Floor</label>
+                            <div class="desk-list" id="floor-desks-list">
+                                <p style="text-align: center; color: rgba(0, 79, 110, 0.6); padding: 20px;">No desks
+                                    assigned</p>
+                            </div>
+                            <div class="add-desk-section">
+                                <button type="button" class="add-desk-btn" id="add-desk-to-floor-btn">
+                                    <span class="material-icons-round">add</span>
+                                    <span>Add Desk to Floor</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -132,6 +169,10 @@
                 </button>
             </div>
             <div class="modal-body">
+                <div class="error-message" id="room-error-message">
+                    <span class="material-icons-round">error</span>
+                    <span id="room-error-text"></span>
+                </div>
                 <form id="room-form">
                     <input type="hidden" id="room-id">
 
@@ -143,21 +184,121 @@
 
                     <div class="form-group">
                         <label class="form-label">Floor (Optional)</label>
-                        <select class="form-input" id="room-floor">
-                            <option value="">No Floor Assignment</option>
-                            <!-- Will be populated dynamically -->
-                        </select>
+                        <div class="custom-select" id="room-floor-select">
+                            <div class="select-selected" id="room-floor-selected">
+                                No Floor Assignment
+                            </div>
+                            <div class="select-items hidden" id="room-floor-items">
+                                <!-- Will be populated dynamically -->
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group">
                         <label class="form-label">Description (Optional)</label>
                         <textarea class="form-input" id="room-description" placeholder="Optional description" rows="3"></textarea>
                     </div>
+
+                    <!-- Only show when editing -->
+                    <div id="room-management-sections" style="display: none;">
+                        <!-- Desks in this room -->
+                        <div class="form-group">
+                            <label class="form-label">Desks in this Room</label>
+                            <div class="desk-list" id="room-desks-list">
+                                <p style="text-align: center; color: rgba(0, 79, 110, 0.6); padding: 20px;">No desks
+                                    assigned</p>
+                            </div>
+                            <div class="add-desk-section">
+                                <button type="button" class="add-desk-btn" id="add-desk-to-room-btn">
+                                    <span class="material-icons-round">add</span>
+                                    <span>Add Desk to Room</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
             <div class="modal-actions">
                 <button class="modal-btn cancel" id="cancel-room-btn">Cancel</button>
                 <button class="modal-btn save" id="save-room-btn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desk Selection Modal -->
+    <div class="modal" id="desk-selection-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="desk-selection-title">Select Desk</h3>
+                <button class="modal-close-btn" id="close-desk-selection-modal">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="error-message" id="desk-selection-error-message">
+                    <span class="material-icons-round">error</span>
+                    <span id="desk-selection-error-text"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Selected Desks</label>
+                    <div class="selected-items empty" id="selected-desks-display">
+                        No desks selected
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Available Desks</label>
+                    <div class="custom-select" id="desk-select">
+                        <div class="select-selected" id="desk-select-selected">
+                            Click to select desks...
+                        </div>
+                        <div class="select-items hidden" id="desk-select-items">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="cancel-desk-selection-btn">Cancel</button>
+                <button class="modal-btn save" id="confirm-desk-selection-btn">Add Selected Desks</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Room Selection Modal -->
+    <div class="modal" id="room-selection-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Select Room</h3>
+                <button class="modal-close-btn" id="close-room-selection-modal">
+                    <span class="material-icons-round">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="error-message" id="room-selection-error-message">
+                    <span class="material-icons-round">error</span>
+                    <span id="room-selection-error-text"></span>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Selected Rooms</label>
+                    <div class="selected-items empty" id="selected-rooms-display">
+                        No rooms selected
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Available Rooms</label>
+                    <div class="custom-select" id="room-select">
+                        <div class="select-selected" id="room-select-selected">
+                            Click to select rooms...
+                        </div>
+                        <div class="select-items hidden" id="room-select-items">
+                            <!-- Will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn cancel" id="cancel-room-selection-btn">Cancel</button>
+                <button class="modal-btn save" id="confirm-room-selection-btn">Add Selected Rooms</button>
             </div>
         </div>
     </div>

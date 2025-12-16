@@ -86,6 +86,7 @@ Route::middleware(['auth', 'check.desk'])->group(function () {
         Route::put('/rooms/{id}', [OfficeManagementController::class, 'updateRoom'])->name('rooms.update');
         Route::delete('/rooms/{id}', [OfficeManagementController::class, 'deleteRoom'])->name('rooms.destroy');
         
+        Route::get('/desks', [OfficeManagementController::class, 'getDesks'])->name('desks.index');
         Route::put('/desks/{deskId}/location', [OfficeManagementController::class, 'assignDeskLocation'])->name('desks.assign-location');
     });
     
