@@ -1,0 +1,140 @@
+/* No Desk Assigned Page Styles */
+
+.no-desk-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px);
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.no-desk-card {
+    background: white;
+    border-radius: 16px;
+    padding: 3rem;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.no-desk-icon {
+    font-size: 80px;
+    color: #667eea;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+.no-desk-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 1rem;
+}
+
+.no-desk-message {
+    font-size: 1.125rem;
+    color: #4a5568;
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+}
+
+.no-desk-submessage {
+    font-size: 1rem;
+    color: #718096;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.no-desk-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn-primary,
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+    transform: translateY(-2px);
+}
+
+.btn-primary .material-icons-round,
+.btn-secondary .material-icons-round {
+    font-size: 20px;
+}
+
+@media (max-width: 640px) {
+    .no-desk-container {
+        padding: 1rem;
+    }
+
+    .no-desk-card {
+        padding: 2rem;
+    }
+
+    .no-desk-title {
+        font-size: 1.5rem;
+    }
+
+    .no-desk-message {
+        font-size: 1rem;
+    }
+
+    .no-desk-submessage {
+        font-size: 0.875rem;
+    }
+
+    .no-desk-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        justify-content: center;
+    }
+}
