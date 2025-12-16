@@ -1,6 +1,6 @@
 const sensorData = [
     { id: 'temp', title: 'Temperature', value: '--', unit: '°C' },
-    { id: 'humid', title: 'Humidity', value: '--', unit: '%' },
+    //{ id: 'humid', title: 'Humidity', value: '--', unit: '%' },
     { id: 'light', title: 'Light', value: '--', unit: ' Lux' },
 ];
 
@@ -94,15 +94,15 @@ function navigate(direction) {
 }
 
 // Function to update sensor data from MQTT
-window.updateSensorData = function(temperature, humidity, light) {
+window.updateSensorData = function(temperature, /*humidity,*/ light) {
     if (temperature !== null && temperature !== undefined) {
         sensorData[0].value = temperature;
-    }
+    }/*
     if (humidity !== null && humidity !== undefined) {
         sensorData[1].value = humidity;
-    }
+    }*/
     if (light !== null && light !== undefined) {
-        sensorData[2].value = light;
+        sensorData[1].value = light;
     }
     
     // Update the display if we're currently viewing the changed sensor
@@ -144,7 +144,7 @@ window.updateSensorData = function(temperature, humidity, light) {
             if (typeof window.updateSensorData === 'function') {
                 window.updateSensorData(
                     data.temperature,
-                    data.humidity,
+                    //data.humidity,
                     data.light
                 );
             }
