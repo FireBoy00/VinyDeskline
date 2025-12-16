@@ -1,10 +1,17 @@
 /* No Desk Assigned Page Styles */
 
+/* Override body styles from app.css for this standalone page */
+.no-desk-body {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0 !important;
+}
+
 .no-desk-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 80px);
+    min-height: 100vh;
     padding: 2rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }

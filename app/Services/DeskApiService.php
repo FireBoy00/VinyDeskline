@@ -12,8 +12,8 @@ class DeskApiService
 
     public function __construct()
     {
-        $this->baseUrl = env('DESK_API_BASE_URL', 'http://localhost:8000');
-        $this->apiKey = env('DESK_API_KEY', 'default-api-key');
+        $this->baseUrl = env('API_BASE', 'http://localhost:8001/api/v2');
+        $this->apiKey = env('DESKS_API_KEY', 'default-api-key');
     }
 
     /**
@@ -24,7 +24,7 @@ class DeskApiService
     public function getAllDeskIds(): ?array
     {
         try {
-            $response = Http::timeout(10)->get("{$this->baseUrl}/api/v2/{$this->apiKey}/desks");
+            $response = Http::timeout(10)->get("{$this->baseUrl}/{$this->apiKey}/desks");
 
             if ($response->successful()) {
                 return $response->json();
@@ -54,7 +54,7 @@ class DeskApiService
     public function getDeskData(string $deskId): ?array
     {
         try {
-            $response = Http::timeout(10)->get("{$this->baseUrl}/api/v2/{$this->apiKey}/desks/{$deskId}");
+            $response = Http::timeout(10)->get("{$this->baseUrl}/{$this->apiKey}/desks/{$deskId}");
 
             if ($response->successful()) {
                 return $response->json();
@@ -90,7 +90,7 @@ class DeskApiService
             $response = Http::timeout(10)
                 ->withHeaders(['Content-Type' => 'application/json'])
                 ->put(
-                    "{$this->baseUrl}/api/v2/{$this->apiKey}/desks/{$deskId}/state",
+                    "{$this->baseUrl}/{$this->apiKey}/desks/{$deskId}/state",
                     ['position_mm' => $positionMm]
                 );
 

@@ -10,9 +10,7 @@
     <title>VinyDeskline - No Desk Assigned</title>
 </head>
 
-<body>
-    <x-navbar active="" />
-
+<body class="no-desk-body">
     <main class="no-desk-container">
         <div class="no-desk-card">
             <span class="material-icons-round no-desk-icon">desk</span>
@@ -27,11 +25,11 @@
                     a personal desk assignment.
                 </p>
                 <div class="no-desk-actions">
-                    <a href="{{ route('arrangement') }}" class="btn-primary">
+                    <a href="{{ route('admin.dashboard') }}" class="btn-primary">
                         <span class="material-icons-round">dashboard</span>
                         <span>Go to Admin Dashboard</span>
                     </a>
-                    <a href="{{ route('arrangement') }}" class="btn-secondary">
+                    <a href="{{ route('admin.arrangement') }}" class="btn-secondary">
                         <span class="material-icons-round">settings</span>
                         <span>Desk Management</span>
                     </a>
