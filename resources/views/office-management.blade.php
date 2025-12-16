@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,9 +11,10 @@
     @vite(['resources/css/office-management.css', 'resources/js/office-management.js'])
     <title>VinyDeskline - Office Management</title>
 </head>
+
 <body>
     <x-navbar active="office-management" />
-    
+
     <main class="dashboard">
         <section class="section office-header">
             <h1 class="section-title"><span>O</span>ffice Management</h1>
@@ -95,10 +97,11 @@
             <div class="modal-body">
                 <form id="floor-form">
                     <input type="hidden" id="floor-id">
-                    
+
                     <div class="form-group">
                         <label class="form-label">Floor Name</label>
-                        <input type="text" class="form-input" id="floor-name" placeholder="e.g., Ground Floor" required>
+                        <input type="text" class="form-input" id="floor-name" placeholder="e.g., Ground Floor"
+                            required>
                     </div>
 
                     <div class="form-group">
@@ -131,10 +134,11 @@
             <div class="modal-body">
                 <form id="room-form">
                     <input type="hidden" id="room-id">
-                    
+
                     <div class="form-group">
                         <label class="form-label">Room Name</label>
-                        <input type="text" class="form-input" id="room-name" placeholder="e.g., Conference Room A" required>
+                        <input type="text" class="form-input" id="room-name"
+                            placeholder="e.g., Conference Room A" required>
                     </div>
 
                     <div class="form-group">
@@ -158,4 +162,5 @@
         </div>
     </div>
 </body>
+
 </html>
