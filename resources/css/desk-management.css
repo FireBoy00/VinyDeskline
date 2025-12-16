@@ -491,11 +491,155 @@
     padding: 24px;
 }
 
+.modal-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.modal-section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin: 0 0 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(4, 133, 185, 0.1);
+}
+
 .desk-detail-info {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 12px;
+}
+
+.desk-assignment-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--accent-dark);
+    font-size: 0.9rem;
+}
+
+.form-input {
+    padding: 10px 14px;
+    border: 1px solid rgba(4, 133, 185, 0.3);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: white;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--btn-primary-hover);
+    box-shadow: 0 0 0 3px rgba(4, 133, 185, 0.1);
+}
+
+.height-control {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.height-slider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(to right, 
+        rgba(4, 133, 185, 0.2) 0%, 
+        var(--btn-primary-hover) 50%, 
+        rgba(4, 133, 185, 0.8) 100%);
+    outline: none;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.height-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--btn-primary-hover);
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+.height-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.height-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--btn-primary-hover);
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+.height-slider::-moz-range-thumb:hover {
+    transform: scale(1.2);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+}
+
+.height-input {
+    width: 80px;
+    padding: 8px 12px;
+    border: 1px solid rgba(4, 133, 185, 0.3);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+.height-input:focus {
+    outline: none;
+    border-color: var(--btn-primary-hover);
+    box-shadow: 0 0 0 3px rgba(4, 133, 185, 0.1);
+}
+
+.height-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.preset-btn {
+    flex: 1;
+    padding: 8px 16px;
+    border: 1px solid rgba(4, 133, 185, 0.3);
+    background-color: white;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.preset-btn:hover {
+    background-color: rgba(4, 133, 185, 0.08);
+    border-color: var(--btn-primary-hover);
+}
+
+.preset-btn:active {
+    transform: scale(0.95);
 }
 
 .detail-row {
@@ -520,14 +664,12 @@
 }
 
 /* Modal Actions */
-.modal-actions {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
 .modal-action-btn {
-    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
     padding: 12px 20px;
     border: none;
     border-radius: 10px;
@@ -535,7 +677,20 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-width: 140px;
+}
+
+.modal-action-btn .material-icons-round {
+    font-size: 20px;
+}
+
+.modal-action-btn.primary {
+    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--accent-dark) 100%);
+    color: white;
+}
+
+.modal-action-btn.primary:hover {
+    box-shadow: 0 4px 12px rgba(4, 133, 185, 0.4);
+    transform: translateY(-2px);
 }
 
 .modal-action-btn.secondary {
@@ -628,12 +783,13 @@
         font-size: 32px;
     }
 
-    .modal-actions {
-        flex-direction: column;
+    .modal-columns {
+        grid-template-columns: 1fr;
     }
 
-    .modal-action-btn {
-        width: 100%;
+    .desk-modal-content {
+        max-height: 90vh;
+        overflow-y: auto;
     }
 }
 

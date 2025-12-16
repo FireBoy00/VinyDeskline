@@ -22,9 +22,12 @@ document.addEventListener("DOMContentLoaded", function () {
     let loadedDesksCount = 0;
     let lastRefreshTime = Date.now();
     let refreshTimerInterval = null;
+    let availableUsers = [];
+    let currentDeskId = null;
 
     // API endpoints - adjust these based on your actual routes
     const DESK_API_ENDPOINT = "/admin/desks";
+    const USER_API_ENDPOINT = "/admin/users";
 
     // Status mapping from API to display
     const statusMap = {
@@ -40,6 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Initialize - Load desks from API
     loadDesks();
+    loadAvailableUsers();
 
     // Refresh button handler
     refreshBtn.addEventListener("click", function () {
@@ -418,6 +422,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        currentDeskId = deskId;
+
         // Populate modal with desk data from API
         document.getElementById("modal-desk-id").textContent = deskId;
         document.getElementById("modal-desk-name").textContent =
@@ -428,8 +434,6 @@ document.addEventListener("DOMContentLoaded", function () {
             "N/A";
         document.getElementById("modal-desk-position").textContent =
             deskData.state?.position_mm || "N/A";
-        document.getElementById("modal-desk-speed").textContent =
-            deskData.state?.speed_mms || "0";
         document.getElementById("modal-desk-manufacturer").textContent =
             deskData.config?.manufacturer || "N/A";
         document.getElementById("modal-desk-activations").textContent =
@@ -437,7 +441,189 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("modal-desk-sitstand").textContent =
             deskData.usage?.sitStandCounter || "0";
 
+        // Load desk's database record for user assignment
+        try {
+            const dbResponse = await fetch(`${DESK_API_ENDPOINT}/${deskId}`);
+            if (dbResponse.ok) {
+                const dbData = await dbResponse.json();
+                populateUserAssignment(dbData.assigned_user);
+            }
+        } catch (error) {
+            console.error("Error loading desk database record:", error);
+        }
+
+        // Set height controls
+        const currentHeight = deskData.state?.position_mm || 700;
+        document.getElementById("modal-height-slider").value = currentHeight;
+        document.getElementById("modal-height-input").value = currentHeight;
+
         modal.classList.add("active");
+    }
+
+    async function loadAvailableUsers() {
+        try {
+            const response = await fetch(USER_API_ENDPOINT);
+            if (!response.ok) throw new Error("Failed to fetch users");
+
+            const data = await response.json();
+            availableUsers = data.users || [];
+        } catch (error) {
+            console.error("Error loading users:", error);
+            showNotification("Failed to load users");
+        }
+    }
+
+    function populateUserAssignment(assignedUserId) {
+        const select = document.getElementById("modal-assigned-user");
+        select.innerHTML = '<option value="">No User Assigned</option>';
+
+        availableUsers.forEach(user => {
+            const option = document.createElement("option");
+            option.value = user.id;
+            option.textContent = `${user.first_name} ${user.last_name}`;
+            
+            // Disable if user already has a desk (unless it's this desk)
+            if (user.desk_id && user.desk_id !== currentDeskId) {
+                option.disabled = true;
+                option.textContent += " (Already assigned)";
+            }
+            
+            if (user.id === assignedUserId) {
+                option.selected = true;
+            }
+            
+            select.appendChild(option);
+        });
+    }
+
+    // Height slider and input synchronization
+    const heightSlider = document.getElementById("modal-height-slider");
+    const heightInput = document.getElementById("modal-height-input");
+
+    if (heightSlider && heightInput) {
+        heightSlider.addEventListener("input", function() {
+            heightInput.value = this.value;
+        });
+
+        heightInput.addEventListener("input", function() {
+            heightSlider.value = this.value;
+        });
+    }
+
+    // Preset height buttons
+    const presetBtns = document.querySelectorAll(".preset-btn");
+    presetBtns.forEach(btn => {
+        btn.addEventListener("click", function() {
+            const height = this.getAttribute("data-height");
+            heightSlider.value = height;
+            heightInput.value = height;
+        });
+    });
+
+    // Apply height button
+    const applyHeightBtn = document.getElementById("apply-height-btn");
+    if (applyHeightBtn) {
+        applyHeightBtn.addEventListener("click", async function() {
+            const deskId = currentDeskId;
+            const newHeight = heightInput.value;
+
+            if (!deskId) {
+                showNotification("No desk selected");
+                return;
+            }
+
+            if (newHeight < 620 || newHeight > 1270) {
+                showNotification("Height must be between 620mm and 1270mm");
+                return;
+            }
+
+            try {
+                applyHeightBtn.disabled = true;
+                applyHeightBtn.innerHTML = '<span class="material-icons-round">hourglass_empty</span><span>Applying...</span>';
+
+                const response = await fetch(`${DESK_API_ENDPOINT}/${deskId}/height`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                    },
+                    body: JSON.stringify({ position_mm: newHeight })
+                });
+
+                if (!response.ok) throw new Error("Failed to set height");
+
+                const result = await response.json();
+                showNotification(`Height set to ${newHeight}mm`);
+
+                // Update cached data
+                if (deskDetailsCache[deskId]) {
+                    deskDetailsCache[deskId].state.position_mm = newHeight;
+                    document.getElementById("modal-desk-position").textContent = newHeight;
+                }
+            } catch (error) {
+                console.error("Error setting height:", error);
+                showNotification("Failed to set height");
+            } finally {
+                applyHeightBtn.disabled = false;
+                applyHeightBtn.innerHTML = '<span class="material-icons-round">height</span><span>Apply Height</span>';
+            }
+        });
+    }
+
+    // User assignment change handler
+    const userSelect = document.getElementById("modal-assigned-user");
+    if (userSelect) {
+        userSelect.addEventListener("change", async function() {
+            const userId = this.value;
+            const deskId = currentDeskId;
+
+            if (!deskId) {
+                showNotification("No desk selected");
+                return;
+            }
+
+            try {
+                userSelect.disabled = true;
+                
+                let response;
+                if (userId) {
+                    // Assign user to desk
+                    response = await fetch(`${DESK_API_ENDPOINT}/${deskId}/assign`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                        },
+                        body: JSON.stringify({ user_id: userId })
+                    });
+                } else {
+                    // Unassign user from desk
+                    response = await fetch(`${DESK_API_ENDPOINT}/${deskId}/unassign`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                        }
+                    });
+                }
+
+                if (!response.ok) throw new Error("Failed to update assignment");
+
+                const result = await response.json();
+                showNotification(result.message || "Assignment updated");
+
+                // Reload users to update availability
+                await loadAvailableUsers();
+            } catch (error) {
+                console.error("Error updating assignment:", error);
+                showNotification("Failed to update assignment");
+                
+                // Revert selection on error
+                populateUserAssignment(null);
+            } finally {
+                userSelect.disabled = false;
+            }
+        });
     }
 
     // Close modal
@@ -455,21 +641,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
-    // Modal action buttons
-    const modalActionBtns = document.querySelectorAll(".modal-action-btn");
-    modalActionBtns.forEach((btn) => {
-        btn.addEventListener("click", function () {
-            const action = this.getAttribute("data-action");
-            const deskId = document.getElementById("modal-desk-id").textContent;
-
-            // TODO: Implement actual actions via API
-            showNotification(
-                `${action.replace("-", " ")} action triggered for ${deskId}`
-            );
-            console.log(`TODO: Implement ${action} for desk:`, deskId);
-        });
-    });
 
     function showError(message) {
         deskRowsContainer.innerHTML = `

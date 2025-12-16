@@ -97,44 +97,71 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="desk-detail-info">
-                            <div class="detail-row">
-                                <span class="detail-label">Desk ID:</span>
-                                <span class="detail-value" id="modal-desk-id">-</span>
+                        <div class="modal-columns">
+                            <div class="desk-detail-info">
+                                <h3 class="modal-section-title">Desk Information</h3>
+                                <div class="detail-row">
+                                    <span class="detail-label">Desk ID:</span>
+                                    <span class="detail-value" id="modal-desk-id">-</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Name:</span>
+                                    <span class="detail-value" id="modal-desk-name">-</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Status:</span>
+                                    <span class="detail-value" id="modal-desk-status">-</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Position (mm):</span>
+                                    <span class="detail-value" id="modal-desk-position">-</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Manufacturer:</span>
+                                    <span class="detail-value" id="modal-desk-manufacturer">-</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Activations:</span>
+                                    <span class="detail-value" id="modal-desk-activations">-</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Sit/Stand Counter:</span>
+                                    <span class="detail-value" id="modal-desk-sitstand">-</span>
+                                </div>
                             </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Name:</span>
-                                <span class="detail-value" id="modal-desk-name">-</span>
+                            
+                            <div class="desk-assignment-controls">
+                                <h3 class="modal-section-title">User Assignment & Controls</h3>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Assigned User:</label>
+                                    <select class="form-input" id="modal-assigned-user">
+                                        <option value="">No User Assigned</option>
+                                        <!-- Will be populated via JavaScript -->
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Height Adjustment (mm):</label>
+                                    <div class="height-control">
+                                        <input type="range" class="height-slider" id="modal-height-slider" 
+                                               min="620" max="1270" step="1" value="700">
+                                        <input type="number" class="height-input" id="modal-height-input" 
+                                               min="620" max="1270" step="1" value="700">
+                                    </div>
+                                    <div class="height-buttons">
+                                        <button class="preset-btn" data-height="700">Sitting</button>
+                                        <button class="preset-btn" data-height="1100">Standing</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <button class="modal-action-btn primary" id="apply-height-btn">
+                                        <span class="material-icons-round">height</span>
+                                        <span>Apply Height</span>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Status:</span>
-                                <span class="detail-value" id="modal-desk-status">-</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Position (mm):</span>
-                                <span class="detail-value" id="modal-desk-position">-</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Speed (mm/s):</span>
-                                <span class="detail-value" id="modal-desk-speed">-</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Manufacturer:</span>
-                                <span class="detail-value" id="modal-desk-manufacturer">-</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Activations:</span>
-                                <span class="detail-value" id="modal-desk-activations">-</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Sit/Stand Counter:</span>
-                                <span class="detail-value" id="modal-desk-sitstand">-</span>
-                            </div>
-                        </div>
-                        <div class="modal-actions">
-                            <button class="modal-action-btn secondary" data-action="edit">Edit</button>
-                            <button class="modal-action-btn danger" data-action="mark-faulty">Mark as Faulty</button>
-                            <button class="modal-action-btn success" data-action="mark-available">Mark as Available</button>
                         </div>
                     </div>
                 </div>
