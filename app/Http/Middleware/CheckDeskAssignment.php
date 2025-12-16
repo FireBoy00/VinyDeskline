@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class CheckDeskAssignment
@@ -16,11 +17,11 @@ class CheckDeskAssignment
     public function handle(Request $request, Closure $next): Response
     {
         // Check if user is authenticated
-        if (!auth()->check()) {
+        if (!Auth::check()) {
             return $next($request);
         }
 
-        $user = auth()->user();
+        $user = Auth::user();
 
         // If user doesn't have a desk assigned
         if (is_null($user->desk_id)) {
