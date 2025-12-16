@@ -15,7 +15,7 @@ Route::middleware('guest')->group(function () {
 });
 
 // Authenticated routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'check.desk'])->group(function () {
     // Personalization routes
     Route::get('/personalize', [AuthController::class, 'showPersonalize'])->name('personalize');
     Route::post('/personalize', [AuthController::class, 'savePersonalization'])->name('personalize.submit');
