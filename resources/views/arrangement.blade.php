@@ -5,10 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @vite(['resources/css/general-admin.css'])
     @vite(['resources/css/desk-management.css', 'resources/js/desk-management.js'])
+    @vite(['resources/css/user-management.css'])
 
     <title>VinyDeskline - Desk Management</title>
 </head>
@@ -79,7 +81,7 @@
                 <p>Loading desks...</p>
             </div>
             <div id="desksList">
-                <!-- Desks will be loaded dynamically via JavaScript -->
+                <!-- Desks will be loaded via AJAX -->
             </div>
         </div>
 
@@ -137,19 +139,23 @@
 
                             <div class="form-group">
                                 <label class="form-label">Assigned User:</label>
-                                <select class="form-input" id="modal-assigned-user">
-                                    <option value="">No User Assigned</option>
-                                    <!-- Will be populated via JavaScript -->
-                                </select>
+                                <div class="custom-select" id="modal-assigned-user-select">
+                                    <div class="select-selected" id="modal-assigned-user-selected">
+                                        No User Assigned
+                                    </div>
+                                    <div class="select-items hidden" id="modal-assigned-user-items">
+                                        <!-- Will be populated via JavaScript -->
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Height Adjustment (mm):</label>
                                 <div class="height-control">
                                     <input type="range" class="height-slider" id="modal-height-slider"
-                                        min="620" max="1270" step="1" value="700">
+                                        min="680" max="1320" step="1" value="700">
                                     <input type="number" class="height-input" id="modal-height-input"
-                                        min="620" max="1270" step="1" value="700">
+                                        min="680" max="1320" step="1" value="700">
                                 </div>
                                 <div class="height-buttons">
                                     <button class="preset-btn" data-height="700">Sitting</button>
@@ -168,3 +174,16 @@
                 </div>
             </div>
         </div>
+    </main>
+
+    <script>
+        window.deskData = {
+            users: @json($users),
+            totalDesks: 0,
+            csrfToken: '{{ csrf_token() }}',
+            desksApiUrl: '{{ route('admin.arrangement.desks') }}'
+        };
+    </script>
+</body>
+
+</html>

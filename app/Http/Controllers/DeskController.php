@@ -70,7 +70,7 @@ class DeskController extends Controller
     public function setHeight(Request $request, $deskId)
     {
         $request->validate([
-            'position_mm' => 'required|integer|min=500|max=1300'
+            'position_mm' => 'required|integer|min:680|max:1320'
         ]);
 
         $targetHeight = $request->input('position_mm');

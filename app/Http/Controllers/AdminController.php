@@ -34,13 +34,13 @@ class AdminController extends Controller
     }
 
     /**
-     * Display the desk arrangement page.
+     * Display the desk arrangement page (redirects to ArrangementController).
      *
-     * @return \Illuminate\Contracts\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function arrangement()
     {
-        return view('arrangement');
+        return redirect()->route('arrangement');
     }
 
     /**

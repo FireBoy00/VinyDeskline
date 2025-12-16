@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\DeskController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OfficeManagementController;
+use App\Http\Controllers\ArrangementController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ScheduleController;
 
@@ -41,7 +42,8 @@ Route::middleware(['auth', 'check.desk'])->group(function () {
         Route::get('/schedules', [AdminController::class, 'schedules'])->name('schedules');
         Route::post('/schedules', [ScheduleController::class, 'store']);
         Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
-        Route::get('/arrangement', [AdminController::class, 'arrangement'])->name('arrangement');
+        Route::get('/arrangement', [ArrangementController::class, 'index'])->name('arrangement');
+        Route::get('/arrangement/desks', [ArrangementController::class, 'getDesks'])->name('arrangement.desks');
         Route::get('/user-management', [AdminController::class, 'userManagement'])->name('user-management');
         Route::get('/office-management', [OfficeManagementController::class, 'index'])->name('office-management');
         Route::get('/account', [AdminController::class, 'account'])->name('account');
