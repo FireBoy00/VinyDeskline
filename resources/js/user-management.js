@@ -31,37 +31,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Load available desks
     function loadAvailableDesks() {
-        return fetch('/admin/desks')
-            .then(response => response.json())
-            .then(data => {
+        return fetch("/admin/desks")
+            .then((response) => response.json())
+            .then((data) => {
                 if (data.success) {
                     availableDesks = data.desks;
                     return availableDesks;
                 }
                 return [];
             })
-            .catch(error => {
-                console.error('Error loading desks:', error);
+            .catch((error) => {
+                console.error("Error loading desks:", error);
                 return [];
             });
     }
 
     // Populate desk dropdown
     function populateDeskDropdown(currentDeskId = null, currentUserId = null) {
-        const deskSelect = document.getElementById('edit-desk');
+        const deskSelect = document.getElementById("edit-desk");
         deskSelect.innerHTML = '<option value="">No Desk Assigned</option>';
-        
-        availableDesks.forEach(desk => {
-            const isAssignedToOther = desk.user && desk.user.id !== currentUserId;
-            const option = document.createElement('option');
+
+        availableDesks.forEach((desk) => {
+            const isAssignedToOther =
+                desk.user && desk.user.id !== currentUserId;
+            const option = document.createElement("option");
             option.value = desk.desk_id;
-            option.textContent = `${desk.name || desk.desk_id}${isAssignedToOther ? ' (Assigned)' : ''}${desk.room ? ' - ' + desk.room.name : ''}`;
+            option.textContent = `${desk.name || desk.desk_id}${
+                isAssignedToOther ? " (Assigned)" : ""
+            }${desk.room ? " - " + desk.room.name : ""}`;
             option.disabled = isAssignedToOther;
-            
+
             if (desk.desk_id === currentDeskId) {
                 option.selected = true;
             }
-            
+
             deskSelect.appendChild(option);
         });
     }
@@ -566,18 +569,20 @@ document.addEventListener("DOMContentLoaded", () => {
             })
             .then((data) => {
                 const savedUserId = data.user.id || userId;
-                
+
                 // Handle desk assignment if changed
-                return handleDeskAssignment(savedUserId, selectedDesk).then(() => {
-                    alert(
-                        isEditMode
-                            ? "User updated successfully!"
-                            : "User created successfully!"
-                    );
-                    closeEditModal();
-                    // Reload the page to reflect changes
-                    window.location.reload();
-                });
+                return handleDeskAssignment(savedUserId, selectedDesk).then(
+                    () => {
+                        alert(
+                            isEditMode
+                                ? "User updated successfully!"
+                                : "User created successfully!"
+                        );
+                        closeEditModal();
+                        // Reload the page to reflect changes
+                        window.location.reload();
+                    }
+                );
             })
             .catch((error) => {
                 console.error("Error saving user:", error);
@@ -596,28 +601,32 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!deskId) {
             // Unassign desk
             return fetch(`/api/users/${userId}/unassign-desk`, {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector(
+                        'meta[name="csrf-token"]'
+                    ).content,
                 },
-            }).catch(error => {
-                console.log('No desk to unassign or error:', error);
+            }).catch((error) => {
+                console.log("No desk to unassign or error:", error);
                 return Promise.resolve(); // Continue even if unassign fails
             });
         } else {
             // Assign desk
             return fetch(`/api/users/${userId}/assign-desk`, {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector(
+                        'meta[name="csrf-token"]'
+                    ).content,
                 },
                 body: JSON.stringify({ desk_id: deskId }),
-            }).then(response => {
+            }).then((response) => {
                 if (!response.ok) {
-                    return response.json().then(err => {
-                        throw new Error(err.message || 'Failed to assign desk');
+                    return response.json().then((err) => {
+                        throw new Error(err.message || "Failed to assign desk");
                     });
                 }
                 return response.json();

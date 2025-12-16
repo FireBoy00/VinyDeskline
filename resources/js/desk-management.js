@@ -477,21 +477,21 @@ document.addEventListener("DOMContentLoaded", function () {
         const select = document.getElementById("modal-assigned-user");
         select.innerHTML = '<option value="">No User Assigned</option>';
 
-        availableUsers.forEach(user => {
+        availableUsers.forEach((user) => {
             const option = document.createElement("option");
             option.value = user.id;
             option.textContent = `${user.first_name} ${user.last_name}`;
-            
+
             // Disable if user already has a desk (unless it's this desk)
             if (user.desk_id && user.desk_id !== currentDeskId) {
                 option.disabled = true;
                 option.textContent += " (Already assigned)";
             }
-            
+
             if (user.id === assignedUserId) {
                 option.selected = true;
             }
-            
+
             select.appendChild(option);
         });
     }
@@ -501,19 +501,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const heightInput = document.getElementById("modal-height-input");
 
     if (heightSlider && heightInput) {
-        heightSlider.addEventListener("input", function() {
+        heightSlider.addEventListener("input", function () {
             heightInput.value = this.value;
         });
 
-        heightInput.addEventListener("input", function() {
+        heightInput.addEventListener("input", function () {
             heightSlider.value = this.value;
         });
     }
 
     // Preset height buttons
     const presetBtns = document.querySelectorAll(".preset-btn");
-    presetBtns.forEach(btn => {
-        btn.addEventListener("click", function() {
+    presetBtns.forEach((btn) => {
+        btn.addEventListener("click", function () {
             const height = this.getAttribute("data-height");
             heightSlider.value = height;
             heightInput.value = height;
@@ -523,7 +523,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Apply height button
     const applyHeightBtn = document.getElementById("apply-height-btn");
     if (applyHeightBtn) {
-        applyHeightBtn.addEventListener("click", async function() {
+        applyHeightBtn.addEventListener("click", async function () {
             const deskId = currentDeskId;
             const newHeight = heightInput.value;
 
@@ -539,16 +539,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
             try {
                 applyHeightBtn.disabled = true;
-                applyHeightBtn.innerHTML = '<span class="material-icons-round">hourglass_empty</span><span>Applying...</span>';
+                applyHeightBtn.innerHTML =
+                    '<span class="material-icons-round">hourglass_empty</span><span>Applying...</span>';
 
-                const response = await fetch(`${DESK_API_ENDPOINT}/${deskId}/height`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-                    },
-                    body: JSON.stringify({ position_mm: newHeight })
-                });
+                const response = await fetch(
+                    `${DESK_API_ENDPOINT}/${deskId}/height`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector(
+                                'meta[name="csrf-token"]'
+                            ).content,
+                        },
+                        body: JSON.stringify({ position_mm: newHeight }),
+                    }
+                );
 
                 if (!response.ok) throw new Error("Failed to set height");
 
@@ -558,14 +564,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Update cached data
                 if (deskDetailsCache[deskId]) {
                     deskDetailsCache[deskId].state.position_mm = newHeight;
-                    document.getElementById("modal-desk-position").textContent = newHeight;
+                    document.getElementById("modal-desk-position").textContent =
+                        newHeight;
                 }
             } catch (error) {
                 console.error("Error setting height:", error);
                 showNotification("Failed to set height");
             } finally {
                 applyHeightBtn.disabled = false;
-                applyHeightBtn.innerHTML = '<span class="material-icons-round">height</span><span>Apply Height</span>';
+                applyHeightBtn.innerHTML =
+                    '<span class="material-icons-round">height</span><span>Apply Height</span>';
             }
         });
     }
@@ -573,7 +581,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // User assignment change handler
     const userSelect = document.getElementById("modal-assigned-user");
     if (userSelect) {
-        userSelect.addEventListener("change", async function() {
+        userSelect.addEventListener("change", async function () {
             const userId = this.value;
             const deskId = currentDeskId;
 
@@ -584,30 +592,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
             try {
                 userSelect.disabled = true;
-                
+
                 let response;
                 if (userId) {
                     // Assign user to desk
-                    response = await fetch(`${DESK_API_ENDPOINT}/${deskId}/assign`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
-                        },
-                        body: JSON.stringify({ user_id: userId })
-                    });
+                    response = await fetch(
+                        `${DESK_API_ENDPOINT}/${deskId}/assign`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": document.querySelector(
+                                    'meta[name="csrf-token"]'
+                                ).content,
+                            },
+                            body: JSON.stringify({ user_id: userId }),
+                        }
+                    );
                 } else {
                     // Unassign user from desk
-                    response = await fetch(`${DESK_API_ENDPOINT}/${deskId}/unassign`, {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                            "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content
+                    response = await fetch(
+                        `${DESK_API_ENDPOINT}/${deskId}/unassign`,
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": document.querySelector(
+                                    'meta[name="csrf-token"]'
+                                ).content,
+                            },
                         }
-                    });
+                    );
                 }
 
-                if (!response.ok) throw new Error("Failed to update assignment");
+                if (!response.ok)
+                    throw new Error("Failed to update assignment");
 
                 const result = await response.json();
                 showNotification(result.message || "Assignment updated");
@@ -617,7 +636,7 @@ document.addEventListener("DOMContentLoaded", function () {
             } catch (error) {
                 console.error("Error updating assignment:", error);
                 showNotification("Failed to update assignment");
-                
+
                 // Revert selection on error
                 populateUserAssignment(null);
             } finally {
