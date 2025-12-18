@@ -23,6 +23,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let availableUsers = window.deskData?.users || [];
     let currentDeskId = null;
     let totalDesks = 0;
+    let roomsByFloor = {}; // Store rooms data
+    let allDesksData = []; // Store all desk data for room modal
 
     // API endpoints
     const DESK_API_ENDPOINT = "/admin/desks";
@@ -61,6 +63,13 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             totalDesks = data.total_desks;
+            roomsByFloor = data.rooms_by_floor || {};
+
+            // Store all desks data for room modal
+            allDesksData = [];
+            Object.values(data.desks_by_floor).forEach((desks) => {
+                allDesksData = allDesksData.concat(desks);
+            });
 
             // Render desks by floor progressively (loading will be hidden inside)
             await renderDesksByFloorProgressively(data.desks_by_floor);
@@ -105,17 +114,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Convert to array and sort properly
-        const floors = Object.entries(desksByFloor).sort(
-            ([floorA], [floorB]) => {
-                // Unassigned goes last
-                if (floorA === "unassigned") return 1;
-                if (floorB === "unassigned") return -1;
-
-                // Numeric sort
-                return parseInt(floorA) - parseInt(floorB);
-            }
-        );
+        // Convert to array - sorting is already done on backend (highest to lowest, then unassigned)
+        const floors = Object.entries(desksByFloor);
 
         // Render floors one by one with slight delay for progressive loading effect
         for (let i = 0; i < floors.length; i++) {
@@ -124,9 +124,20 @@ document.addEventListener("DOMContentLoaded", function () {
             const floorContainer = createFloorContainer(floorKey);
             const deskItems = floorContainer.querySelector(".desk-items");
 
+            // First, add room cards if this floor has rooms
+            const roomsOnFloor = roomsByFloor[floorKey] || [];
+            roomsOnFloor.forEach((room) => {
+                const roomCard = createRoomCard(room, floorKey);
+                deskItems.appendChild(roomCard);
+            });
+
+            // Then add desk cards - but only desks that are NOT in a room
             desks.forEach((desk) => {
-                const deskCard = createDeskCard(desk);
-                deskItems.appendChild(deskCard);
+                // Only show desks that are directly on the floor (not in a room)
+                if (!desk.room_id) {
+                    const deskCard = createDeskCard(desk);
+                    deskItems.appendChild(deskCard);
+                }
             });
 
             deskRowsContainer.appendChild(floorContainer);
@@ -148,6 +159,11 @@ document.addEventListener("DOMContentLoaded", function () {
         row.className = "desk-row";
         row.setAttribute("data-floor", floorKey);
 
+        // Add special styling for unassigned section
+        if (floorKey === "unassigned") {
+            row.classList.add("unassigned-section");
+        }
+
         const deskItems = document.createElement("div");
         deskItems.className = "desk-items";
 
@@ -157,13 +173,17 @@ document.addEventListener("DOMContentLoaded", function () {
         const rowHeader = document.createElement("div");
         rowHeader.className = "row-header";
 
-        const floorLabel = floorKey === "unassigned" ? "" : "Floor";
-        const floorNumber = floorKey === "unassigned" ? "Unassigned" : floorKey;
-
-        rowHeader.innerHTML = `
-            <span class="row-label">${floorLabel}</span>
-            <span class="row-number">${floorNumber}</span>
-        `;
+        if (floorKey === "unassigned") {
+            rowHeader.classList.add("unassigned");
+            rowHeader.innerHTML = `
+                <span class="row-number unassigned">N/A</span>
+            `;
+        } else {
+            rowHeader.innerHTML = `
+                <span class="row-label">Floor</span>
+                <span class="row-number">${floorKey}</span>
+            `;
+        }
 
         row.appendChild(deskItems);
         row.appendChild(separator);
@@ -192,6 +212,38 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
             <div class="desk-status ${statusClass}"></div>
         `;
+
+        return card;
+    }
+
+    function createRoomCard(room, floorKey) {
+        const card = document.createElement("div");
+        card.className = "room-card";
+        card.setAttribute("data-room-id", room.id);
+        card.setAttribute("data-room-name", room.name);
+        card.setAttribute("data-floor-key", floorKey);
+
+        card.innerHTML = `
+            <div class="room-card-content">
+                <div class="room-name">${room.name}</div>
+                <div class="room-desk-count">
+                    <span class="material-icons-round">desk</span>
+                    <span>${room.desks_count} desk${
+            room.desks_count !== 1 ? "s" : ""
+        }</span>
+                </div>
+            </div>
+            <span class="material-icons-round room-icon">meeting_room</span>
+        `;
+
+        // Add click event to open room modal
+        card.addEventListener("click", function (e) {
+            if (selectMode) {
+                // In select mode, can't select rooms
+                return;
+            }
+            openRoomModal(room);
+        });
 
         return card;
     }
@@ -812,4 +864,71 @@ document.addEventListener("DOMContentLoaded", function () {
             clearInterval(refreshTimerInterval);
         }
     });
+
+    // Room Modal functionality
+    const roomModal = document.getElementById("room-modal");
+    const roomModalClose = document.getElementById("room-modal-close");
+    const roomModalTitle = document.getElementById("room-modal-title");
+    const roomModalSubtitle = document.getElementById("room-modal-subtitle");
+    const roomDesksGrid = document.getElementById("room-desks-grid");
+    const roomModalEmpty = document.getElementById("room-modal-empty");
+
+    function openRoomModal(room) {
+        // Set room title
+        roomModalTitle.textContent = room.name;
+        roomModalSubtitle.textContent = `${room.desks_count} desk${
+            room.desks_count !== 1 ? "s" : ""
+        }`;
+
+        // Find all desks in this room
+        const desksInRoom = allDesksData.filter(
+            (desk) => desk.room_id === room.id
+        );
+
+        // Clear previous content
+        roomDesksGrid.innerHTML = "";
+
+        if (desksInRoom.length === 0) {
+            roomDesksGrid.classList.add("hidden");
+            roomModalEmpty.classList.remove("hidden");
+        } else {
+            roomDesksGrid.classList.remove("hidden");
+            roomModalEmpty.classList.add("hidden");
+
+            // Create desk cards for this room
+            desksInRoom.forEach((desk) => {
+                const deskCard = createDeskCard(desk);
+                // Re-attach click event for desk modal
+                deskCard.addEventListener("click", function () {
+                    // Close room modal first
+                    roomModal.classList.remove("active");
+                    // Open desk modal
+                    selectedDesks = [desk.desk_id];
+                    currentViewIndex = 0;
+                    openDeskModal(desk.desk_id);
+                    updateModalNavigation();
+                });
+                roomDesksGrid.appendChild(deskCard);
+            });
+        }
+
+        // Show modal
+        roomModal.classList.add("active");
+    }
+
+    // Close room modal
+    if (roomModalClose) {
+        roomModalClose.addEventListener("click", function () {
+            roomModal.classList.remove("active");
+        });
+    }
+
+    // Close room modal when clicking outside
+    if (roomModal) {
+        roomModal.addEventListener("click", function (e) {
+            if (e.target === roomModal) {
+                roomModal.classList.remove("active");
+            }
+        });
+    }
 });

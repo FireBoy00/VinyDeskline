@@ -39,6 +39,9 @@ class ArrangementController extends Controller
                 ->where('is_removed_from_api', false)
                 ->get();
 
+            // Get all floors with their rooms
+            $floors = Floor::with('rooms')->orderByDesc('floor_number')->get();
+
             // Enrich each desk with real-time API data
             $enrichedDesks = $desks->map(function ($desk) {
                 $apiData = $this->deskApiService->getDeskData($desk->desk_id);
@@ -56,6 +59,7 @@ class ArrangementController extends Controller
                     'floor_id' => $desk->floor_id,
                     'floor_name' => $desk->floor ? $desk->floor->name : null,
                     'floor_number' => $desk->floor ? $desk->floor->floor_number : null,
+                    'room_id' => $desk->room_id,
                 ];
             });
 
@@ -67,16 +71,32 @@ class ArrangementController extends Controller
                 return 'unassigned';
             });
 
-            // Sort floors numerically, with unassigned at the end
-            $sortedFloors = $desksByFloor->sortKeys(SORT_NATURAL)->sortKeysUsing(function ($a, $b) {
+            // Sort floors from highest to lowest number, with unassigned at the end
+            $sortedFloors = $desksByFloor->sortKeysUsing(function ($a, $b) {
                 if ($a === 'unassigned') return 1;
                 if ($b === 'unassigned') return -1;
-                return (int)$a <=> (int)$b;
+                return (int)$b <=> (int)$a; // Descending order
             });
+
+            // Prepare rooms by floor
+            $roomsByFloor = [];
+            foreach ($floors as $floor) {
+                $roomsByFloor[$floor->floor_number] = $floor->rooms->map(function ($room) use ($enrichedDesks) {
+                    $desksInRoom = $enrichedDesks->where('room_id', $room->id)->values();
+                    return [
+                        'id' => $room->id,
+                        'name' => $room->name,
+                        'description' => $room->description,
+                        'floor_id' => $room->floor_id,
+                        'desks_count' => $desksInRoom->count(),
+                    ];
+                })->values();
+            }
 
             return response()->json([
                 'success' => true,
                 'desks_by_floor' => $sortedFloors,
+                'rooms_by_floor' => $roomsByFloor,
                 'total_desks' => $enrichedDesks->count(),
             ]);
         } catch (\Exception $e) {

@@ -174,6 +174,33 @@
                 </div>
             </div>
         </div>
+
+        <!-- Room Details Modal -->
+        <div class="room-modal" id="room-modal">
+            <div class="room-modal-content">
+                <div class="room-modal-header">
+                    <div class="room-modal-title-section">
+                        <span class="material-icons-round">meeting_room</span>
+                        <div>
+                            <h2 class="room-modal-title" id="room-modal-title">Room Name</h2>
+                            <p class="room-modal-subtitle" id="room-modal-subtitle">0 desks</p>
+                        </div>
+                    </div>
+                    <button class="modal-close" id="room-modal-close">
+                        <span class="material-icons-round">close</span>
+                    </button>
+                </div>
+                <div class="room-modal-body">
+                    <div class="room-desks-grid" id="room-desks-grid">
+                        <!-- Room desks will be rendered here -->
+                    </div>
+                    <div class="room-modal-empty hidden" id="room-modal-empty">
+                        <span class="material-icons-round">meeting_room</span>
+                        <p>No desks in this room</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <script>
