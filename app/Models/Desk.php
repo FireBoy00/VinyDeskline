@@ -20,6 +20,7 @@ class Desk extends Model
 
     protected $fillable = [
         'desk_id',
+        'name',
         'room_id',
         'floor_id',
         'is_removed_from_api',

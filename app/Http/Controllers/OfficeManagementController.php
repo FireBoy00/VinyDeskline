@@ -250,6 +250,9 @@ class OfficeManagementController extends Controller
             // Get floor from room if desk is in a room
             $floor = $desk->room ? $desk->room->floor : null;
             
+            // Use stored name, fallback to API if not stored
+            $deskName = $desk->name ?? ($apiData['config']['name'] ?? 'Unknown Desk');
+            
             return [
                 'desk_id' => $desk->desk_id,
                 'room_id' => $desk->room_id,
@@ -259,7 +262,7 @@ class OfficeManagementController extends Controller
                 'floor' => $floor,
                 'user' => $desk->user,
                 // Real-time data from API
-                'name' => $apiData['config']['name'] ?? 'Unknown Desk',
+                'name' => $deskName,
                 'manufacturer' => $apiData['config']['manufacturer'] ?? null,
                 'position_mm' => $apiData['state']['position_mm'] ?? null,
                 'speed_mms' => $apiData['state']['speed_mms'] ?? null,

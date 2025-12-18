@@ -96,6 +96,31 @@
                             </div>
                         </div>
                         <div class="filter-group">
+                            <label class="filter-label">Desk Assignment:</label>
+                            <div class="custom-select" data-name="filter-desk-assignment">
+                                <div class="select-selected">
+                                    @if (request('desk_assignment') === 'assigned')
+                                        Has Desk
+                                    @elseif(request('desk_assignment') === 'unassigned')
+                                        No Desk
+                                    @else
+                                        All
+                                    @endif
+                                </div>
+                                <div class="select-items hidden">
+                                    <div data-value="all"
+                                        class="{{ request('desk_assignment', 'all') === 'all' ? 'selected' : '' }}">All
+                                    </div>
+                                    <div data-value="assigned"
+                                        class="{{ request('desk_assignment') === 'assigned' ? 'selected' : '' }}">
+                                        Has Desk</div>
+                                    <div data-value="unassigned"
+                                        class="{{ request('desk_assignment') === 'unassigned' ? 'selected' : '' }}">No
+                                        Desk</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filter-group">
                             <label class="filter-label">Age:</label>
                             <div class="custom-select" data-name="filter-age-comparison">
                                 <div class="select-selected">
@@ -299,7 +324,8 @@
 
                     <div class="form-group">
                         <label class="form-label">Email</label>
-                        <input type="email" class="form-input" id="edit-email" required>
+                        <input type="email" class="form-input" id="edit-email" required
+                            placeholder="Auto-generated if left blank">
                     </div>
 
                     <div class="form-group" id="password-group">

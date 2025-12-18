@@ -65,21 +65,27 @@ class SyncDesksFromApi extends Command
         $errorCount = 0;
 
         foreach ($apiDeskIds as $deskId) {
-            // We don't need to fetch full desk data anymore - just ensure the desk exists
-            // Real-time data (position, speed, status, etc.) should be fetched from API when needed
+            // Fetch desk data from API to get the name
+            $apiData = $this->deskApiService->getDeskData($deskId);
+            $deskName = $apiData['config']['name'] ?? null;
             
             $desk = Desk::where('desk_id', $deskId)->first();
 
             if ($desk) {
                 // If desk was previously marked as removed, restore it
-                if ($desk->is_removed_from_api) {
-                    $desk->update(['is_removed_from_api' => false]);
+                // Also update the name in case it changed
+                if ($desk->is_removed_from_api || $desk->name !== $deskName) {
+                    $desk->update([
+                        'is_removed_from_api' => false,
+                        'name' => $deskName,
+                    ]);
                     $updatedCount++;
                 }
             } else {
-                // Create new desk with just the ID - room/floor assignments are managed separately
+                // Create new desk with ID and name - room/floor assignments are managed separately
                 Desk::create([
                     'desk_id' => $deskId,
+                    'name' => $deskName,
                     'is_removed_from_api' => false,
                 ]);
                 $addedCount++;

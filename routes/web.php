@@ -70,7 +70,7 @@ Route::middleware(['auth', 'check.desk'])->group(function () {
     Route::middleware('admin')->prefix('api')->name('api.')->group(function () {
         Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
-        Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+        Route::match(['put', 'post'], '/users/{id}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
         Route::post('/users/{userId}/assign-desk', [UserController::class, 'assignDesk'])->name('users.assign-desk');
         Route::post('/users/{userId}/unassign-desk', [UserController::class, 'unassignDesk'])->name('users.unassign-desk');

@@ -36,6 +36,9 @@ class DeskController extends Controller
         $desksWithApiData = $desks->map(function ($desk) {
             $apiData = $this->deskApiService->getDeskData($desk->desk_id);
             
+            // Use stored name, fallback to API if not stored
+            $deskName = $desk->name ?? ($apiData['config']['name'] ?? null);
+            
             return [
                 'desk_id' => $desk->desk_id,
                 'room_id' => $desk->room_id,
@@ -44,7 +47,7 @@ class DeskController extends Controller
                 'floor' => $desk->room ? $desk->room->floor : null,
                 'user' => $desk->user,
                 // Real-time data from API
-                'name' => $apiData['config']['name'] ?? null,
+                'name' => $deskName,
                 'manufacturer' => $apiData['config']['manufacturer'] ?? null,
                 'position_mm' => $apiData['state']['position_mm'] ?? null,
                 'speed_mms' => $apiData['state']['speed_mms'] ?? null,

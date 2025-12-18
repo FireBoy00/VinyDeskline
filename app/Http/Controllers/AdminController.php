@@ -89,6 +89,15 @@ class AdminController extends Controller
             }
         }
 
+        // Desk assignment filter
+        if ($request->filled('desk_assignment') && $request->desk_assignment !== 'all') {
+            if ($request->desk_assignment === 'assigned') {
+                $query->whereNotNull('desk_id');
+            } elseif ($request->desk_assignment === 'unassigned') {
+                $query->whereNull('desk_id');
+            }
+        }
+
         // Age filter
         if ($request->filled('age_comparison') && $request->age_comparison !== 'any' && $request->filled('age_value')) {
             $ageValue = (int) $request->age_value;

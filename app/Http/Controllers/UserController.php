@@ -33,6 +33,7 @@ class UserController extends Controller
             'age' => $user->age,
             'is_admin' => $user->is_admin,
             'needs_personalization' => $user->needs_personalization,
+            'desk_id' => $user->desk_id,
         ]);
     }
 
@@ -47,7 +48,7 @@ class UserController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
-            'height' => 'nullable|integer|min:0',
+            'height' => 'nullable|numeric|min:0',
             'age' => 'nullable|integer|min:0',
             'is_admin' => 'boolean',
             'needs_personalization' => 'boolean',
@@ -81,16 +82,17 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Validate the request
+        // Validate the request (ignore _method field used for Laravel method spoofing)
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => 'nullable|string|min:8',
-            'height' => 'nullable|integer|min:0',
+            'height' => 'nullable|numeric|min:0',
             'age' => 'nullable|integer|min:0',
             'is_admin' => 'boolean',
             'needs_personalization' => 'boolean',
+            '_method' => 'sometimes|string', // Allow _method field for method spoofing
         ]);
 
         // Update user data
