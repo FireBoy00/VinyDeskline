@@ -27,6 +27,6 @@ class Room extends Model
      */
     public function desks(): HasMany
     {
-        return $this->hasMany(Desk::class);
+        return $this->hasMany(Desk::class, 'room_id', 'id');
     }
 }

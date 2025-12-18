@@ -6,10 +6,17 @@ use Illuminate\Http\Request;
 use App\Models\Floor;
 use App\Models\Room;
 use App\Models\Desk;
+use App\Services\DeskApiService;
 use Illuminate\Support\Facades\Validator;
 
 class OfficeManagementController extends Controller
 {
+    protected $deskApiService;
+
+    public function __construct(DeskApiService $deskApiService)
+    {
+        $this->deskApiService = $deskApiService;
+    }
     /**
      * Show the office management page
      */
@@ -28,7 +35,15 @@ class OfficeManagementController extends Controller
      */
     public function getFloors()
     {
-        $floors = Floor::withCount(['rooms', 'desks'])->orderBy('floor_number')->get();
+        $floors = Floor::with('rooms')->orderBy('floor_number')->get();
+        
+        // Count ALL desks on this floor (direct + in rooms on this floor)
+        $floors->each(function ($floor) {
+            $floor->desks_count = Desk::where('floor_id', $floor->id)
+                ->where('is_removed_from_api', false)
+                ->count();
+            $floor->rooms_count = $floor->rooms->count();
+        });
         
         return response()->json([
             'success' => true,
@@ -99,11 +114,11 @@ class OfficeManagementController extends Controller
     {
         $floor = Floor::findOrFail($id);
         
-        // Check if floor has rooms or desks
-        if ($floor->rooms()->count() > 0 || $floor->desks()->count() > 0) {
+        // Check if floor has rooms (which may have desks)
+        if ($floor->rooms()->count() > 0) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cannot delete floor with assigned rooms or desks'
+                'message' => 'Cannot delete floor with assigned rooms'
             ], 422);
         }
 
@@ -178,6 +193,12 @@ class OfficeManagementController extends Controller
             ], 422);
         }
 
+        // If floor is changing, update all desks in this room to the new floor
+        if ($request->has('floor_id') && $room->floor_id !== $request->floor_id) {
+            Desk::where('room_id', $room->id)
+                ->update(['floor_id' => $request->floor_id]);
+        }
+
         $room->update($request->only(['name', 'floor_id', 'description']));
         $room->load('floor');
 
@@ -214,20 +235,50 @@ class OfficeManagementController extends Controller
     // ===== Desk Location Assignment =====
 
     /**
-     * Get all desks
+     * Get all desks with real-time API data
      */
     public function getDesks()
     {
-        $desks = Desk::with(['floor', 'room', 'user'])->where('is_removed_from_api', false)->get();
+        $desks = Desk::with(['room.floor', 'user'])
+            ->where('is_removed_from_api', false)
+            ->get();
+        
+        // Enrich with real-time API data
+        $desksWithApiData = $desks->map(function ($desk) {
+            $apiData = $this->deskApiService->getDeskData($desk->desk_id);
+            
+            // Get floor from room if desk is in a room
+            $floor = $desk->room ? $desk->room->floor : null;
+            
+            return [
+                'desk_id' => $desk->desk_id,
+                'room_id' => $desk->room_id,
+                'floor_id' => $desk->floor_id, // Computed attribute from room
+                'is_removed_from_api' => $desk->is_removed_from_api,
+                'room' => $desk->room,
+                'floor' => $floor,
+                'user' => $desk->user,
+                // Real-time data from API
+                'name' => $apiData['config']['name'] ?? 'Unknown Desk',
+                'manufacturer' => $apiData['config']['manufacturer'] ?? null,
+                'position_mm' => $apiData['state']['position_mm'] ?? null,
+                'speed_mms' => $apiData['state']['speed_mms'] ?? null,
+                'status' => $apiData['state']['status'] ?? null,
+                'activations_counter' => $apiData['usage']['activationsCounter'] ?? 0,
+                'sit_stand_counter' => $apiData['usage']['sitStandCounter'] ?? 0,
+            ];
+        });
         
         return response()->json([
             'success' => true,
-            'desks' => $desks
+            'desks' => $desksWithApiData
         ]);
     }
 
     /**
      * Assign desk to floor and/or room
+     * When assigning to room: desk takes room's floor_id
+     * When assigning to floor directly: room_id must be null
      */
     public function assignDeskLocation(Request $request, $deskId)
     {
@@ -245,8 +296,22 @@ class OfficeManagementController extends Controller
             ], 422);
         }
 
-        $desk->update($request->only(['floor_id', 'room_id']));
-        $desk->load(['floor', 'room']);
+        // Logic: If assigning to a room, desk takes the room's floor
+        if ($request->room_id) {
+            $room = Room::findOrFail($request->room_id);
+            $desk->update([
+                'room_id' => $request->room_id,
+                'floor_id' => $room->floor_id, // Desk gets room's floor
+            ]);
+        } else {
+            // Assigning directly to floor or unassigning
+            $desk->update([
+                'room_id' => null,
+                'floor_id' => $request->floor_id,
+            ]);
+        }
+
+        $desk->load(['floor', 'room.floor']);
 
         return response()->json([
             'success' => true,

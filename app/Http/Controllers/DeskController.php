@@ -28,13 +28,35 @@ class DeskController extends Controller
      */
     public function index()
     {
-        $desks = Desk::with(['user', 'room', 'floor'])
+        $desks = Desk::with(['user', 'room.floor'])
             ->where('is_removed_from_api', false)
             ->get();
 
+        // Enrich with real-time API data
+        $desksWithApiData = $desks->map(function ($desk) {
+            $apiData = $this->deskApiService->getDeskData($desk->desk_id);
+            
+            return [
+                'desk_id' => $desk->desk_id,
+                'room_id' => $desk->room_id,
+                'floor_id' => $desk->floor_id, // Computed from room
+                'room' => $desk->room,
+                'floor' => $desk->room ? $desk->room->floor : null,
+                'user' => $desk->user,
+                // Real-time data from API
+                'name' => $apiData['config']['name'] ?? null,
+                'manufacturer' => $apiData['config']['manufacturer'] ?? null,
+                'position_mm' => $apiData['state']['position_mm'] ?? null,
+                'speed_mms' => $apiData['state']['speed_mms'] ?? null,
+                'status' => $apiData['state']['status'] ?? null,
+                'activations_counter' => $apiData['usage']['activationsCounter'] ?? 0,
+                'sit_stand_counter' => $apiData['usage']['sitStandCounter'] ?? 0,
+            ];
+        });
+
         return response()->json([
             'success' => true,
-            'desks' => $desks
+            'desks' => $desksWithApiData
         ]);
     }
 
@@ -43,7 +65,7 @@ class DeskController extends Controller
      */
     public function show($deskId)
     {
-        $desk = Desk::with(['user', 'room.floor', 'floor'])
+        $desk = Desk::with(['user', 'room.floor'])
             ->where('desk_id', $deskId)
             ->first();
 
@@ -85,12 +107,7 @@ class DeskController extends Controller
             ], 500);
         }
 
-        // Update local database
-        $desk = Desk::where('desk_id', $deskId)->first();
-        if ($desk) {
-            $desk->update(['position_mm' => $targetHeight]);
-        }
-
+        // No need to update local database - real-time data comes from API
         return response()->json([
             'success' => true,
             'position_mm' => $targetHeight
@@ -228,11 +245,15 @@ class DeskController extends Controller
             if ($desk->user) {
                 $counts['assigned']++;
 
+                // Get real-time position from API
+                $apiData = $this->deskApiService->getDeskData($desk->desk_id);
+                $position = $apiData['state']['position_mm'] ?? null;
+
                 // Determine state based on position
-                if ($desk->position_mm !== null) {
-                    if ($desk->position_mm <= self::SEATED_THRESHOLD) {
+                if ($position !== null) {
+                    if ($position <= self::SEATED_THRESHOLD) {
                         $counts['seated']++;
-                    } elseif ($desk->position_mm >= self::STANDING_THRESHOLD) {
+                    } elseif ($position >= self::STANDING_THRESHOLD) {
                         $counts['standing']++;
                     } else {
                         $counts['idle']++;

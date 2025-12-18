@@ -13,24 +13,20 @@ class Desk extends Model
 {
     use HasFactory, Notifiable;
 
+    // Use desk_id as primary key instead of auto-increment id
+    protected $primaryKey = 'desk_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
         'desk_id',
         'room_id',
         'floor_id',
         'is_removed_from_api',
-        'name',
-        'manufacturer',
-        'position_mm',
-        'speed_mms',
-        'status',
-        'activations_counter',
-        'sit_stand_counter',
-        'last_synced_at',
     ];
 
     protected $casts = [
         'is_removed_from_api' => 'boolean',
-        'last_synced_at' => 'datetime',
     ];
 
     /**
@@ -63,5 +59,13 @@ class Desk extends Model
     public function metrics(): HasMany
     {
         return $this->hasMany(DeskMetric::class, 'desk_id', 'desk_id');
+    }
+
+    /**
+     * Get the schedules for this desk.
+     */
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class, 'desk_id', 'desk_id');
     }
 }

@@ -65,41 +65,23 @@ class SyncDesksFromApi extends Command
         $errorCount = 0;
 
         foreach ($apiDeskIds as $deskId) {
-            $deskData = $this->deskApiService->getDeskData($deskId);
-
-            if ($deskData === null) {
-                $this->warn("Failed to fetch data for desk: {$deskId}");
-                $errorCount++;
-                continue;
-            }
-
-            // Extract data from API response
-            $config = $deskData['config'] ?? [];
-            $state = $deskData['state'] ?? [];
-            $usage = $deskData['usage'] ?? [];
-
-            // Find or create desk
+            // We don't need to fetch full desk data anymore - just ensure the desk exists
+            // Real-time data (position, speed, status, etc.) should be fetched from API when needed
+            
             $desk = Desk::where('desk_id', $deskId)->first();
 
-            $dataToUpdate = [
-                'is_removed_from_api' => false,
-                'name' => $config['name'] ?? null,
-                'manufacturer' => $config['manufacturer'] ?? null,
-                'position_mm' => $state['position_mm'] ?? null,
-                'speed_mms' => $state['speed_mms'] ?? null,
-                'status' => $state['status'] ?? null,
-                'activations_counter' => $usage['activationsCounter'] ?? 0,
-                'sit_stand_counter' => $usage['sitStandCounter'] ?? 0,
-                'last_synced_at' => now(),
-            ];
-
             if ($desk) {
-                // Update existing desk (keep room_id and floor_id)
-                $desk->update($dataToUpdate);
-                $updatedCount++;
+                // If desk was previously marked as removed, restore it
+                if ($desk->is_removed_from_api) {
+                    $desk->update(['is_removed_from_api' => false]);
+                    $updatedCount++;
+                }
             } else {
-                // Create new desk
-                Desk::create(array_merge(['desk_id' => $deskId], $dataToUpdate));
+                // Create new desk with just the ID - room/floor assignments are managed separately
+                Desk::create([
+                    'desk_id' => $deskId,
+                    'is_removed_from_api' => false,
+                ]);
                 $addedCount++;
             }
         }
