@@ -233,43 +233,44 @@ class DeskController extends Controller
             ->get();
 
         $counts = [
-            'total' => $desks->count(),
+            'total_users' => User::count(),
+            'total_desks' => 0,
             'assigned' => 0,
-            'unassigned' => 0,
-            'seated' => 0,
+            'sitting' => 0,
             'standing' => 0,
-            'idle' => 0,
+            'active' => 0,
         ];
 
         foreach ($desks as $desk) {
+            // Count all desks from API
+            $counts['total_desks']++;
+
+            // Get real-time position and speed from API
+            $apiData = $this->deskApiService->getDeskData($desk->desk_id);
+            $position = $apiData['state']['position_mm'] ?? null;
+            $speed = $apiData['state']['speed_mms'] ?? 0;
+
+            // Count assigned desks
             if ($desk->user) {
                 $counts['assigned']++;
 
-                // Get real-time position from API
-                $apiData = $this->deskApiService->getDeskData($desk->desk_id);
-                $position = $apiData['state']['position_mm'] ?? null;
-
-                // Determine state based on position
+                // Determine sitting/standing based on position
                 if ($position !== null) {
                     if ($position <= self::SEATED_THRESHOLD) {
-                        $counts['seated']++;
+                        $counts['sitting']++;
                     } elseif ($position >= self::STANDING_THRESHOLD) {
                         $counts['standing']++;
-                    } else {
-                        $counts['idle']++;
                     }
-                } else {
-                    $counts['idle']++;
                 }
-            } else {
-                $counts['unassigned']++;
+
+                // Count active desks (in transit - has speed > 0)
+                // Only count active for desks with users assigned
+                if ($speed > 0) {
+                    $counts['active']++;
+                }
             }
         }
 
-        return response()->json([
-            'success' => true,
-            'stats' => $counts,
-            'last_updated' => now()->toIso8601String(),
-        ]);
+        return response()->json($counts);
     }
 }

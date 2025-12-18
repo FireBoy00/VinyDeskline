@@ -4,15 +4,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Cache DOM elements for live updates
     const statTotal = document.getElementById("stat-total");
-
     const statLastUpdated = document.getElementById("stat-last-updated");
     const refreshIcon = document.getElementById("refresh-icon");
 
     // Countdown from 10 to 0
     let countdown = 10;
+    let isFetching = false;
 
     // Update the overview card values with data from the API. Uses a fixed polling interval so values feel "real-time".
     async function fetchAndUpdateStats() {
+        // Prevent multiple simultaneous fetches
+        if (isFetching) return;
+
+        isFetching = true;
+
         // Add spin animation to refresh icon
         refreshIcon.classList.add("spinning");
 
@@ -22,37 +27,55 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const json = await res.json();
 
-            document.getElementById("stat-total").textContent =
-                json.total_users;
-            document.getElementById("stat-seated").textContent = json.seated;
+            // Update stats with API data
+            document.getElementById("stat-total-users").textContent =
+                json.total_users ?? "N/A";
+            document.getElementById("stat-total-desks").textContent =
+                json.total_desks ?? "N/A";
+            document.getElementById("stat-assigned").textContent =
+                json.assigned ?? "N/A";
+            document.getElementById("stat-sitting").textContent =
+                json.sitting ?? "N/A";
             document.getElementById("stat-standing").textContent =
-                json.standing;
-            document.getElementById("stat-active").textContent = json.active;
-            document.getElementById("stat-cleaning").textContent =
-                json.cleaning;
-            document.getElementById("stat-idle").textContent = json.idle;
-
-            // Reset countdown to 10 after successful fetch
-            countdown = 10;
-            statLastUpdated.textContent = `${countdown}s`;
+                json.standing ?? "N/A";
+            document.getElementById("stat-active").textContent =
+                json.active ?? "N/A";
         } catch (err) {
             console.warn("Dashboard stats fetch error:", err);
-        }
+            // Show N/A when API is unavailable
+            document.getElementById("stat-total-users").textContent = "N/A";
+            document.getElementById("stat-total-desks").textContent = "N/A";
+            document.getElementById("stat-assigned").textContent = "N/A";
+            document.getElementById("stat-sitting").textContent = "N/A";
+            document.getElementById("stat-standing").textContent = "N/A";
+            document.getElementById("stat-active").textContent = "N/A";
+        } finally {
+            // Remove spin animation
+            setTimeout(() => {
+                refreshIcon.classList.remove("spinning");
+            }, 600);
 
-        // Remove spin animation after a short delay
-        setTimeout(() => {
-            refreshIcon.classList.remove("spinning");
-        }, 600);
+            // Reset countdown to 10 after fetch completes
+            countdown = 10;
+            statLastUpdated.textContent = `${countdown}s`;
+            isFetching = false;
+        }
     }
 
     // Countdown timer that ticks every second
     function tickCountdown() {
+        // Don't decrement if we're currently fetching
+        if (isFetching) {
+            return;
+        }
+
         countdown--;
 
-        // When countdown reaches 0, fetch immediately and reset
+        // When countdown reaches 0, fetch and stay at 0
         if (countdown === 0) {
+            statLastUpdated.textContent = "0s";
             fetchAndUpdateStats();
-        } else {
+        } else if (countdown > 0) {
             statLastUpdated.textContent = `${countdown}s`;
         }
     }
