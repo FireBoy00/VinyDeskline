@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Desk extends Model
 {
-    use HasFactory, Notifiable;
+    use HasFactory;
 
     // Use desk_id as primary key instead of auto-increment id
     protected $primaryKey = 'desk_id';
