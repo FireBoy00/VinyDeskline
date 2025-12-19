@@ -1,3 +1,5 @@
+import { DeskInsightsService } from "./deskInsightsService.js";
+
 const sensorData = [
     { id: "temp", title: "Temperature", value: "19°C" },
     { id: "humid", title: "Humidity", value: "65%" },
@@ -10,6 +12,7 @@ let sensorTitleElement;
 let sensorValueElement;
 let myPlotElement;
 let metricsData = [];
+let insightsService = null;
 
 // Global chart container IDs
 const chartContainers = {
@@ -449,6 +452,85 @@ function updateCarousel() {
     });
 }
 
+/**
+ * Render Daily Briefing
+ */
+function renderDailyBriefing() {
+    const briefingElement = document.getElementById("daily-briefing-text");
+    if (!briefingElement) return;
+
+    if (insightsService && metricsData.length > 0) {
+        const briefing = insightsService.generateDailyBriefing();
+        briefingElement.textContent = briefing;
+    } else {
+        briefingElement.textContent =
+            "Welcome! Start using your desk and we'll provide insights about your posture habits.";
+    }
+}
+
+/**
+ * Render Feedback observations and suggestions
+ */
+function renderFeedback() {
+    const observationsElement = document.getElementById(
+        "feedback-observations"
+    );
+    const suggestionsElement = document.getElementById("feedback-suggestions");
+
+    if (!observationsElement || !suggestionsElement) return;
+
+    if (insightsService && metricsData.length > 0) {
+        const feedback = insightsService.generateFeedback();
+
+        // Check if observations contain "no data" messages
+        const isNoDataObservation = (obs) => {
+            return (
+                obs.includes("No desk usage data recorded yet") ||
+                obs.includes("No desk activity recorded today yet")
+            );
+        };
+
+        // Render observations as cards
+        observationsElement.innerHTML = feedback.observations
+            .map(
+                (obs) => `
+                <div class="feedback-card-item${
+                    isNoDataObservation(obs) ? " no-data" : ""
+                }">
+                    <div class="feedback-icon">📊</div>
+                    <div class="feedback-text">${obs}</div>
+                </div>
+            `
+            )
+            .join("");
+
+        // Render suggestions as cards
+        suggestionsElement.innerHTML = feedback.suggestions
+            .map(
+                (sug) => `
+                <div class="feedback-card-item">
+                    <div class="feedback-icon">💡</div>
+                    <div class="feedback-text">${sug}</div>
+                </div>
+            `
+            )
+            .join("");
+    } else {
+        observationsElement.innerHTML = `
+            <div class="feedback-card-item no-data">
+                <div class="feedback-icon">📊</div>
+                <div class="feedback-text">No desk usage data recorded yet.</div>
+            </div>
+        `;
+        suggestionsElement.innerHTML = `
+            <div class="feedback-card-item">
+                <div class="feedback-icon">💡</div>
+                <div class="feedback-text">Start using your desk to receive personalized ergonomic recommendations.</div>
+            </div>
+        `;
+    }
+}
+
 function navigate(direction) {
     currentSlide += direction;
     updateCarousel();
@@ -560,8 +642,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Fetch real metrics data from API
     metricsData = await fetchDeskMetrics();
 
+    // Initialize insights service with metrics data
+    if (metricsData && metricsData.length > 0) {
+        insightsService = new DeskInsightsService(metricsData);
+    }
+
+    // Render all components
     renderDailyUsageChart();
     renderHeightHistoryChart();
-
+    renderDailyBriefing();
+    renderFeedback();
     renderCarousel();
 });

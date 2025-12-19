@@ -35,11 +35,8 @@
             <h2 class="accent-title"><span>Daily</span> <span>Briefing</span></h2>
 
             <div class="brief-row">
-                <span class="brief-text">
-                    This is
-                    lalalallalalalallalalalalalalalalalalalalalalalalalalalalallalalallalalalaalallalalalallallalal.
-                    This is
-                    lalalallalalalallalalalalalalalalalalalalalalalalalalalallalalallalalalaalallalalalallallalal.
+                <span class="brief-text" id="daily-briefing-text">
+                    Loading your daily insights...
                 </span>
             </div>
         </section>
@@ -159,13 +156,37 @@
 
         <!-- FEEDBACK -->
         <section class="card feedback-card">
-            <button class="card-help-btn" data-tooltip="Get a feedback recommendation based on your desk usage.">
+            <button class="card-help-btn"
+                data-tooltip="Review your desk usage observations and receive personalized ergonomic recommendations.">
                 <span class="material-icons-round">help_outline</span>
             </button>
             <h2 class="accent-title"><span>Feedback</span></h2>
-            <div class="feedback-dot"></div>
-            <div class="feedback-dot"></div>
-            <div class="feedback-dot"></div>
+
+            <div id="feedback-content" class="feedback-scroll-container">
+                <div class="feedback-section">
+                    <h3 class="feedback-subtitle">Today's Observations</h3>
+                    <div id="feedback-observations" class="feedback-cards-container">
+                        <div class="feedback-card-item">
+                            <div class="feedback-icon">📊</div>
+                            <div class="feedback-text">Loading observations...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feedback-section">
+                    <h3 class="feedback-subtitle">Suggestions</h3>
+                    <div id="feedback-suggestions" class="feedback-cards-container">
+                        <div class="feedback-card-item">
+                            <div class="feedback-icon">💡</div>
+                            <div class="feedback-text">Loading suggestions...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        </ul>
+        </div>
+        </div>
         </section>
     </main>
 </body>
