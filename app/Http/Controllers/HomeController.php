@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use App\Models\User;
 
 
 class HomeController extends Controller
@@ -135,6 +134,53 @@ class HomeController extends Controller
     }
 
     /**
+     * Get desk metrics for the authenticated user's desk.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getDeskMetrics()
+    {
+        $user = Auth::user();
+        
+        if (!$user->desk_id) {
+            return response()->json([
+                'error' => 'No desk assigned to user',
+                'metrics' => []
+            ], 400);
+        }
+
+        // Fetch all metrics for user's desk from the last 30 days
+        $metrics = \App\Models\DeskMetric::where('desk_id', $user->desk_id)
+            ->where('recorded_at', '>=', now()->subDays(30))
+            ->orderBy('recorded_at', 'asc')
+            ->get();
+
+        if ($metrics->isEmpty()) {
+            return response()->json([
+                'error' => 'No metrics found for this desk',
+                'metrics' => []
+            ], 404);
+        }
+
+        // Transform metrics into a useful format
+        $transformedMetrics = $metrics->map(function ($metric) {
+            return [
+                'height_mm' => $metric->height_mm,
+                'is_sitting' => $metric->is_sitting,
+                'recorded_at' => $metric->recorded_at->toIso8601String(),
+                'timestamp' => $metric->recorded_at->timestamp
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'metrics' => $transformedMetrics,
+            'count' => $transformedMetrics->count(),
+            'desk_id' => $user->desk_id
+        ]);
+    }
+
+    /**
      * Update user's custom desk position.
      *
      * @param Request $request
@@ -143,7 +189,7 @@ class HomeController extends Controller
 
     public function updateCustom(Request $request)
     {
-        $user = auth()->user();
+        $user = Auth::user();
 
         $index = $request->index;
         $nameField = "custom_name_$index";

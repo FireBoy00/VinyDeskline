@@ -125,10 +125,12 @@
         <!-- STATISTICS -->
         <section class="card stats-card">
             <button class="card-help-btn"
-                data-tooltip="View your desk usage statistics and track time spent in different positions throughout the day.">
+                data-tooltip="Track your daily sitting and standing time to maintain a healthy desk posture balance.">
                 <span class="material-icons-round">help_outline</span>
             </button>
-            <h2 class="accent-title"><span>Your</span> <span>Statistics</span></h2>
+            <h2 class="accent-title"><span>Weekly</span> <span>Sit</span> <span>vs</span> <span>Stand</span>
+                <span>(7d)</span>
+            </h2>
 
             <div id="myPlot"></div>
 
@@ -140,14 +142,6 @@
                 <div class="legend-item">
                     <span class="legend-dot standing"></span>
                     <span class="legend-label">Standing</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-dot cleaning"></span>
-                    <span class="legend-label">Cleaning</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-dot lowered"></span>
-                    <span class="legend-label">Uniform</span>
                 </div>
             </div>
         </section>
