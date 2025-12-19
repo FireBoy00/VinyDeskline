@@ -544,18 +544,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const csrfToken = document
         .querySelector('meta[name="csrf-token"]')
         .getAttribute("content");
-    let height;
 
     buttons.forEach((button) => {
         button.addEventListener("click", async () => {
             const parentRow = button.closest(".pos-row");
             const positionIndex = button.getAttribute("data-position");
+            let heightInMm;
+
+            // Handle custom positions (with pos-row parent)
             if (positionIndex && parentRow) {
                 const nameInput = parentRow.querySelector(".custom-name");
                 const heightInput = parentRow.querySelector(".custom-height");
 
                 const customName = nameInput.value;
-                const customHeight = heightInput.value;
+                const customHeightCm = heightInput.value;
 
                 try {
                     const response = await fetch(
@@ -569,7 +571,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             body: JSON.stringify({
                                 index: positionIndex,
                                 name: customName,
-                                position_mm: customHeight * 10,
+                                position_mm: customHeightCm * 10,
                             }),
                         }
                     );
@@ -577,41 +579,56 @@ document.addEventListener("DOMContentLoaded", function () {
                     const data = await response.json();
 
                     if (data.success) {
-                        height = data.height / 10;
+                        heightInMm = data.height;
                         alert(`Height and name updated!`);
                     } else {
                         alert(
                             `Error: ${data.message}` || `Error updating height.`
                         );
+                        return; // Don't proceed to set desk height if update failed
                     }
                 } catch (error) {
                     console.error("Error:", error);
-                    alert("An error occurred while setting height.");
+                    alert("An error occurred while updating custom position.");
+                    return; // Don't proceed to set desk height if update failed
                 }
             } else {
-                height = button.getAttribute("data-height");
+                // Handle optimal positions (standing/sitting)
+                heightInMm = button.getAttribute("data-height");
             }
-            try {
-                const response = await fetch(`/desks/${deskId}/set-height`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": csrfToken,
-                    },
-                    body: JSON.stringify({ position_mm: height * 10 }),
-                });
 
-                const data = await response.json();
-                if (data.success) alert("Height updated!");
-                else
-                    alert(
-                        `Desk Error : ${data.message}` ||
-                            `Error updating height.`
+            // Set the desk height
+            if (heightInMm) {
+                try {
+                    const response = await fetch(
+                        `/desks/${deskId}/set-height`,
+                        {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": csrfToken,
+                            },
+                            body: JSON.stringify({
+                                position_mm: parseInt(heightInMm),
+                            }),
+                        }
                     );
-                height = null;
-            } catch (error) {
-                console.error(error);
-                alert("Desk error:  An error occurred while setting height.");
+
+                    const data = await response.json();
+                    if (data.success) {
+                        alert("Desk height set successfully!");
+                    } else {
+                        alert(
+                            `Desk Error: ${data.message}` ||
+                                `Error setting desk height.`
+                        );
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert(
+                        "Desk error: An error occurred while setting height."
+                    );
+                }
             }
         });
     });

@@ -90,6 +90,14 @@ class DeskController extends Controller
     }
 
     /**
+     * Update desk height via API (snake_case route handler)
+     */
+    public function set_height(Request $request, $desk_id)
+    {
+        return $this->setHeight($request, $desk_id);
+    }
+
+    /**
      * Update desk height via API
      */
     public function setHeight(Request $request, $deskId)
