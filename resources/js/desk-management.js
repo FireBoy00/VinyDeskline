@@ -114,8 +114,15 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // Convert to array - sorting is already done on backend (highest to lowest, then unassigned)
+        // Convert to array then sort (highest to lowest, then unassigned)
         const floors = Object.entries(desksByFloor);
+        floors.sort((a, b) => {
+            const floorA = a[0];
+            const floorB = b[0];
+            if (floorA === "unassigned") return 1;
+            if (floorB === "unassigned") return -1;
+            return parseInt(floorB) - parseInt(floorA);
+        });
 
         // Render floors one by one with slight delay for progressive loading effect
         for (let i = 0; i < floors.length; i++) {
