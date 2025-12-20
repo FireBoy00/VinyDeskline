@@ -28,8 +28,7 @@ async function fetchDeskMetrics() {
         const response = await fetch("/home/metrics");
         if (!response.ok) {
             console.error("Failed to fetch metrics:", response.statusText);
-            // Fall back to generated data if metrics not available
-            return generateFallbackMetrics();
+            return [];
         }
 
         const data = await response.json();
@@ -37,47 +36,13 @@ async function fetchDeskMetrics() {
             metricsData = data.metrics;
             return metricsData;
         } else {
-            console.warn("No metrics data available, using fallback data");
-            return generateFallbackMetrics();
+            console.warn("No metrics data available");
+            return [];
         }
     } catch (error) {
         console.error("Error fetching metrics:", error);
-        return generateFallbackMetrics();
+        return [];
     }
-}
-
-/**
- * Generate fallback metrics data for demonstration
- */
-function generateFallbackMetrics() {
-    const metrics = [];
-    const now = new Date();
-
-    // Generate 30 days of metrics (one entry every 30 minutes)
-    for (let day = 29; day >= 0; day--) {
-        const date = new Date(now);
-        date.setDate(date.getDate() - day);
-
-        for (let hour = 8; hour < 17; hour++) {
-            const entry = new Date(date);
-            entry.setHours(hour);
-
-            // 50/50 sitting vs standing, with some randomness
-            const isSitting = Math.random() > 0.5;
-            const height = isSitting
-                ? Math.floor(Math.random() * 150) + 700 // 700-850mm
-                : Math.floor(Math.random() * 200) + 1000; // 1000-1200mm
-
-            metrics.push({
-                height_mm: height,
-                is_sitting: isSitting,
-                recorded_at: entry.toISOString(),
-                timestamp: entry.getTime() / 1000,
-            });
-        }
-    }
-
-    return metrics;
 }
 
 /**
@@ -106,7 +71,7 @@ function calculateDailyDurations(metrics) {
             let sittingTime = 0;
             let standingTime = 0;
 
-            // Assume each metric represents ~30 minutes if consecutive
+            // Assume each metric represents ~5 minutes if consecutive
             // Count transitions and time spent in each position
             dayMetrics.forEach((metric, index) => {
                 const nextMetric = dayMetrics[index + 1];
@@ -116,10 +81,13 @@ function calculateDailyDurations(metrics) {
                         new Date(metric.recorded_at);
                     const minutes = timeDiff / (1000 * 60);
 
-                    if (metric.is_sitting) {
-                        sittingTime += minutes;
-                    } else {
-                        standingTime += minutes;
+                    // Only count if the gap is reasonable (e.g., < 15 minutes)
+                    if (minutes < 15) {
+                        if (metric.is_sitting) {
+                            sittingTime += minutes;
+                        } else {
+                            standingTime += minutes;
+                        }
                     }
                 }
             });
@@ -166,43 +134,6 @@ function generateHeightHistoryFromMetrics(metrics) {
     });
 
     return data;
-}
-
-/**
- * Generates randomized duration data for a single day (fallback).
- * Includes Sitting, Standing, Cleaning, and Uniform.
- */
-function generateDailyDurations() {
-    const maxWorkMinutes = 480; // Total time (8 hours) to distribute
-
-    let sitting =
-        Math.floor(
-            Math.random() * (maxWorkMinutes * 0.6 - maxWorkMinutes * 0.2 + 1)
-        ) +
-        maxWorkMinutes * 0.3;
-    let standing =
-        Math.floor(
-            Math.random() * (maxWorkMinutes * 0.4 - maxWorkMinutes * 0 + 1)
-        ) +
-        maxWorkMinutes * 0.1;
-    let cleaning = Math.floor(Math.random() * 80);
-    let uniform = Math.floor(Math.random() * 60);
-
-    const total = sitting + standing + cleaning + uniform;
-    if (total > maxWorkMinutes) {
-        const ratio = maxWorkMinutes / total;
-        sitting *= ratio;
-        standing *= ratio;
-        cleaning *= ratio;
-        uniform *= ratio;
-    }
-
-    return {
-        Sitting: Math.round(sitting),
-        Standing: Math.round(standing),
-        Cleaning: Math.round(cleaning),
-        Uniform: Math.round(uniform),
-    };
 }
 
 /**
@@ -305,14 +236,14 @@ function renderDailyUsageChart() {
     const dayDurations = calculateDailyDurations(metricsData);
 
     if (Object.keys(dayDurations).length === 0) {
-        // Fallback to generated data
-        const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-        const dataByDay = days.map(generateDailyDurations);
-
-        const sittingTimes = dataByDay.map((d) => d.Sitting);
-        const standingTimes = dataByDay.map((d) => d.Standing);
-
-        createAndRenderDailyChart(days, sittingTimes, standingTimes, false);
+        // Show empty chart
+        const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        createAndRenderDailyChart(
+            days,
+            Array(7).fill(0),
+            Array(7).fill(0),
+            true
+        );
         return;
     }
 
@@ -352,23 +283,6 @@ function renderHeightHistoryChart() {
         data = { x: [], y: [] };
     }
 
-    if (data.x.length === 0) {
-        // Generate fallback data if no real data available
-        const startTime = new Date();
-        startTime.setHours(8, 0, 0, 0);
-        let currentHeight = 700;
-
-        for (let i = 0; i < 48; i++) {
-            const currentTime = new Date(startTime.getTime() + i * 10 * 60000);
-            data.x.push(currentTime);
-            data.y.push(currentHeight + Math.floor(Math.random() * 10) - 5);
-
-            if (i > 0 && i % 12 === 0) {
-                currentHeight = currentHeight === 700 ? 1100 : 700;
-            }
-        }
-    }
-
     const trace = {
         x: data.x,
         y: data.y,
@@ -391,13 +305,28 @@ function renderHeightHistoryChart() {
         },
         yaxis: {
             title: "Height (mm)",
-            range: [650, 1150],
+            range: [680, 1320],
         },
         annotations: [],
         margin: { t: 50, b: 50, l: 50, r: 20 },
         plot_bgcolor: "#dce5e9",
         paper_bgcolor: "#dce5e9",
     };
+
+    if (data.x.length === 0) {
+        layout.annotations.push({
+            text: "No data available for today",
+            xref: "paper",
+            yref: "paper",
+            x: 0.5,
+            y: 0.5,
+            showarrow: false,
+            font: {
+                size: 16,
+                color: "#666",
+            },
+        });
+    }
 
     if (window.Plotly) {
         window.Plotly.newPlot(chartContainers.heightHistory, [trace], layout, {

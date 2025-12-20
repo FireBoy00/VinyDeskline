@@ -105,44 +105,52 @@ export class DeskInsightsService {
                     new Date(metric.recorded_at);
                 const minutes = timeDiff / (1000 * 60);
 
-                if (metric.is_sitting) {
-                    totalSittingMinutes += minutes;
-                    currentStretch =
-                        lastPosition === "sitting"
-                            ? currentStretch + minutes
-                            : minutes;
-                    longestSittingStretch = Math.max(
-                        longestSittingStretch,
-                        currentStretch
-                    );
+                // Only count if the gap is reasonable (e.g., < 15 minutes)
+                if (minutes < 15) {
+                    if (metric.is_sitting) {
+                        totalSittingMinutes += minutes;
+                        currentStretch =
+                            lastPosition === "sitting"
+                                ? currentStretch + minutes
+                                : minutes;
+                        longestSittingStretch = Math.max(
+                            longestSittingStretch,
+                            currentStretch
+                        );
+                    } else {
+                        totalStandingMinutes += minutes;
+                        currentStretch =
+                            lastPosition === "standing"
+                                ? currentStretch + minutes
+                                : minutes;
+                        longestStandingStretch = Math.max(
+                            longestStandingStretch,
+                            currentStretch
+                        );
+
+                        // Track time of day
+                        const hour = new Date(metric.recorded_at).getHours();
+                        if (hour >= 6 && hour < 12)
+                            morningStanding.push(metric);
+                        else if (hour >= 12 && hour < 18)
+                            afternoonStanding.push(metric);
+                        else if (hour >= 18) eveningStanding.push(metric);
+                    }
+
+                    // Track position changes
+                    if (
+                        lastPosition &&
+                        lastPosition !==
+                            (metric.is_sitting ? "sitting" : "standing")
+                    ) {
+                        positionChanges++;
+                    }
+                    lastPosition = metric.is_sitting ? "sitting" : "standing";
                 } else {
-                    totalStandingMinutes += minutes;
-                    currentStretch =
-                        lastPosition === "standing"
-                            ? currentStretch + minutes
-                            : minutes;
-                    longestStandingStretch = Math.max(
-                        longestStandingStretch,
-                        currentStretch
-                    );
-
-                    // Track time of day
-                    const hour = new Date(metric.recorded_at).getHours();
-                    if (hour >= 6 && hour < 12) morningStanding.push(metric);
-                    else if (hour >= 12 && hour < 18)
-                        afternoonStanding.push(metric);
-                    else if (hour >= 18) eveningStanding.push(metric);
+                    // Gap too large, reset stretch
+                    currentStretch = 0;
+                    lastPosition = null;
                 }
-
-                // Track position changes
-                if (
-                    lastPosition &&
-                    lastPosition !==
-                        (metric.is_sitting ? "sitting" : "standing")
-                ) {
-                    positionChanges++;
-                }
-                lastPosition = metric.is_sitting ? "sitting" : "standing";
             }
         });
 
@@ -203,10 +211,12 @@ export class DeskInsightsService {
                         new Date(metric.recorded_at);
                     const minutes = timeDiff / (1000 * 60);
 
-                    if (metric.is_sitting) {
-                        sitting += minutes;
-                    } else {
-                        standing += minutes;
+                    if (minutes < 15) {
+                        if (metric.is_sitting) {
+                            sitting += minutes;
+                        } else {
+                            standing += minutes;
+                        }
                     }
                 }
             });
@@ -435,7 +445,7 @@ export class DeskInsightsService {
         }
 
         // THIS WEEK-based suggestions
-        if (last7Days.length > 0) {
+        if (last7Days.length > 0 && weekTotalSitting + weekTotalStanding > 0) {
             const weekSittingPercent =
                 (weekTotalSitting / (weekTotalSitting + weekTotalStanding)) *
                 100;
@@ -448,10 +458,15 @@ export class DeskInsightsService {
                 suggestions.push(
                     "<strong>This week:</strong> Excellent balance! You're maintaining a healthy sitting-to-standing ratio. Keep it up!"
                 );
+            } else {
+                suggestions.push(
+                    "<strong>This week:</strong> You have a good balance between sitting and standing. Keep it up!"
+                );
             }
 
             if (
                 this.hasTodayData() &&
+                weekly.avgDailySitting > 0 &&
                 today.totalSittingMinutes > weekly.avgDailySitting * 1.4
             ) {
                 suggestions.push(
@@ -481,21 +496,13 @@ export class DeskInsightsService {
             }
         }
 
-        // GENERAL suggestions (if limited data)
-        if (suggestions.length === 0) {
-            if (this.metrics.length < 10) {
-                suggestions.push(
-                    "<strong>Getting started:</strong> Keep using your desk regularly to receive personalized insights. We need more data to provide tailored recommendations."
-                );
-            } else {
-                suggestions.push(
-                    "<strong>General tip:</strong> Keep your screen at eye level and maintain good posture whether sitting or standing."
-                );
-                suggestions.push(
-                    "<strong>General tip:</strong> Use an anti-fatigue mat when standing to reduce foot and leg discomfort."
-                );
-            }
-        }
+        // GENERAL suggestions
+        suggestions.push(
+            "<strong>General tip:</strong> Keep your screen at eye level and maintain good posture whether sitting or standing."
+        );
+        suggestions.push(
+            "<strong>General tip:</strong> Use an anti-fatigue mat when standing to reduce foot and leg discomfort."
+        );
 
         return suggestions;
     }
@@ -516,7 +523,11 @@ export class DeskInsightsService {
                     const timeDiff =
                         new Date(nextMetric.recorded_at) -
                         new Date(metric.recorded_at);
-                    total += timeDiff / (1000 * 60); // Convert to minutes
+                    const minutes = timeDiff / (1000 * 60); // Convert to minutes
+
+                    if (minutes < 15) {
+                        total += minutes;
+                    }
                 }
             }
         });
