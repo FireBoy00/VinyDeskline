@@ -189,6 +189,16 @@
         </div>
         </div>
         </section>
+
+        <!-- TUTORIAL -->
+        <section class="card tutorial-card">
+            <button class="card-help-btn"
+                data-tooltip="View the desk usage tutorial to learn best practices for optimal ergonomics and desk positioning.">
+                <span class="material-icons-round">help_outline</span>
+            </button>
+            <h2 class="accent-title"><span>Desk</span> <span>Usage</span> <span>Tutorial</span></h2>
+            <img src="{{ asset('assets/desk_use_tutorial.png') }}" alt="Desk Usage Tutorial">
+        </section>
     </main>
 </body>
 
