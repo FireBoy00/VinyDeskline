@@ -38,6 +38,16 @@ class User extends Authenticatable
     ];
 
     /**
+     * Boot the model.
+     * Register the observer for automatic height calculation.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        // Observer is registered globally in AppServiceProvider
+    }
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var list<string>
