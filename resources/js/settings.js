@@ -80,6 +80,9 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData(form);
         const data = Object.fromEntries(formData);
 
+        // Remove email field since it's disabled and cannot be changed
+        delete data.email;
+
         try {
             const response = await fetch(form.dataset.updateUrl, {
                 method: "POST",

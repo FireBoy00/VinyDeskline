@@ -40,7 +40,7 @@ class AdminController extends Controller
      */
     public function arrangement()
     {
-        return redirect()->route('arrangement');
+        return redirect()->route('admin.arrangement');
     }
 
     /**
@@ -137,7 +137,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Update user information (first_name, last_name, email).
+     * Update user information (first_name, last_name).
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -147,7 +147,6 @@ class AdminController extends Controller
         $validator = Validator::make($request->all(), [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
         ]);
 
         if ($validator->fails()) {

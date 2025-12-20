@@ -63,7 +63,7 @@
                         <div class="form-row">
                             <label for="email">Email Address <span class="required">*</span></label>
                             <input type="email" id="email" name="email" placeholder="Enter email address"
-                                value="{{ Auth::user()->email ?? '' }}" required>
+                                value="{{ Auth::user()->email ?? '' }}" disabled>
                         </div>
 
                         <button type="submit" class="primary-btn save-info-btn">

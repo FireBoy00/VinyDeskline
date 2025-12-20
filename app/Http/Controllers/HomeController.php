@@ -50,7 +50,7 @@ class HomeController extends Controller
     }
 
     /**
-     * Update user information (name, surname, email, height, age).
+     * Update user information (name, surname, height, age).
      *
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
@@ -60,7 +60,6 @@ class HomeController extends Controller
         $validator = Validator::make($request->all(), [
             'first_name' => ['required', 'string', 'max:255'],
             'last_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
         ]);
 
         if ($validator->fails()) {
