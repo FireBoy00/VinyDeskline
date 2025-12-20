@@ -346,6 +346,12 @@ nav.navbar .nav-link .nav-icon {
     display: flex;
     justify-content: center;
     gap: 10px;
+    padding: 10px 20px 0;
+}
+
+.plot-container {
+    height: 400px;
+    padding: 20px;
 }
 
 .nav-button {
@@ -373,4 +379,104 @@ nav.navbar .nav-link .nav-icon {
 
 .chart-plot.active-chart {
     display: block;
+}
+
+.timeline-filter {
+    display: flex;
+    max-width: 300px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 20px;
+}
+
+/* Custom Select Styles */
+.custom-select {
+    position: relative;
+    min-width: 150px;
+}
+
+.select-selected {
+    /* background-color: rgba(255, 255, 255, 0.6); */
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 10px 32px 10px 12px;
+    border: 1px solid rgba(102, 178, 208, 0.3);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    color: var(--text-dark);
+}
+
+.select-selected::after {
+    content: "▼";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+    color: var(--accent-dark);
+    transition: transform 0.2s ease;
+}
+
+.custom-select.active .select-selected::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.select-selected:hover {
+    background-color: rgba(4, 133, 185, 0.08);
+    border-color: var(--btn-primary-hover);
+}
+
+.select-items {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.98);
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    border: 1px solid rgba(4, 133, 185, 0.2);
+    border-radius: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    animation: dropDown 0.2s ease;
+}
+
+.select-items.hidden {
+    display: none;
+}
+
+.select-items div {
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    transition: background-color 0.2s ease;
+}
+
+.select-items div:hover {
+    background-color: rgba(4, 133, 185, 0.08);
+}
+
+.select-items div.selected {
+    background-color: rgba(4, 133, 185, 0.15);
+    font-weight: 600;
+}
+
+.select-items div.selected-multi {
+    background-color: rgba(4, 133, 185, 0.25);
+    font-weight: 600;
+}
+
+@keyframes dropDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

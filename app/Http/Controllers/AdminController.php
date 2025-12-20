@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 use App\Models\Schedule;
+use App\Models\DeskMetric;
+use App\Models\Desk;
+use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -210,6 +214,125 @@ class AdminController extends Controller
         return response()->json([
             'message' => 'User settings reset successfully',
             'user' => $user
+        ]);
+    }
+
+    public function getDashboardMetrics(Request $request)
+    {
+        // 1. Sit/Stand Timeline
+        $timelineData = [];
+        $userIds = $request->input('user_ids');
+        
+        $query = DeskMetric::join('desks', 'desk_metrics.desk_id', '=', 'desks.desk_id')
+            ->join('users', 'desks.desk_id', '=', 'users.desk_id')
+            ->whereDate('desk_metrics.recorded_at', Carbon::today())
+            ->select('desk_metrics.*', 'users.id as user_id', 'users.first_name', 'users.last_name')
+            ->orderBy('desk_metrics.recorded_at');
+
+        if ($userIds) {
+            $userIdsArray = is_array($userIds) ? $userIds : explode(',', $userIds);
+            $query->whereIn('users.id', $userIdsArray);
+        } else {
+             // Default to top 5 users if no selection
+             $topUsers = User::whereNotNull('desk_id')->take(5)->pluck('id');
+             $query->whereIn('users.id', $topUsers);
+        }
+
+        $metrics = $query->get();
+        
+        $groupedMetrics = $metrics->groupBy('user_id');
+        
+        foreach ($groupedMetrics as $userId => $userMetrics) {
+            $user = $userMetrics->first();
+            $timelineData[] = [
+                'name' => $user->first_name . ' ' . $user->last_name,
+                'x' => $userMetrics->pluck('recorded_at')->map(fn($d) => $d->format('Y-m-d H:i:s')),
+                'y' => $userMetrics->pluck('height_mm'),
+            ];
+        }
+
+        // 2. Standing Percentage (Current Snapshot)
+        // Get latest metric for each desk
+        $latestMetrics = DeskMetric::select('desk_id', 'is_sitting')
+            ->whereIn('id', function($q) {
+                $q->select(DB::raw('MAX(id)'))
+                  ->from('desk_metrics')
+                  ->groupBy('desk_id');
+            })
+            ->get();
+            
+        $totalReported = $latestMetrics->count();
+        $standingCount = $latestMetrics->where('is_sitting', false)->count();
+        $sittingCount = $latestMetrics->where('is_sitting', true)->count();
+        
+        $standingPercentage = [
+            'standing' => $standingCount,
+            'sitting' => $sittingCount
+        ];
+
+        // 3. Desk State Overview
+        $totalDesks = Desk::count();
+        $assignedDesks = User::whereNotNull('desk_id')->count();
+        $availableDesks = $totalDesks - $assignedDesks;
+        
+        // For raised/lowered, we look at assigned desks and their latest status
+        $assignedDeskIds = User::whereNotNull('desk_id')->pluck('desk_id')->toArray();
+        
+        $raisedCount = $latestMetrics->whereIn('desk_id', $assignedDeskIds)->where('is_sitting', false)->count();
+        $loweredCount = $latestMetrics->whereIn('desk_id', $assignedDeskIds)->where('is_sitting', true)->count();
+        
+        $unavailableCount = Desk::where('is_removed_from_api', true)->count();
+        
+        $assignedWithMetricsCount = $raisedCount + $loweredCount;
+        $occupiedNoMetrics = max(0, $assignedDesks - $assignedWithMetricsCount);
+        
+        $deskState = [
+            'Available' => $availableDesks,
+            'Occupied' => $occupiedNoMetrics,
+            'Raised' => $raisedCount,
+            'Lowered' => $loweredCount,
+            'Unavailable' => $unavailableCount
+        ];
+
+        // 4. Daily Usage Duration (Last 5 days)
+        $dailyUsage = [
+            'days' => [],
+            'usageData' => [
+                'Sitting' => [],
+                'Standing' => [],
+                'Cleaning' => [],
+                'Uniform' => []
+            ]
+        ];
+        
+        for ($i = 4; $i >= 0; $i--) {
+            $date = Carbon::today()->subDays($i);
+            $dailyUsage['days'][] = $date->format('D');
+            
+            // Count metrics for this day
+            $dayMetrics = DeskMetric::whereDate('recorded_at', $date)->get();
+            $sitCount = $dayMetrics->where('is_sitting', true)->count();
+            $standCount = $dayMetrics->where('is_sitting', false)->count();
+            
+            // Approximation: 1 sample = 15 minutes = 0.25 hours
+            $dailyUsage['usageData']['Sitting'][] = $sitCount * 0.25;
+            $dailyUsage['usageData']['Standing'][] = $standCount * 0.25;
+            $dailyUsage['usageData']['Cleaning'][] = 0; // Placeholder
+            $dailyUsage['usageData']['Uniform'][] = 0; // Placeholder
+        }
+
+        return response()->json([
+            'timeline' => $timelineData,
+            'standingPercentage' => $standingPercentage,
+            'deskState' => $deskState,
+            'dailyUsage' => $dailyUsage,
+            'total_users' => User::count(),
+            'total_desks' => $totalDesks,
+            'assigned' => $assignedDesks,
+            'sitting' => $sittingCount,
+            'standing' => $standingCount,
+            'active' => $assignedWithMetricsCount,
+            'all_users' => User::whereNotNull('desk_id')->select('id', 'first_name', 'last_name')->get()
         ]);
     }
 

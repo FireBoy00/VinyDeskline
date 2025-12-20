@@ -86,7 +86,20 @@
                 </div>
             </section>
             <section class="section" id="timeline-card">
-                <h1 class="section-title"><span>Sit</span>/<span>Stand</span> <span>Timeline</span></h1>
+                <div class="timeline-header">
+                    <h1 class="section-title"><span>Sit</span>/<span>Stand</span> <span>Timeline</span></h1>
+                    <div class="timeline-filter">
+                        <label class="filter-label">Filter by Users:</label>
+                        <div class="custom-select" id="user-select">
+                            <div class="select-selected" id="user-select-selected">
+                                Select Users...
+                            </div>
+                            <div class="select-items hidden" id="user-select-items">
+                                <!-- Will be populated dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="plot-wrap">
                     <div id="timelinePlot"></div>
                 </div>
@@ -115,13 +128,13 @@
             <section class="section" id="environment-card">
                 <h1 class="section-title">Environmental Data Overview</h1>
 
-                <div class="chart-navigation" style="padding: 10px 20px 0;">
+                <div class="chart-navigation">
                     <button class="nav-button active" data-chart="tempPlot">Temperature</button>
                     <button class="nav-button" data-chart="lightPlot">Light</button>
                     <button class="nav-button" data-chart="humidityPlot">Humidity</button>
                 </div>
 
-                <div class="plot-container" style="height: 400px; padding: 20px;">
+                <div class="plot-container">
                     <div id="tempPlot" class="chart-plot active-chart"></div>
                     <div id="lightPlot" class="chart-plot hidden-chart"></div>
                     <div id="humidityPlot" class="chart-plot hidden-chart"></div>

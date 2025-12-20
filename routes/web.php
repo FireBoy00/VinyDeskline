@@ -40,6 +40,7 @@ Route::middleware(['auth', 'check.desk'])->group(function () {
     // Admin-only routes
     Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+        Route::get('/dashboard/metrics', [AdminController::class, 'getDashboardMetrics'])->name('dashboard.metrics');
         Route::get('/schedules', [AdminController::class, 'schedules'])->name('schedules');
         Route::post('/schedules', [ScheduleController::class, 'store']);
         Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy'])->name('schedules.destroy');
