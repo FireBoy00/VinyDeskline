@@ -143,22 +143,20 @@ class DeskController extends Controller
             ], 404);
         }
 
-        // Check if another user is already assigned to this desk
+        // Get the user to be assigned
+        $user = User::find($request->user_id);
+
+        // If this desk already has a different user assigned, unassign them first
         $existingUser = User::where('desk_id', $deskId)
             ->where('id', '!=', $request->user_id)
             ->first();
 
         if ($existingUser) {
-            return response()->json([
-                'success' => false,
-                'message' => 'This desk is already assigned to another user'
-            ], 422);
+            $existingUser->update(['desk_id' => null]);
         }
 
-        // Check if user is already assigned to another desk
-        $user = User::find($request->user_id);
+        // Check if user is already assigned to another desk and unassign first
         if ($user->desk_id && $user->desk_id !== $deskId) {
-            // Unassign from old desk first
             $user->update(['desk_id' => null]);
         }
 

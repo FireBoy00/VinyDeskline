@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const refreshBtn = document.getElementById("refresh-btn");
     const lastRefreshText = document.getElementById("last-refresh-text");
     let currentViewIndex = 0;
+    let selectedDesks = []; // Track selected desks for modal navigation
     let allDeskCards = [];
     let lastRefreshTime = Date.now();
     let refreshTimerInterval = null;
@@ -418,7 +419,8 @@ document.addEventListener("DOMContentLoaded", function () {
             const userDiv = document.createElement("div");
             const userName = `${user.first_name} ${user.last_name}`;
 
-            // Check if user already has a desk (unless it's this desk)
+            // Check if user already has a desk AND it's not the current desk
+            // Users can always be assigned to the current desk (even if they're already there)
             if (user.desk_id && user.desk_id !== currentDeskId) {
                 userDiv.textContent = `${userName} (Already assigned)`;
                 userDiv.classList.add("disabled");
