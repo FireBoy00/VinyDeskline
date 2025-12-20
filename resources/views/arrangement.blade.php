@@ -29,38 +29,6 @@
             <!-- Action Panel / Table Header -->
             <div class="action-panel">
                 <div class="action-panel-content">
-                    <!-- Left: Select Button -->
-                    <button class="action-btn" id="select-btn">
-                        <span class="material-icons-round">check_box_outline_blank</span>
-                        <span>Select</span>
-                    </button>
-
-                    <!-- Actions Menu Button (next to select) -->
-                    <div class="actions-menu-container">
-                        <button class="action-btn hidden" id="actions-btn">
-                            <span class="material-icons-round">more_vert</span>
-                        </button>
-                        <!-- Actions dropdown menu -->
-                        <div class="actions-dropdown" id="actions-dropdown">
-                            <button class="dropdown-action-item" data-action="assign">
-                                <span class="material-icons-round">person_add</span>
-                                <span>Assign User</span>
-                            </button>
-                            <button class="dropdown-action-item" data-action="mark-available">
-                                <span class="material-icons-round">check_circle</span>
-                                <span>Mark Available</span>
-                            </button>
-                            <button class="dropdown-action-item" data-action="mark-cleaning">
-                                <span class="material-icons-round">cleaning_services</span>
-                                <span>Mark for Cleaning</span>
-                            </button>
-                            <button class="dropdown-action-item danger" data-action="mark-faulty">
-                                <span class="material-icons-round">warning</span>
-                                <span>Mark as Faulty</span>
-                            </button>
-                        </div>
-                    </div>
-
                     <!-- Middle: Status Text -->
                     <div class="desk-status-text" id="desk-status-text">
                         Loading desks...
@@ -152,10 +120,10 @@
                             <div class="form-group">
                                 <label class="form-label">Height Adjustment (mm):</label>
                                 <div class="height-control">
-                                    <input type="range" class="height-slider" id="modal-height-slider"
-                                        min="680" max="1320" step="1" value="700">
-                                    <input type="number" class="height-input" id="modal-height-input"
-                                        min="680" max="1320" step="1" value="700">
+                                    <input type="range" class="height-slider" id="modal-height-slider" min="680"
+                                        max="1320" step="1" value="700">
+                                    <input type="number" class="height-input" id="modal-height-input" min="680"
+                                        max="1320" step="1" value="700">
                                 </div>
                                 <div class="height-buttons">
                                     <button class="preset-btn" data-height="700">Sitting</button>

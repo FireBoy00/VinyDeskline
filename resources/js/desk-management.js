@@ -6,16 +6,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const deskStatusText = document.getElementById("desk-status-text");
     const modal = document.getElementById("desk-modal");
     const modalClose = document.getElementById("modal-close");
-    const selectBtn = document.getElementById("select-btn");
-    const actionsBtn = document.getElementById("actions-btn");
-    const actionsDropdown = document.getElementById("actions-dropdown");
     const modalPrevBtn = document.getElementById("modal-prev-desk");
     const modalNextBtn = document.getElementById("modal-next-desk");
     const refreshBtn = document.getElementById("refresh-btn");
     const lastRefreshText = document.getElementById("last-refresh-text");
-
-    let selectedDesks = [];
-    let selectMode = false;
     let currentViewIndex = 0;
     let allDeskCards = [];
     let lastRefreshTime = Date.now();
@@ -50,7 +44,6 @@ document.addEventListener("DOMContentLoaded", function () {
         try {
             updateStatusText("Loading desks...");
             loadingContainer.classList.remove("hidden");
-            selectBtn.disabled = true;
             refreshBtn.disabled = true;
 
             const response = await fetch(DESKS_DATA_URL);
@@ -88,7 +81,6 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             // Enable buttons
-            selectBtn.disabled = false;
             refreshBtn.disabled = false;
 
             // Start refresh timer
@@ -245,10 +237,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Add click event to open room modal
         card.addEventListener("click", function (e) {
-            if (selectMode) {
-                // In select mode, can't select rooms
-                return;
-            }
             openRoomModal(room);
         });
 
@@ -276,27 +264,16 @@ document.addEventListener("DOMContentLoaded", function () {
     function attachCardEventListener(card) {
         card.addEventListener("click", function () {
             const deskId = this.getAttribute("data-desk-id");
-
-            if (selectMode) {
-                this.classList.toggle("selected");
-                updateSelectedDesks();
-            } else {
-                selectedDesks = [deskId];
-                currentViewIndex = 0;
-                openDeskModal(deskId);
-                updateModalNavigation();
-            }
+            selectedDesks = [deskId];
+            currentViewIndex = 0;
+            openDeskModal(deskId);
+            updateModalNavigation();
         });
     }
 
     // Refresh button handler - reload desks
     refreshBtn.addEventListener("click", function () {
         if (refreshBtn.disabled) return;
-
-        // Reset selections when refreshing
-        if (selectMode) {
-            toggleSelectMode();
-        }
 
         // Clear existing desks and show loading
         deskRowsContainer.innerHTML = "";
@@ -307,15 +284,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function toggleSelectMode() {
-        selectMode = false;
-        selectBtn.classList.remove("primary");
-        const icon = selectBtn.querySelector(".material-icons-round");
-        icon.textContent = "check_box_outline_blank";
-        actionsBtn.style.display = "none";
-        actionsDropdown.classList.remove("active");
-        document
-            .querySelectorAll(".desk-card")
-            .forEach((card) => card.classList.remove("selected"));
         selectedDesks = [];
         updateStatusText(`${totalDesks} desks loaded`);
     }
@@ -327,24 +295,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function updateSelectedDesks() {
-        selectedDesks = Array.from(
-            document.querySelectorAll(".desk-card.selected")
-        ).map((card) => card.getAttribute("data-desk-id"));
-
-        // Update status text based on selection
-        if (selectMode) {
-            if (selectedDesks.length === 0) {
-                updateStatusText(`${totalDesks} desks`);
-            } else {
-                updateStatusText(
-                    `${selectedDesks.length} desk${
-                        selectedDesks.length !== 1 ? "s" : ""
-                    } selected`
-                );
-            }
-        } else {
-            updateStatusText(`${totalDesks} desks loaded`);
-        }
+        // This function is kept for modal navigation compatibility
+        // but no longer handles bulk selection
     }
 
     // Modal navigation buttons
@@ -381,84 +333,6 @@ document.addEventListener("DOMContentLoaded", function () {
             modalNextBtn.style.display = "none";
         }
     }
-
-    // Select button - toggles selection mode
-    if (selectBtn) {
-        selectBtn.addEventListener("click", function () {
-            selectMode = !selectMode;
-            this.classList.toggle("primary");
-
-            // Update icon
-            const icon = this.querySelector(".material-icons-round");
-            if (selectMode) {
-                icon.textContent = "check_box";
-                actionsBtn.style.display = "flex";
-                updateStatusText(
-                    `${totalDesks} desks - Select desks to perform actions`
-                );
-            } else {
-                icon.textContent = "check_box_outline_blank";
-                actionsBtn.style.display = "none";
-                actionsDropdown.classList.remove("active");
-                document
-                    .querySelectorAll(".desk-card")
-                    .forEach((card) => card.classList.remove("selected"));
-                selectedDesks = [];
-                updateStatusText(`${totalDesks} desks loaded`);
-            }
-
-            showNotification(
-                selectMode
-                    ? "Selection mode enabled"
-                    : "Selection mode disabled"
-            );
-        });
-    }
-
-    // Actions button - toggle dropdown
-    if (actionsBtn) {
-        actionsBtn.addEventListener("click", function (e) {
-            e.stopPropagation();
-            actionsDropdown.classList.toggle("active");
-        });
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener("click", function (e) {
-        if (
-            actionsDropdown &&
-            !actionsBtn.contains(e.target) &&
-            !actionsDropdown.contains(e.target)
-        ) {
-            actionsDropdown.classList.remove("active");
-        }
-    });
-
-    // Dropdown action items
-    const dropdownActions = document.querySelectorAll(".dropdown-action-item");
-    dropdownActions.forEach((item) => {
-        item.addEventListener("click", function () {
-            const action = this.getAttribute("data-action");
-            const selectedCount = selectedDesks.length;
-
-            if (selectedCount > 0) {
-                // TODO: Implement actual action via API
-                showNotification(
-                    `${action.replace(
-                        "-",
-                        " "
-                    )} will be applied to ${selectedCount} desk(s)`
-                );
-                actionsDropdown.classList.remove("active");
-                console.log(
-                    `TODO: Implement ${action} for desks:`,
-                    selectedDesks
-                );
-            } else {
-                showNotification("Please select desks first");
-            }
-        });
-    });
 
     async function openDeskModal(deskId) {
         // Get fresh desk data from the card's data attributes
