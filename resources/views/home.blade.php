@@ -8,6 +8,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="desk-id" content="{{ $user->desk_id ?? '' }}">
     <title>VinyDeskline</title>
+    
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @vite(['resources/css/general-user.css'])
@@ -50,7 +52,7 @@
             <h2 class="accent-title"><span id="sensor-title">Temperature</span></h2>
             <div class="carousel-controls">
                 <i class="material-icons-round chevron-btn" id="prev-btn">chevron_left</i>
-                <div class="carousel-value" id="sensor-value">19°C</div>
+                <div class="carousel-value" id="sensor-value"></div>
                 <i class="material-icons-round chevron-btn" id="next-btn">chevron_right</i>
             </div>
 
