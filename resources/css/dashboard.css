@@ -397,7 +397,6 @@ nav.navbar .nav-link .nav-icon {
 }
 
 .select-selected {
-    /* background-color: rgba(255, 255, 255, 0.6); */
     background-color: rgba(255, 255, 255, 0.5);
     padding: 10px 32px 10px 12px;
     border: 1px solid rgba(102, 178, 208, 0.3);
