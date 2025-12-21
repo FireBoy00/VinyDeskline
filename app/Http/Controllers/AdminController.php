@@ -321,11 +321,35 @@ class AdminController extends Controller
             $dailyUsage['usageData']['Uniform'][] = 0; // Placeholder
         }
 
+        // 5. Environmental Data (Last 24 hours)
+        $sensorMetrics = \App\Models\SensorMetric::where('recorded_at', '>=', now()->subDay())
+            ->orderBy('recorded_at', 'asc')
+            ->get();
+
+        $environmentalData = null;
+        if ($sensorMetrics->isNotEmpty()) {
+            $environmentalData = [
+                'temperature' => [
+                    'x' => $sensorMetrics->pluck('recorded_at')->map(fn($d) => $d->format('Y-m-d H:i:s')),
+                    'y' => $sensorMetrics->pluck('temperature'),
+                ],
+                'light' => [
+                    'x' => $sensorMetrics->pluck('recorded_at')->map(fn($d) => $d->format('Y-m-d H:i:s')),
+                    'y' => $sensorMetrics->pluck('light'),
+                ],
+                'humidity' => [
+                    'x' => $sensorMetrics->pluck('recorded_at')->map(fn($d) => $d->format('Y-m-d H:i:s')),
+                    'y' => $sensorMetrics->pluck('humidity'),
+                ],
+            ];
+        }
+
         return response()->json([
             'timeline' => $timelineData,
             'standingPercentage' => $standingPercentage,
             'deskState' => $deskState,
             'dailyUsage' => $dailyUsage,
+            'environmentalData' => $environmentalData,
             'total_users' => User::count(),
             'total_desks' => $totalDesks,
             'assigned' => $assignedDesks,

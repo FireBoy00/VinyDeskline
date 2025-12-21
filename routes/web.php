@@ -25,6 +25,7 @@ Route::middleware(['auth', 'check.desk'])->group(function () {
     // Main application routes (all authenticated users)
     Route::get('/home', [HomeController::class, 'index'])->name('home');
     Route::get('/home/metrics', [HomeController::class, 'getDeskMetrics'])->name('home.metrics');
+    Route::get('/home/latest-sensors', [HomeController::class, 'getLatestSensors'])->name('home.latest-sensors');
     Route::get('/no-desk', function() {
         return view('no-desk-assigned');
     })->name('no-desk');

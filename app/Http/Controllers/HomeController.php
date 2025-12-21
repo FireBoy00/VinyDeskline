@@ -16,7 +16,12 @@ class HomeController extends Controller
     public function index()
     {
         $user = Auth::user();
-        return view('home', ['user' => $user]);
+        $latestSensorMetric = \App\Models\SensorMetric::latest('recorded_at')->first();
+        
+        return view('home', [
+            'user' => $user,
+            'latestSensorMetric' => $latestSensorMetric
+        ]);
     }
 
     /**
@@ -224,5 +229,18 @@ class HomeController extends Controller
         'height' => $user->$heightField]);
     }
 
-    
+    /**
+     * Get the latest sensor metrics.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getLatestSensors()
+    {
+        $latest = \App\Models\SensorMetric::latest('recorded_at')->first();
+        
+        return response()->json([
+            'success' => true,
+            'data' => $latest
+        ]);
+    }
 }

@@ -69,4 +69,12 @@ class Desk extends Model
     {
         return $this->hasMany(Schedule::class, 'desk_id', 'desk_id');
     }
+
+    /**
+     * Get the sensor metrics for this desk.
+     */
+    public function sensorMetrics(): HasMany
+    {
+        return $this->hasMany(SensorMetric::class, 'desk_id', 'desk_id');
+    }
 }

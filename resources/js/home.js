@@ -447,36 +447,6 @@ window.updateSensorData = function (temperature, light, humidity) {
     updateCarousel();
 };
 
-function initializeMqtt() {
-    if (typeof mqtt === "undefined") return;
-
-    const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt");
-
-    client.on("connect", () => {
-        console.log("✓ MQTT connected to HiveMQ broker");
-        client.subscribe("pico/sensors", (err) => {
-            if (err) {
-                console.error("✗ Subscription error:", err);
-            } else {
-                console.log("✓ Subscribed to pico/sensors topic");
-            }
-        });
-    });
-
-    client.on("message", (topic, message) => {
-        try {
-            const data = JSON.parse(message.toString());
-            window.updateSensorData(
-                data.temperature,
-                data.light,
-                data.humidity
-            );
-        } catch (err) {
-            console.error("✗ Invalid MQTT message format:", err);
-        }
-    });
-}
-
 // --- Desk Control ---
 
 async function handleSaveIconClick(button) {
@@ -596,6 +566,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     renderDailyBriefing();
     renderFeedback();
 
-    // Initialize MQTT
-    initializeMqtt();
+    // Initialize sensors from meta tag
+    const latestSensorsMeta = document.querySelector(
+        'meta[name="latest-sensors"]'
+    );
+    if (latestSensorsMeta) {
+        try {
+            const data = JSON.parse(latestSensorsMeta.getAttribute("content"));
+            if (data) {
+                window.updateSensorData(
+                    data.temperature,
+                    data.light,
+                    data.humidity
+                );
+            }
+        } catch (e) {
+            console.error("Error parsing latest sensors data:", e);
+        }
+    }
+
+    // Poll for latest sensors every 30 seconds
+    setInterval(async () => {
+        try {
+            const response = await fetch("/home/latest-sensors");
+            const result = await response.json();
+            if (result.success && result.data) {
+                window.updateSensorData(
+                    result.data.temperature,
+                    result.data.light,
+                    result.data.humidity
+                );
+            }
+        } catch (error) {
+            console.error("Error polling sensors:", error);
+        }
+    }, 30000);
 });
