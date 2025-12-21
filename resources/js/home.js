@@ -334,141 +334,147 @@ function renderHeightHistoryChart() {
             displayModeBar: false,
         });
 
-document.addEventListener("DOMContentLoaded", () => {
-    paginationDotsContainer = document.getElementById("pagination-dots");
-    sensorTitleElement = document.getElementById("sensor-title");
-    sensorValueElement = document.getElementById("sensor-value");
-    myPlotElement = document.getElementById("myPlot");
+        document.addEventListener("DOMContentLoaded", () => {
+            paginationDotsContainer =
+                document.getElementById("pagination-dots");
+            sensorTitleElement = document.getElementById("sensor-title");
+            sensorValueElement = document.getElementById("sensor-value");
+            myPlotElement = document.getElementById("myPlot");
 
-    document
-        .getElementById("next-btn")
-        .addEventListener("click", () => navigate(1));
-    document
-        .getElementById("prev-btn")
-        .addEventListener("click", () => navigate(-1));
+            document
+                .getElementById("next-btn")
+                .addEventListener("click", () => navigate(1));
+            document
+                .getElementById("prev-btn")
+                .addEventListener("click", () => navigate(-1));
 
-    renderCarousel();
-    initializeChart();
-});
-
-function initializeChart() {
-    const xArray = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
-    const yArray = [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15];
-
-    if (window.Plotly && myPlotElement) {
-        window.Plotly.newPlot(
-            myPlotElement,
-            [
-                {
-                    x: xArray,
-                    y: yArray,
-                    mode: "lines",
-                    line: { color: "#004F6E" },
-                },
-            ],
-            {
-                xaxis: { title: "Square Meters" },
-                yaxis: { title: "Price in Millions" },
-                margin: { t: 20, b: 40, l: 60, r: 20 },
-                plot_bgcolor: "transparent",
-                paper_bgcolor: "transparent",
-                showlegend: false,
-            }
-        );
-    }
-}
-
-// --- Carousel Functions
-
-function renderCarousel() {
-    if (paginationDotsContainer) {
-        paginationDotsContainer.innerHTML = sensorData
-            .map(
-                (_, index) => `<span class="dot" data-index="${index}"></span>`
-            )
-            .join("");
-
-        document.querySelectorAll(".dot").forEach((dot) => {
-            dot.addEventListener("click", (e) => {
-                currentSlide = parseInt(e.target.dataset.index);
-                updateCarousel();
-            });
+            renderCarousel();
+            initializeChart();
         });
-    }
 
-    updateCarousel();
-}
+        function initializeChart() {
+            const xArray = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150];
+            const yArray = [7, 8, 8, 9, 9, 9, 10, 11, 14, 14, 15];
 
-function updateCarousel() {
-    if (currentSlide < 0) {
-        currentSlide = sensorData.length - 1;
-    } else if (currentSlide >= sensorData.length) {
-        currentSlide = 0;
-    }
-
-    const currentData = sensorData[currentSlide];
-
-    if (sensorTitleElement) {
-        sensorTitleElement.textContent = currentData.title;
-    }
-    if (sensorValueElement) {
-        const displayValue =
-            currentData.value !== "--"
-                ? currentData.value + currentData.unit
-                : "--";
-        sensorValueElement.textContent = displayValue;
-    }
-
-    document.querySelectorAll(".dot").forEach((dot, index) => {
-        dot.classList.remove("active");
-        if (index === currentSlide) {
-            dot.classList.add("active");
+            if (window.Plotly && myPlotElement) {
+                window.Plotly.newPlot(
+                    myPlotElement,
+                    [
+                        {
+                            x: xArray,
+                            y: yArray,
+                            mode: "lines",
+                            line: { color: "#004F6E" },
+                        },
+                    ],
+                    {
+                        xaxis: { title: "Square Meters" },
+                        yaxis: { title: "Price in Millions" },
+                        margin: { t: 20, b: 40, l: 60, r: 20 },
+                        plot_bgcolor: "transparent",
+                        paper_bgcolor: "transparent",
+                        showlegend: false,
+                    }
+                );
+            }
         }
-    });
-}
 
-/**
- * Render Daily Briefing
- */
-function renderDailyBriefing() {
-    const briefingElement = document.getElementById("daily-briefing-text");
-    if (!briefingElement) return;
+        // --- Carousel Functions
 
-    if (insightsService && metricsData.length > 0) {
-        const briefing = insightsService.generateDailyBriefing();
-        briefingElement.textContent = briefing;
-    } else {
-        briefingElement.textContent =
-            "Welcome! Start using your desk and we'll provide insights about your posture habits.";
-    }
-}
+        function renderCarousel() {
+            if (paginationDotsContainer) {
+                paginationDotsContainer.innerHTML = sensorData
+                    .map(
+                        (_, index) =>
+                            `<span class="dot" data-index="${index}"></span>`
+                    )
+                    .join("");
 
-/**
- * Render Feedback observations and suggestions
- */
-function renderFeedback() {
-    const observationsElement = document.getElementById(
-        "feedback-observations"
-    );
-    const suggestionsElement = document.getElementById("feedback-suggestions");
+                document.querySelectorAll(".dot").forEach((dot) => {
+                    dot.addEventListener("click", (e) => {
+                        currentSlide = parseInt(e.target.dataset.index);
+                        updateCarousel();
+                    });
+                });
+            }
 
-    if (!observationsElement || !suggestionsElement) return;
+            updateCarousel();
+        }
 
-    if (insightsService && metricsData.length > 0) {
-        const feedback = insightsService.generateFeedback();
+        function updateCarousel() {
+            if (currentSlide < 0) {
+                currentSlide = sensorData.length - 1;
+            } else if (currentSlide >= sensorData.length) {
+                currentSlide = 0;
+            }
 
-        // Check if observations contain "no data" messages
-        const isNoDataObservation = (obs) => {
-            return (
-                obs.includes("No desk usage data recorded yet") ||
-                obs.includes("No desk activity recorded today yet")
+            const currentData = sensorData[currentSlide];
+
+            if (sensorTitleElement) {
+                sensorTitleElement.textContent = currentData.title;
+            }
+            if (sensorValueElement) {
+                const displayValue =
+                    currentData.value !== "--"
+                        ? currentData.value + currentData.unit
+                        : "--";
+                sensorValueElement.textContent = displayValue;
+            }
+
+            document.querySelectorAll(".dot").forEach((dot, index) => {
+                dot.classList.remove("active");
+                if (index === currentSlide) {
+                    dot.classList.add("active");
+                }
+            });
+        }
+
+        /**
+         * Render Daily Briefing
+         */
+        function renderDailyBriefing() {
+            const briefingElement = document.getElementById(
+                "daily-briefing-text"
             );
-        };
+            if (!briefingElement) return;
 
-        // Render observations as cards
-        observationsElement.innerHTML = feedback.observations
-            .map(
-                (obs) => `
+            if (insightsService && metricsData.length > 0) {
+                const briefing = insightsService.generateDailyBriefing();
+                briefingElement.textContent = briefing;
+            } else {
+                briefingElement.textContent =
+                    "Welcome! Start using your desk and we'll provide insights about your posture habits.";
+            }
+        }
+
+        /**
+         * Render Feedback observations and suggestions
+         */
+        function renderFeedback() {
+            const observationsElement = document.getElementById(
+                "feedback-observations"
+            );
+            const suggestionsElement = document.getElementById(
+                "feedback-suggestions"
+            );
+
+            if (!observationsElement || !suggestionsElement) return;
+
+            if (insightsService && metricsData.length > 0) {
+                const feedback = insightsService.generateFeedback();
+
+                // Check if observations contain "no data" messages
+                const isNoDataObservation = (obs) => {
+                    return (
+                        obs.includes("No desk usage data recorded yet") ||
+                        obs.includes("No desk activity recorded today yet")
+                    );
+                };
+
+                // Render observations as cards
+                observationsElement.innerHTML = feedback.observations
+                    .map(
+                        (obs) => `
                 <div class="feedback-card-item${
                     isNoDataObservation(obs) ? " no-data" : ""
                 }">
@@ -476,233 +482,241 @@ function renderFeedback() {
                     <div class="feedback-text">${obs}</div>
                 </div>
             `
-            )
-            .join("");
+                    )
+                    .join("");
 
-        // Render suggestions as cards
-        suggestionsElement.innerHTML = feedback.suggestions
-            .map(
-                (sug) => `
+                // Render suggestions as cards
+                suggestionsElement.innerHTML = feedback.suggestions
+                    .map(
+                        (sug) => `
                 <div class="feedback-card-item">
                     <div class="feedback-icon">💡</div>
                     <div class="feedback-text">${sug}</div>
                 </div>
             `
-            )
-            .join("");
-    } else {
-        observationsElement.innerHTML = `
+                    )
+                    .join("");
+            } else {
+                observationsElement.innerHTML = `
             <div class="feedback-card-item no-data">
                 <div class="feedback-icon">📊</div>
                 <div class="feedback-text">No desk usage data recorded yet.</div>
             </div>
         `;
-        suggestionsElement.innerHTML = `
+                suggestionsElement.innerHTML = `
             <div class="feedback-card-item">
                 <div class="feedback-icon">💡</div>
                 <div class="feedback-text">Start using your desk to receive personalized ergonomic recommendations.</div>
             </div>
         `;
-    }
-}
-
-function navigate(direction) {
-    currentSlide += direction;
-    updateCarousel();
-}
-
-// Function to update sensor data from MQTT
-window.updateSensorData = function (temperature, light, humidity) {
-    if (temperature !== null && temperature !== undefined) {
-        sensorData[0].value = temperature;
-    }
-    if (light !== null && light !== undefined) {
-        sensorData[1].value = light;
-    }
-    if (humidity !== null && humidity !== undefined) {
-        sensorData[2].value = humidity;
-    }
-
-    // Update the display if we're currently viewing the changed sensor
-    updateCarousel();
-};
-
-// MQTT Connection for real-time sensor updates
-const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt");
-
-client.on("connect", () => {
-    console.log("✓ MQTT connected to HiveMQ broker");
-    client.subscribe("pico/sensors", (err) => {
-        if (err) {
-            console.error("✗ Subscription error:", err);
-        } else {
-            console.log("✓ Subscribed to pico/sensors topic");
+            }
         }
-    });
-});
 
-client.on("error", (err) => {
-    console.error("✗ MQTT connection error:", err);
-});
-
-client.on("reconnect", () => {
-    console.log("↻ Reconnecting to MQTT broker...");
-});
-
-client.on("offline", () => {
-    console.log("⚠ MQTT client offline");
-});
-
-client.on("message", (topic, message) => {
-    try {
-        const data = JSON.parse(message.toString());
-        console.log("📨 Received sensor data:", data);
-
-        // Update the carousel with new sensor values
-        if (typeof window.updateSensorData === "function") {
-            window.updateSensorData(
-                data.temperature,
-                data.light,
-                data.humidity
-            );
+        function navigate(direction) {
+            currentSlide += direction;
+            updateCarousel();
         }
-    } catch (err) {
-        console.error("✗ Invalid MQTT message format:", err);
-    }
-});
 
-document.addEventListener("DOMContentLoaded", function () {
-    const buttons = document.querySelectorAll(".save-icon");
-    const deskId = document
-        .querySelector('meta[name="desk-id"]')
-        .getAttribute("content");
-    const csrfToken = document
-        .querySelector('meta[name="csrf-token"]')
-        .getAttribute("content");
-
-    buttons.forEach((button) => {
-        button.addEventListener("click", async () => {
-            const parentRow = button.closest(".pos-row");
-            const positionIndex = button.getAttribute("data-position");
-            let heightInMm;
-
-            // Handle custom positions (with pos-row parent)
-            if (positionIndex && parentRow) {
-                const nameInput = parentRow.querySelector(".custom-name");
-                const heightInput = parentRow.querySelector(".custom-height");
-
-                const customName = nameInput.value;
-                const customHeightCm = heightInput.value;
-
-                try {
-                    const response = await fetch(
-                        `/home/${deskId}/${positionIndex}/updateCustom`,
-                        {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRF-TOKEN": csrfToken,
-                            },
-                            body: JSON.stringify({
-                                index: positionIndex,
-                                name: customName,
-                                position_mm: customHeightCm * 10,
-                            }),
-                        }
-                    );
-
-                    const data = await response.json();
-
-                    if (data.success) {
-                        heightInMm = data.height;
-                        alert(`Height and name updated!`);
-                    } else {
-                        alert(
-                            `Error: ${data.message}` || `Error updating height.`
-                        );
-                        return; // Don't proceed to set desk height if update failed
-                    }
-                } catch (error) {
-                    console.error("Error:", error);
-                    alert("An error occurred while updating custom position.");
-                    return; // Don't proceed to set desk height if update failed
-                }
-            } else {
-                // Handle optimal positions (standing/sitting)
-                heightInMm = button.getAttribute("data-height");
+        // Function to update sensor data from MQTT
+        window.updateSensorData = function (temperature, light, humidity) {
+            if (temperature !== null && temperature !== undefined) {
+                sensorData[0].value = temperature;
+            }
+            if (light !== null && light !== undefined) {
+                sensorData[1].value = light;
+            }
+            if (humidity !== null && humidity !== undefined) {
+                sensorData[2].value = humidity;
             }
 
-            // Set the desk height
-            if (heightInMm) {
-                try {
-                    const response = await fetch(
-                        `/desks/${deskId}/set-height`,
-                        {
-                            method: "PUT",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "X-CSRF-TOKEN": csrfToken,
-                            },
-                            body: JSON.stringify({
-                                position_mm: parseInt(heightInMm),
-                            }),
-                        }
-                    );
+            // Update the display if we're currently viewing the changed sensor
+            updateCarousel();
+        };
 
-                    const data = await response.json();
-                    if (data.success) {
-                        alert("Desk height set successfully!");
-                    } else {
-                        alert(
-                            `Desk Error: ${data.message}` ||
-                                `Error setting desk height.`
-                        );
-                    }
-                } catch (error) {
-                    console.error(error);
-                    alert(
-                        "Desk error: An error occurred while setting height."
+        // MQTT Connection for real-time sensor updates
+        const client = mqtt.connect("ws://broker.hivemq.com:8000/mqtt");
+
+        client.on("connect", () => {
+            console.log("✓ MQTT connected to HiveMQ broker");
+            client.subscribe("pico/sensors", (err) => {
+                if (err) {
+                    console.error("✗ Subscription error:", err);
+                } else {
+                    console.log("✓ Subscribed to pico/sensors topic");
+                }
+            });
+        });
+
+        client.on("error", (err) => {
+            console.error("✗ MQTT connection error:", err);
+        });
+
+        client.on("reconnect", () => {
+            console.log("↻ Reconnecting to MQTT broker...");
+        });
+
+        client.on("offline", () => {
+            console.log("⚠ MQTT client offline");
+        });
+
+        client.on("message", (topic, message) => {
+            try {
+                const data = JSON.parse(message.toString());
+                console.log("📨 Received sensor data:", data);
+
+                // Update the carousel with new sensor values
+                if (typeof window.updateSensorData === "function") {
+                    window.updateSensorData(
+                        data.temperature,
+                        data.light,
+                        data.humidity
                     );
                 }
+            } catch (err) {
+                console.error("✗ Invalid MQTT message format:", err);
             }
         });
-    });
-});
 
-// --- DOM Initialization ---
+        document.addEventListener("DOMContentLoaded", function () {
+            const buttons = document.querySelectorAll(".save-icon");
+            const deskId = document
+                .querySelector('meta[name="desk-id"]')
+                .getAttribute("content");
+            const csrfToken = document
+                .querySelector('meta[name="csrf-token"]')
+                .getAttribute("content");
 
-document.addEventListener("DOMContentLoaded", async () => {
-    paginationDotsContainer = document.getElementById("pagination-dots");
-    sensorTitleElement = document.getElementById("sensor-title");
-    sensorValueElement = document.getElementById("sensor-value");
-    myPlotElement = document.getElementById("myPlot");
+            buttons.forEach((button) => {
+                button.addEventListener("click", async () => {
+                    const parentRow = button.closest(".pos-row");
+                    const positionIndex = button.getAttribute("data-position");
+                    let heightInMm;
 
-    document
-        .getElementById("next-btn")
-        .addEventListener("click", () => navigate(1));
-    document
-        .getElementById("prev-btn")
-        .addEventListener("click", () => navigate(-1));
+                    // Handle custom positions (with pos-row parent)
+                    if (positionIndex && parentRow) {
+                        const nameInput =
+                            parentRow.querySelector(".custom-name");
+                        const heightInput =
+                            parentRow.querySelector(".custom-height");
 
-    if (typeof window.Plotly === "undefined") {
-        console.error(
-            "Plotly.js is not loaded. Please ensure it is linked in your HTML."
-        );
-        return;
+                        const customName = nameInput.value;
+                        const customHeightCm = heightInput.value;
+
+                        try {
+                            const response = await fetch(
+                                `/home/${deskId}/${positionIndex}/updateCustom`,
+                                {
+                                    method: "PUT",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "X-CSRF-TOKEN": csrfToken,
+                                    },
+                                    body: JSON.stringify({
+                                        index: positionIndex,
+                                        name: customName,
+                                        position_mm: customHeightCm * 10,
+                                    }),
+                                }
+                            );
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                heightInMm = data.height;
+                                alert(`Height and name updated!`);
+                            } else {
+                                alert(
+                                    `Error: ${data.message}` ||
+                                        `Error updating height.`
+                                );
+                                return; // Don't proceed to set desk height if update failed
+                            }
+                        } catch (error) {
+                            console.error("Error:", error);
+                            alert(
+                                "An error occurred while updating custom position."
+                            );
+                            return; // Don't proceed to set desk height if update failed
+                        }
+                    } else {
+                        // Handle optimal positions (standing/sitting)
+                        heightInMm = button.getAttribute("data-height");
+                    }
+
+                    // Set the desk height
+                    if (heightInMm) {
+                        try {
+                            const response = await fetch(
+                                `/desks/${deskId}/set-height`,
+                                {
+                                    method: "PUT",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "X-CSRF-TOKEN": csrfToken,
+                                    },
+                                    body: JSON.stringify({
+                                        position_mm: parseInt(heightInMm),
+                                    }),
+                                }
+                            );
+
+                            const data = await response.json();
+                            if (data.success) {
+                                alert("Desk height set successfully!");
+                            } else {
+                                alert(
+                                    `Desk Error: ${data.message}` ||
+                                        `Error setting desk height.`
+                                );
+                            }
+                        } catch (error) {
+                            console.error(error);
+                            alert(
+                                "Desk error: An error occurred while setting height."
+                            );
+                        }
+                    }
+                });
+            });
+        });
+
+        // --- DOM Initialization ---
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            paginationDotsContainer =
+                document.getElementById("pagination-dots");
+            sensorTitleElement = document.getElementById("sensor-title");
+            sensorValueElement = document.getElementById("sensor-value");
+            myPlotElement = document.getElementById("myPlot");
+
+            document
+                .getElementById("next-btn")
+                .addEventListener("click", () => navigate(1));
+            document
+                .getElementById("prev-btn")
+                .addEventListener("click", () => navigate(-1));
+
+            if (typeof window.Plotly === "undefined") {
+                console.error(
+                    "Plotly.js is not loaded. Please ensure it is linked in your HTML."
+                );
+                return;
+            }
+
+            // Fetch real metrics data from API
+            metricsData = await fetchDeskMetrics();
+
+            // Initialize insights service with metrics data
+            if (metricsData && metricsData.length > 0) {
+                insightsService = new DeskInsightsService(metricsData);
+            }
+
+            // Render all components
+            renderDailyUsageChart();
+            renderHeightHistoryChart();
+            renderDailyBriefing();
+            renderFeedback();
+            renderCarousel();
+        });
     }
-
-    // Fetch real metrics data from API
-    metricsData = await fetchDeskMetrics();
-
-    // Initialize insights service with metrics data
-    if (metricsData && metricsData.length > 0) {
-        insightsService = new DeskInsightsService(metricsData);
-    }
-
-    // Render all components
-    renderDailyUsageChart();
-    renderHeightHistoryChart();
-    renderDailyBriefing();
-    renderFeedback();
-    renderCarousel();
-});
+}
