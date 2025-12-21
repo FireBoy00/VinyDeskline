@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="desk-id" content="{{ $user->desk_id ?? '' }}">
+    <meta name="latest-sensors" content="{{ json_encode($latestSensorMetric) }}">
     <title>VinyDeskline</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -50,7 +51,7 @@
             <h2 class="accent-title"><span id="sensor-title">Temperature</span></h2>
             <div class="carousel-controls">
                 <i class="material-icons-round chevron-btn" id="prev-btn">chevron_left</i>
-                <div class="carousel-value" id="sensor-value">19°C</div>
+                <div class="carousel-value" id="sensor-value"></div>
                 <i class="material-icons-round chevron-btn" id="next-btn">chevron_right</i>
             </div>
 

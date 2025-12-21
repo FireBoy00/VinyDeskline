@@ -381,6 +381,9 @@ class DatabaseSeeder extends Seeder
             'desk_id' => $emp2DeskId,
         ]);
         $this->createDeskMetrics($emp2DeskId, 50);
+
+        // ========== SENSOR METRICS ==========
+        $this->call(SensorMetricSeeder::class);
     }
 
     /**
