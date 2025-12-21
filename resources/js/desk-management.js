@@ -1,262 +1,292 @@
 // Desk Management Page JavaScript
 
-document.addEventListener('DOMContentLoaded', function () {
-    const deskRowsContainer = document.getElementById('desksList');
-    const loadingContainer = document.querySelector('.loading-container');
-    const deskStatusText = document.getElementById('desk-status-text');
-    const modal = document.getElementById('desk-modal');
-    const modalClose = document.getElementById('modal-close');
-    const selectBtn = document.getElementById('select-btn');
-    const actionsBtn = document.getElementById('actions-btn');
-    const actionsDropdown = document.getElementById('actions-dropdown');
-    const modalPrevBtn = document.getElementById('modal-prev-desk');
-    const modalNextBtn = document.getElementById('modal-next-desk');
-    const refreshBtn = document.getElementById('refresh-btn');
-    const lastRefreshText = document.getElementById('last-refresh-text');
-    
-    let selectedDesks = [];
-    let selectMode = false;
+document.addEventListener("DOMContentLoaded", function () {
+    const deskRowsContainer = document.getElementById("desksList");
+    const loadingContainer = document.querySelector(".loading-container");
+    const deskStatusText = document.getElementById("desk-status-text");
+    const modal = document.getElementById("desk-modal");
+    const modalClose = document.getElementById("modal-close");
+    const modalPrevBtn = document.getElementById("modal-prev-desk");
+    const modalNextBtn = document.getElementById("modal-next-desk");
+    const refreshBtn = document.getElementById("refresh-btn");
+    const lastRefreshText = document.getElementById("last-refresh-text");
     let currentViewIndex = 0;
-    let allDesks = [];
-    let deskDetailsCache = {};
-    let loadedDesksCount = 0;
+    let selectedDesks = []; // Track selected desks for modal navigation
+    let allDeskCards = [];
     let lastRefreshTime = Date.now();
     let refreshTimerInterval = null;
+    let availableUsers = window.deskData?.users || [];
+    let currentDeskId = null;
+    let totalDesks = 0;
+    let roomsByFloor = {}; // Store rooms data
+    let allDesksData = []; // Store all desk data for room modal
 
-    // API endpoints - adjust these based on your actual routes
-    const API_BASE = '/admin/desks';
+    // API endpoints
+    const DESK_API_ENDPOINT = "/admin/desks";
+    const DESKS_DATA_URL =
+        window.deskData?.desksApiUrl || "/admin/arrangement/desks";
 
     // Status mapping from API to display
     const statusMap = {
-        'Normal': 'Normal',
-        'normal': 'Normal',
-        'Moving': 'In Use',
-        'moving': 'In Use',
-        'Collision': 'Faulty',
-        'collision': 'Faulty',
-        'Occupied': 'Occupied',
-        'occupied': 'Occupied'
+        Normal: "Normal",
+        normal: "Normal",
+        Moving: "In Use",
+        moving: "In Use",
+        Collision: "Faulty",
+        collision: "Faulty",
+        Occupied: "Occupied",
+        occupied: "Occupied",
     };
 
-    // Initialize - Load desks from API
-    loadDesks();
-    
-    // Refresh button handler
-    refreshBtn.addEventListener('click', function() {
-        if (refreshBtn.disabled) return;
-        
-        // Reset selections when refreshing
-        if (selectMode) {
-            toggleSelectMode();
-        }
-        
-        stopRefreshTimer();
-        loadDesks();
-    });
+    // Initialize - Load desks via AJAX after page is ready
+    loadDesksFromServer();
 
-    async function loadDesks() {
+    async function loadDesksFromServer() {
         try {
-            updateStatusText(`Loading desks...`);
-            loadingContainer.classList.remove('hidden');
-            selectBtn.disabled = true;
-            actionsBtn.disabled = true;
+            updateStatusText("Loading desks...");
+            loadingContainer.classList.remove("hidden");
             refreshBtn.disabled = true;
-            
-            const response = await fetch(API_BASE);
-            if (!response.ok) throw new Error('Failed to fetch desks');
-            
+
+            const response = await fetch(DESKS_DATA_URL);
+            if (!response.ok) throw new Error("Failed to fetch desks");
+
             const data = await response.json();
-            allDesks = data.desks || [];
-            loadingContainer.classList.add('hidden');
-            
-            if (allDesks.length === 0) {
-                showError('No desks found');
-                updateStatusText('No desks found');
-                return;
+
+            if (!data.success) {
+                throw new Error(data.message || "Failed to load desks");
             }
-            
-            // Reset counter and clear container for progressive rendering
-            loadedDesksCount = 0;
-            deskRowsContainer.innerHTML = '';
-            updateStatusText(`Loading ${allDesks.length} desks...`);
-            
-            // Load details progressively - render as each desk loads
-            await loadAllDeskDetailsProgressively();
-            
-            updateStatusText(`${loadedDesksCount} desks loaded`);
-            selectBtn.disabled = false;
-            actionsBtn.disabled = false;
+
+            totalDesks = data.total_desks;
+            roomsByFloor = data.rooms_by_floor || {};
+
+            // Store all desks data for room modal
+            allDesksData = [];
+            Object.values(data.desks_by_floor).forEach((desks) => {
+                allDesksData = allDesksData.concat(desks);
+            });
+
+            // Render desks by floor progressively (loading will be hidden inside)
+            await renderDesksByFloorProgressively(data.desks_by_floor);
+
+            // Collect all desk cards
+            allDeskCards = Array.from(document.querySelectorAll(".desk-card"));
+
+            // Attach event listeners
+            allDeskCards.forEach((card) => {
+                attachCardEventListener(card);
+            });
+
+            // Update status
+            updateStatusText(
+                `${totalDesks} desk${totalDesks !== 1 ? "s" : ""} loaded`
+            );
+
+            // Enable buttons
             refreshBtn.disabled = false;
-            
+
             // Start refresh timer
             lastRefreshTime = Date.now();
             startRefreshTimer();
-            
         } catch (error) {
-            loadingContainer.classList.add('hidden');
-            console.error('Error loading desks:', error);
-            showError('Failed to load desks. Please try again.');
-            updateStatusText('Failed to load desks');
+            console.error("Error loading desks:", error);
+            loadingContainer.classList.add("hidden");
+            showError("Failed to load desks. Please try again.");
+            updateStatusText("Failed to load desks");
             refreshBtn.disabled = false;
         }
     }
 
-    async function loadAllDeskDetailsProgressively() {
-        // Assign desks to floors randomly
-        const deskFloorAssignments = {};
-        const totalFloors = 10;
-        
-        // Pre-assign each desk to a random floor
-        allDesks.forEach(deskId => {
-            const floorNum = Math.floor(Math.random() * totalFloors) + 1;
-            deskFloorAssignments[deskId] = floorNum;
-        });
-        
-        // Load each desk and render progressively
-        for (let i = 0; i < allDesks.length; i++) {
-            const deskId = allDesks[i];
-            
-            // Load desk details
-            const deskData = await loadDeskDetails(deskId);
-            
-            // Only proceed if desk data loaded successfully
-            if (!deskData) {
-                console.warn(`Skipping desk ${deskId} - failed to load details`);
-                continue;
-            }
-            
-            loadedDesksCount++;
-            
-            // Update status text
-            updateStatusText(`Loading desks... ${loadedDesksCount}/${allDesks.length}`);
-            
-            // Get the floor for this desk
-            const floorNum = deskFloorAssignments[deskId];
-            
-            // Check if floor container exists, if not create it
-            let floorContainer = document.querySelector(`[data-floor="${floorNum}"]`);
-            if (!floorContainer) {
-                floorContainer = createFloorContainer(floorNum);
-                // Insert floor in sorted order (highest to lowest)
-                insertFloorInOrder(floorContainer, floorNum);
-            }
-            
-            const deskItems = floorContainer.querySelector('.desk-items');
-            const deskCard = createDeskCard(deskId);
-            deskItems.appendChild(deskCard);
-            
-            // Attach event listener to this card
-            attachCardEventListener(deskCard);
-        }
-    }
-
-    function insertFloorInOrder(floorContainer, floorNum) {
-        const existingFloors = Array.from(deskRowsContainer.querySelectorAll('.desk-row'));
-        
-        if (existingFloors.length === 0) {
-            deskRowsContainer.appendChild(floorContainer);
+    async function renderDesksByFloorProgressively(desksByFloor) {
+        if (!desksByFloor || Object.keys(desksByFloor).length === 0) {
+            deskRowsContainer.innerHTML = `
+                <div class="no-results-message active">
+                    <span class="material-icons-round">error_outline</span>
+                    <p>No desks found</p>
+                </div>
+            `;
             return;
         }
-        
-        // Find the correct position (floors sorted descending)
-        let inserted = false;
-        for (let existingFloor of existingFloors) {
-            const existingFloorNum = parseInt(existingFloor.getAttribute('data-floor'));
-            if (floorNum > existingFloorNum) {
-                deskRowsContainer.insertBefore(floorContainer, existingFloor);
-                inserted = true;
-                break;
-            }
-        }
-        
-        if (!inserted) {
+
+        // Convert to array then sort (highest to lowest, then unassigned)
+        const floors = Object.entries(desksByFloor);
+        floors.sort((a, b) => {
+            const floorA = a[0];
+            const floorB = b[0];
+            if (floorA === "unassigned") return 1;
+            if (floorB === "unassigned") return -1;
+            return parseInt(floorB) - parseInt(floorA);
+        });
+
+        // Render floors one by one with slight delay for progressive loading effect
+        for (let i = 0; i < floors.length; i++) {
+            const [floorKey, desks] = floors[i];
+
+            const floorContainer = createFloorContainer(floorKey);
+            const deskItems = floorContainer.querySelector(".desk-items");
+
+            // First, add room cards if this floor has rooms
+            const roomsOnFloor = roomsByFloor[floorKey] || [];
+            roomsOnFloor.forEach((room) => {
+                const roomCard = createRoomCard(room, floorKey);
+                deskItems.appendChild(roomCard);
+            });
+
+            // Then add desk cards - but only desks that are NOT in a room
+            desks.forEach((desk) => {
+                // Only show desks that are directly on the floor (not in a room)
+                if (!desk.room_id) {
+                    const deskCard = createDeskCard(desk);
+                    deskItems.appendChild(deskCard);
+                }
+            });
+
             deskRowsContainer.appendChild(floorContainer);
+
+            // Hide loading spinner after first floor renders
+            if (i === 0) {
+                loadingContainer.classList.add("hidden");
+            }
+
+            // Delay between floors for progressive visual effect
+            if (i < floors.length - 1) {
+                await new Promise((resolve) => setTimeout(resolve, 50));
+            }
         }
     }
 
-    function createFloorContainer(floorNum) {
-        const row = document.createElement('div');
-        row.className = 'desk-row';
-        row.setAttribute('data-floor', floorNum);
-        
-        // Desk items container (initially empty)
-        const deskItems = document.createElement('div');
-        deskItems.className = 'desk-items';
-        
-        // Separator
-        const separator = document.createElement('div');
-        separator.className = 'row-separator';
-        
-        // Row header
-        const rowHeader = document.createElement('div');
-        rowHeader.className = 'row-header';
-        rowHeader.innerHTML = `
-            <span class=\"row-label\">Floor</span>
-            <span class=\"row-number\">${floorNum}</span>
-        `;
-        
+    function createFloorContainer(floorKey) {
+        const row = document.createElement("div");
+        row.className = "desk-row";
+        row.setAttribute("data-floor", floorKey);
+
+        // Add special styling for unassigned section
+        if (floorKey === "unassigned") {
+            row.classList.add("unassigned-section");
+        }
+
+        const deskItems = document.createElement("div");
+        deskItems.className = "desk-items";
+
+        const separator = document.createElement("div");
+        separator.className = "row-separator";
+
+        const rowHeader = document.createElement("div");
+        rowHeader.className = "row-header";
+
+        if (floorKey === "unassigned") {
+            rowHeader.classList.add("unassigned");
+            rowHeader.innerHTML = `
+                <span class="row-number unassigned">N/A</span>
+            `;
+        } else {
+            rowHeader.innerHTML = `
+                <span class="row-label">Floor</span>
+                <span class="row-number">${floorKey}</span>
+            `;
+        }
+
         row.appendChild(deskItems);
         row.appendChild(separator);
         row.appendChild(rowHeader);
-        
+
         return row;
     }
 
-    async function loadDeskDetails(deskId) {
-        try {
-            const response = await fetch(`${API_BASE}/${deskId}`);
-            if (!response.ok) throw new Error(`Failed to fetch desk ${deskId}`);
-            
-            const data = await response.json();
-            deskDetailsCache[deskId] = data;
-            return data;
-        } catch (error) {
-            console.error(`Error loading desk ${deskId}:`, error);
-            return null;
-        }
-    }
+    function createDeskCard(desk) {
+        const card = document.createElement("div");
+        card.className = "desk-card";
+        card.setAttribute("data-desk-id", desk.desk_id);
+        card.setAttribute("data-desk-name", desk.display_name);
+        card.setAttribute("data-position", desk.current_position || "");
+        card.setAttribute("data-status", desk.current_status);
+        card.setAttribute("data-manufacturer", desk.manufacturer);
+        card.setAttribute("data-activations", desk.activations);
+        card.setAttribute("data-sit-stand", desk.sit_stand);
+        card.setAttribute("data-assigned-user", desk.assigned_user_id || "");
 
-    function createDeskCard(deskId) {
-        const card = document.createElement('div');
-        card.className = 'desk-card';
-        card.setAttribute('data-desk-id', deskId);
-        
-        const deskData = deskDetailsCache[deskId];
-        const status = deskData?.state?.status || 'Normal';
-        const statusClass = getStatusClass(status);
-        
+        const statusClass = getStatusClass(desk.current_status);
+
         card.innerHTML = `
             <div class="desk-icon">
                 <span class="material-icons-round">desk</span>
             </div>
             <div class="desk-status ${statusClass}"></div>
         `;
-        
+
+        return card;
+    }
+
+    function createRoomCard(room, floorKey) {
+        const card = document.createElement("div");
+        card.className = "room-card";
+        card.setAttribute("data-room-id", room.id);
+        card.setAttribute("data-room-name", room.name);
+        card.setAttribute("data-floor-key", floorKey);
+
+        card.innerHTML = `
+            <div class="room-card-content">
+                <div class="room-name">${room.name}</div>
+                <div class="room-desk-count">
+                    <span class="material-icons-round">desk</span>
+                    <span>${room.desks_count} desk${
+            room.desks_count !== 1 ? "s" : ""
+        }</span>
+                </div>
+            </div>
+            <span class="material-icons-round room-icon">meeting_room</span>
+        `;
+
+        // Add click event to open room modal
+        card.addEventListener("click", function (e) {
+            openRoomModal(room);
+        });
+
         return card;
     }
 
     function getStatusClass(status) {
         const normalized = status.toLowerCase();
-        if (normalized.includes('error') || normalized.includes('collision')) return 'faulty';
-        if (normalized.includes('moving') || normalized.includes('use')) return 'occupied';
-        if (normalized.includes('cleaning')) return 'cleaning';
-        return 'available';
+        if (
+            normalized.includes("error") ||
+            normalized.includes("collision") ||
+            normalized.includes("faulty")
+        )
+            return "faulty";
+        if (
+            normalized.includes("moving") ||
+            normalized.includes("use") ||
+            normalized.includes("occupied")
+        )
+            return "occupied";
+        if (normalized.includes("cleaning")) return "cleaning";
+        return "available";
     }
 
     function attachCardEventListener(card) {
-        card.addEventListener('click', function () {
-            const deskId = this.getAttribute('data-desk-id');
-            
-            if (selectMode) {
-                this.classList.toggle('selected');
-                updateSelectedDesks();
-            } else {
-                selectedDesks = [deskId];
-                currentViewIndex = 0;
-                openDeskModal(deskId);
-                updateModalNavigation();
-            }
+        card.addEventListener("click", function () {
+            const deskId = this.getAttribute("data-desk-id");
+            selectedDesks = [deskId];
+            currentViewIndex = 0;
+            openDeskModal(deskId);
+            updateModalNavigation();
         });
+    }
+
+    // Refresh button handler - reload desks
+    refreshBtn.addEventListener("click", function () {
+        if (refreshBtn.disabled) return;
+
+        // Clear existing desks and show loading
+        deskRowsContainer.innerHTML = "";
+        loadingContainer.classList.remove("hidden");
+
+        stopRefreshTimer();
+        loadDesksFromServer();
+    });
+
+    function toggleSelectMode() {
+        selectedDesks = [];
+        updateStatusText(`${totalDesks} desks loaded`);
     }
 
     function updateStatusText(text) {
@@ -266,24 +296,13 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updateSelectedDesks() {
-        selectedDesks = Array.from(document.querySelectorAll('.desk-card.selected'))
-            .map(card => card.getAttribute('data-desk-id'));
-        
-        // Update status text based on selection
-        if (selectMode) {
-            if (selectedDesks.length === 0) {
-                updateStatusText(`${loadedDesksCount} desks`);
-            } else {
-                updateStatusText(`${selectedDesks.length} desk${selectedDesks.length !== 1 ? 's' : ''} selected`);
-            }
-        } else {
-            updateStatusText(`${loadedDesksCount} desks`);
-        }
+        // This function is kept for modal navigation compatibility
+        // but no longer handles bulk selection
     }
 
     // Modal navigation buttons
     if (modalPrevBtn) {
-        modalPrevBtn.addEventListener('click', function () {
+        modalPrevBtn.addEventListener("click", function () {
             if (currentViewIndex > 0) {
                 currentViewIndex--;
                 openDeskModal(selectedDesks[currentViewIndex]);
@@ -293,7 +312,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     if (modalNextBtn) {
-        modalNextBtn.addEventListener('click', function () {
+        modalNextBtn.addEventListener("click", function () {
             if (currentViewIndex < selectedDesks.length - 1) {
                 currentViewIndex++;
                 openDeskModal(selectedDesks[currentViewIndex]);
@@ -304,124 +323,342 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateModalNavigation() {
         if (selectedDesks.length > 1) {
-            modalPrevBtn.style.display = 'flex';
-            modalNextBtn.style.display = 'flex';
-            
+            modalPrevBtn.style.display = "flex";
+            modalNextBtn.style.display = "flex";
+
             modalPrevBtn.disabled = currentViewIndex === 0;
-            modalNextBtn.disabled = currentViewIndex === selectedDesks.length - 1;
+            modalNextBtn.disabled =
+                currentViewIndex === selectedDesks.length - 1;
         } else {
-            modalPrevBtn.style.display = 'none';
-            modalNextBtn.style.display = 'none';
+            modalPrevBtn.style.display = "none";
+            modalNextBtn.style.display = "none";
         }
     }
-
-    // Select button - toggles selection mode
-    if (selectBtn) {
-        selectBtn.addEventListener('click', function () {
-            selectMode = !selectMode;
-            this.classList.toggle('primary');
-            
-            // Update icon
-            const icon = this.querySelector('.material-icons-round');
-            if (selectMode) {
-                icon.textContent = 'check_box';
-                actionsBtn.style.display = 'flex';
-                updateStatusText(`${loadedDesksCount} desks - Select desks to perform actions`);
-            } else {
-                icon.textContent = 'check_box_outline_blank';
-                actionsBtn.style.display = 'none';
-                actionsDropdown.classList.remove('active');
-                document.querySelectorAll('.desk-card').forEach(card => card.classList.remove('selected'));
-                selectedDesks = [];
-                updateStatusText(`${loadedDesksCount} desks loaded`);
-            }
-            
-            showNotification(selectMode ? 'Selection mode enabled' : 'Selection mode disabled');
-        });
-    }
-
-    // Actions button - toggle dropdown
-    if (actionsBtn) {
-        actionsBtn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            actionsDropdown.classList.toggle('active');
-        });
-    }
-
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function (e) {
-        if (actionsDropdown && !actionsBtn.contains(e.target) && !actionsDropdown.contains(e.target)) {
-            actionsDropdown.classList.remove('active');
-        }
-    });
-
-    // Dropdown action items
-    const dropdownActions = document.querySelectorAll('.dropdown-action-item');
-    dropdownActions.forEach(item => {
-        item.addEventListener('click', function () {
-            const action = this.getAttribute('data-action');
-            const selectedCount = selectedDesks.length;
-            
-            if (selectedCount > 0) {
-                // TODO: Implement actual action via API
-                showNotification(`${action.replace('-', ' ')} will be applied to ${selectedCount} desk(s)`);
-                actionsDropdown.classList.remove('active');
-                console.log(`TODO: Implement ${action} for desks:`, selectedDesks);
-            } else {
-                showNotification('Please select desks first');
-            }
-        });
-    });
 
     async function openDeskModal(deskId) {
-        const deskData = deskDetailsCache[deskId];
-        
-        if (!deskData) {
-            showNotification('Desk data not available');
+        // Get fresh desk data from the card's data attributes
+        const card = document.querySelector(`[data-desk-id="${deskId}"]`);
+
+        if (!card) {
+            showNotification("Desk not found");
             return;
         }
 
-        // Populate modal with desk data from API
-        document.getElementById('modal-desk-id').textContent = deskId;
-        document.getElementById('modal-desk-name').textContent = deskData.config?.name || 'N/A';
-        document.getElementById('modal-desk-status').textContent = statusMap[deskData.state?.status] || deskData.state?.status || 'N/A';
-        document.getElementById('modal-desk-position').textContent = deskData.state?.position_mm || 'N/A';
-        document.getElementById('modal-desk-speed').textContent = deskData.state?.speed_mms || '0';
-        document.getElementById('modal-desk-manufacturer').textContent = deskData.config?.manufacturer || 'N/A';
-        document.getElementById('modal-desk-activations').textContent = deskData.usage?.activationsCounter || '0';
-        document.getElementById('modal-desk-sitstand').textContent = deskData.usage?.sitStandCounter || '0';
+        currentDeskId = deskId;
 
-        modal.classList.add('active');
+        // Force clear all modal content first to ensure fresh data is visible
+        document.getElementById("modal-desk-id").textContent = "";
+        document.getElementById("modal-desk-name").textContent = "";
+        document.getElementById("modal-desk-status").textContent = "";
+        document.getElementById("modal-desk-position").textContent = "";
+        document.getElementById("modal-desk-manufacturer").textContent = "";
+        document.getElementById("modal-desk-activations").textContent = "";
+        document.getElementById("modal-desk-sitstand").textContent = "";
+
+        // Now populate with fresh data from card attributes
+        document.getElementById("modal-desk-id").textContent = deskId;
+        document.getElementById("modal-desk-name").textContent =
+            card.getAttribute("data-desk-name") || "N/A";
+        document.getElementById("modal-desk-status").textContent =
+            statusMap[card.getAttribute("data-status")] ||
+            card.getAttribute("data-status") ||
+            "N/A";
+        document.getElementById("modal-desk-position").textContent =
+            card.getAttribute("data-position") || "N/A";
+        document.getElementById("modal-desk-manufacturer").textContent =
+            card.getAttribute("data-manufacturer") || "N/A";
+        document.getElementById("modal-desk-activations").textContent =
+            card.getAttribute("data-activations") || "0";
+        document.getElementById("modal-desk-sitstand").textContent =
+            card.getAttribute("data-sit-stand") || "0";
+
+        // Populate user assignment with custom select
+        const assignedUserId = card.getAttribute("data-assigned-user");
+        populateUserAssignmentCustomSelect(assignedUserId || null);
+
+        // Set height controls
+        const currentHeight =
+            parseInt(card.getAttribute("data-position")) || 700;
+        document.getElementById("modal-height-slider").value = currentHeight;
+        document.getElementById("modal-height-input").value = currentHeight;
+
+        modal.classList.add("active");
+    }
+
+    function populateUserAssignmentCustomSelect(assignedUserId) {
+        const selectContainer = document.getElementById(
+            "modal-assigned-user-select"
+        );
+        const selectSelected = document.getElementById(
+            "modal-assigned-user-selected"
+        );
+        const selectItems = document.getElementById(
+            "modal-assigned-user-items"
+        );
+
+        if (!selectContainer || !selectSelected || !selectItems) return;
+
+        // Clear existing items
+        selectItems.innerHTML = "";
+
+        // Add "No User Assigned" option
+        const noUserDiv = document.createElement("div");
+        noUserDiv.textContent = "No User Assigned";
+        noUserDiv.setAttribute("data-value", "");
+        noUserDiv.addEventListener("click", function () {
+            handleUserSelection("", "No User Assigned");
+        });
+        selectItems.appendChild(noUserDiv);
+
+        // Set default selected text
+        let selectedText = "No User Assigned";
+        let selectedFound = false;
+
+        // Add users
+        availableUsers.forEach((user) => {
+            const userDiv = document.createElement("div");
+            const userName = `${user.first_name} ${user.last_name}`;
+
+            // Check if user already has a desk AND it's not the current desk
+            // Users can always be assigned to the current desk (even if they're already there)
+            if (user.desk_id && user.desk_id !== currentDeskId) {
+                userDiv.textContent = `${userName} (Already assigned)`;
+                userDiv.classList.add("disabled");
+                userDiv.style.opacity = "0.5";
+                userDiv.style.cursor = "not-allowed";
+            } else {
+                userDiv.textContent = userName;
+                userDiv.setAttribute("data-value", user.id);
+                userDiv.addEventListener("click", function () {
+                    if (!this.classList.contains("disabled")) {
+                        handleUserSelection(user.id, userName);
+                    }
+                });
+            }
+
+            // Mark as selected if this is the assigned user
+            if (user.id == assignedUserId) {
+                userDiv.classList.add("selected");
+                selectedText = userName;
+                selectedFound = true;
+            }
+
+            selectItems.appendChild(userDiv);
+        });
+
+        // Update selected display
+        selectSelected.textContent = selectedText;
+
+        // Mark "No User Assigned" as selected if no user is assigned
+        if (!selectedFound && !assignedUserId) {
+            noUserDiv.classList.add("selected");
+        }
+
+        // Handle custom select dropdown toggle
+        selectSelected.onclick = function () {
+            selectContainer.classList.toggle("active");
+            selectItems.classList.toggle("hidden");
+        };
+
+        // Close dropdown when clicking outside
+        document.addEventListener("click", function closeDropdown(e) {
+            if (!selectContainer.contains(e.target)) {
+                selectContainer.classList.remove("active");
+                selectItems.classList.add("hidden");
+            }
+        });
+    }
+
+    async function handleUserSelection(userId, userName) {
+        const selectContainer = document.getElementById(
+            "modal-assigned-user-select"
+        );
+        const selectSelected = document.getElementById(
+            "modal-assigned-user-selected"
+        );
+        const selectItems = document.getElementById(
+            "modal-assigned-user-items"
+        );
+
+        // Close dropdown
+        selectContainer.classList.remove("active");
+        selectItems.classList.add("hidden");
+
+        // Update display
+        selectSelected.textContent = userName;
+
+        // Update selected state in dropdown
+        selectItems.querySelectorAll("div").forEach((div) => {
+            div.classList.remove("selected");
+            if (
+                div.getAttribute("data-value") == userId ||
+                (!userId && div.textContent === "No User Assigned")
+            ) {
+                div.classList.add("selected");
+            }
+        });
+
+        const deskId = currentDeskId;
+
+        if (!deskId) {
+            showNotification("No desk selected");
+            return;
+        }
+
+        try {
+            let response;
+            if (userId) {
+                // Assign user to desk
+                response = await fetch(
+                    `${DESK_API_ENDPOINT}/${deskId}/assign`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": window.deskData.csrfToken,
+                        },
+                        body: JSON.stringify({ user_id: userId }),
+                    }
+                );
+            } else {
+                // Unassign user from desk
+                response = await fetch(
+                    `${DESK_API_ENDPOINT}/${deskId}/unassign`,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": window.deskData.csrfToken,
+                        },
+                    }
+                );
+            }
+
+            if (!response.ok) throw new Error("Failed to update assignment");
+
+            const result = await response.json();
+            showNotification(result.message || "Assignment updated");
+
+            // Update card attribute
+            const card = document.querySelector(`[data-desk-id="${deskId}"]`);
+            if (card) {
+                card.setAttribute("data-assigned-user", userId || "");
+            }
+
+            // Update users list - mark user as having this desk
+            const userIndex = availableUsers.findIndex((u) => u.id == userId);
+            if (userIndex >= 0) {
+                availableUsers[userIndex].desk_id = userId ? deskId : null;
+            }
+        } catch (error) {
+            console.error("Error updating assignment:", error);
+            showNotification("Failed to update assignment");
+
+            // Revert selection on error
+            populateUserAssignmentCustomSelect(null);
+        }
+    }
+
+    // Height slider and input synchronization
+    const heightSlider = document.getElementById("modal-height-slider");
+    const heightInput = document.getElementById("modal-height-input");
+
+    if (heightSlider && heightInput) {
+        heightSlider.addEventListener("input", function () {
+            heightInput.value = this.value;
+        });
+
+        heightInput.addEventListener("input", function () {
+            heightSlider.value = this.value;
+        });
+    }
+
+    // Preset height buttons
+    const presetBtns = document.querySelectorAll(".preset-btn");
+    presetBtns.forEach((btn) => {
+        btn.addEventListener("click", function () {
+            const height = this.getAttribute("data-height");
+            heightSlider.value = height;
+            heightInput.value = height;
+        });
+    });
+
+    // Apply height button
+    const applyHeightBtn = document.getElementById("apply-height-btn");
+    if (applyHeightBtn) {
+        applyHeightBtn.addEventListener("click", async function () {
+            const deskId = currentDeskId;
+            const newHeight = heightInput.value;
+
+            if (!deskId) {
+                showNotification("No desk selected");
+                return;
+            }
+
+            if (newHeight < 680 || newHeight > 1320) {
+                showNotification("Height must be between 680mm and 1320mm");
+                return;
+            }
+
+            try {
+                applyHeightBtn.disabled = true;
+                applyHeightBtn.innerHTML =
+                    '<span class="material-icons-round">hourglass_empty</span><span>Applying...</span>';
+
+                const response = await fetch(
+                    `${DESK_API_ENDPOINT}/${deskId}/height`,
+                    {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": window.deskData.csrfToken,
+                        },
+                        body: JSON.stringify({
+                            position_mm: parseInt(newHeight),
+                        }),
+                    }
+                );
+
+                if (!response.ok) throw new Error("Failed to set height");
+
+                const result = await response.json();
+                showNotification(`Height set to ${newHeight}mm`);
+
+                // Update card data attribute
+                const card = document.querySelector(
+                    `[data-desk-id="${deskId}"]`
+                );
+                if (card) {
+                    card.setAttribute("data-position", newHeight);
+                    document.getElementById("modal-desk-position").textContent =
+                        newHeight;
+                }
+            } catch (error) {
+                console.error("Error setting height:", error);
+                showNotification("Failed to set height");
+            } finally {
+                applyHeightBtn.disabled = false;
+                applyHeightBtn.innerHTML =
+                    '<span class="material-icons-round">height</span><span>Apply Height</span>';
+            }
+        });
     }
 
     // Close modal
     if (modalClose) {
-        modalClose.addEventListener('click', function () {
-            modal.classList.remove('active');
+        modalClose.addEventListener("click", function () {
+            modal.classList.remove("active");
         });
     }
 
     // Close modal when clicking outside
     if (modal) {
-        modal.addEventListener('click', function (e) {
+        modal.addEventListener("click", function (e) {
             if (e.target === modal) {
-                modal.classList.remove('active');
+                modal.classList.remove("active");
             }
         });
     }
-
-    // Modal action buttons
-    const modalActionBtns = document.querySelectorAll('.modal-action-btn');
-    modalActionBtns.forEach(btn => {
-        btn.addEventListener('click', function () {
-            const action = this.getAttribute('data-action');
-            const deskId = document.getElementById('modal-desk-id').textContent;
-            
-            // TODO: Implement actual actions via API
-            showNotification(`${action.replace('-', ' ')} action triggered for ${deskId}`);
-            console.log(`TODO: Implement ${action} for desk:`, deskId);
-        });
-    });
 
     function showError(message) {
         deskRowsContainer.innerHTML = `
@@ -432,74 +669,36 @@ document.addEventListener('DOMContentLoaded', function () {
             </div>
         `;
         // Add event listener for retry button
-        const retryBtn = deskRowsContainer.querySelector('.retry-btn');
+        const retryBtn = deskRowsContainer.querySelector(".retry-btn");
         if (retryBtn) {
-            retryBtn.addEventListener('click', function () {
-                location.reload();
+            retryBtn.addEventListener("click", function () {
+                loadDesksFromServer();
             });
         }
     }
 
     function showNotification(message) {
         console.log(`Notification: ${message}`);
-        
-        const notification = document.createElement('div');
-        notification.className = 'notification-toast';
+
+        const notification = document.createElement("div");
+        notification.className = "notification-toast";
         notification.textContent = message;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--btn-primary-hover);
-            color: white;
-            padding: 16px 24px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            z-index: 2000;
-            animation: slideInRight 0.3s ease;
-        `;
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
-            notification.style.animation = 'slideOutRight 0.3s ease';
+            notification.classList.add("closing");
             setTimeout(() => {
                 notification.remove();
             }, 300);
         }, 2000);
     }
 
-    // Add notification animations
-    const style = document.createElement('style');
-    style.textContent = `
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        @keyframes slideOutRight {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-    
     // Refresh timer functions
     function startRefreshTimer() {
         // Update immediately
         updateRefreshText();
-        
+
         // Update every second
         refreshTimerInterval = setInterval(updateRefreshText, 1000);
     }
@@ -512,41 +711,107 @@ document.addEventListener('DOMContentLoaded', function () {
             refreshTimerInterval = null;
         }
     }
-    
+
     function updateRefreshText() {
         const now = Date.now();
         const secondsAgo = Math.floor((now - lastRefreshTime) / 1000);
-        
+
         if (secondsAgo < 60) {
             if (secondsAgo === 0) {
-                lastRefreshText.textContent = 'Just now';
+                lastRefreshText.textContent = "Just now";
             } else if (secondsAgo === 1) {
-                lastRefreshText.textContent = '1 second ago';
+                lastRefreshText.textContent = "1 second ago";
             } else {
                 lastRefreshText.textContent = `${secondsAgo} seconds ago`;
             }
         } else if (secondsAgo < 3600) {
             const minutesAgo = Math.floor(secondsAgo / 60);
             if (minutesAgo === 1) {
-                lastRefreshText.textContent = '1 minute ago';
+                lastRefreshText.textContent = "1 minute ago";
             } else {
                 lastRefreshText.textContent = `${minutesAgo} minutes ago`;
             }
         } else {
             const hoursAgo = Math.floor(secondsAgo / 3600);
             if (hoursAgo === 1) {
-                lastRefreshText.textContent = '1 hour ago';
+                lastRefreshText.textContent = "1 hour ago";
             } else {
                 lastRefreshText.textContent = `${hoursAgo} hours ago`;
             }
-            lastRefreshText.textContent = hoursAgo === 1 ? '1 hour ago' : `${hoursAgo} hours ago`;
         }
     }
-    
+
     // Clear interval when page is unloaded
-    window.addEventListener('beforeunload', function() {
+    window.addEventListener("beforeunload", function () {
         if (refreshTimerInterval) {
             clearInterval(refreshTimerInterval);
         }
     });
+
+    // Room Modal functionality
+    const roomModal = document.getElementById("room-modal");
+    const roomModalClose = document.getElementById("room-modal-close");
+    const roomModalTitle = document.getElementById("room-modal-title");
+    const roomModalSubtitle = document.getElementById("room-modal-subtitle");
+    const roomDesksGrid = document.getElementById("room-desks-grid");
+    const roomModalEmpty = document.getElementById("room-modal-empty");
+
+    function openRoomModal(room) {
+        // Set room title
+        roomModalTitle.textContent = room.name;
+        roomModalSubtitle.textContent = `${room.desks_count} desk${
+            room.desks_count !== 1 ? "s" : ""
+        }`;
+
+        // Find all desks in this room
+        const desksInRoom = allDesksData.filter(
+            (desk) => desk.room_id === room.id
+        );
+
+        // Clear previous content
+        roomDesksGrid.innerHTML = "";
+
+        if (desksInRoom.length === 0) {
+            roomDesksGrid.classList.add("hidden");
+            roomModalEmpty.classList.remove("hidden");
+        } else {
+            roomDesksGrid.classList.remove("hidden");
+            roomModalEmpty.classList.add("hidden");
+
+            // Create desk cards for this room
+            desksInRoom.forEach((desk) => {
+                const deskCard = createDeskCard(desk);
+                // Re-attach click event for desk modal
+                deskCard.addEventListener("click", function () {
+                    // Close room modal first
+                    roomModal.classList.remove("active");
+                    // Open desk modal
+                    selectedDesks = [desk.desk_id];
+                    currentViewIndex = 0;
+                    openDeskModal(desk.desk_id);
+                    updateModalNavigation();
+                });
+                roomDesksGrid.appendChild(deskCard);
+            });
+        }
+
+        // Show modal
+        roomModal.classList.add("active");
+    }
+
+    // Close room modal
+    if (roomModalClose) {
+        roomModalClose.addEventListener("click", function () {
+            roomModal.classList.remove("active");
+        });
+    }
+
+    // Close room modal when clicking outside
+    if (roomModal) {
+        roomModal.addEventListener("click", function (e) {
+            if (e.target === roomModal) {
+                roomModal.classList.remove("active");
+            }
+        });
+    }
 });

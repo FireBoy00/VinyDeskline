@@ -1,7 +1,8 @@
 /* -------------------------------
    Base layout
    ------------------------------- */
-html, body {
+html,
+body {
     height: 100%;
 }
 body {
@@ -16,7 +17,6 @@ body {
 .hidden-section {
     display: none;
 }
-
 
 /* -------------------------------
    Navbar / Sidebar
@@ -88,7 +88,6 @@ nav.navbar .nav-link .nav-icon {
     font-size: 20px;
 }
 
-
 /* -------------------------------
    Dashboard layout (main content)
    ------------------------------- */
@@ -101,6 +100,13 @@ nav.navbar .nav-link .nav-icon {
     flex-direction: column;
     gap: var(--general-margin);
     background-color: var(--bg-page);
+}
+
+.dashboard-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--general-margin);
+    padding-bottom: var(--general-margin);
 }
 /* Responsive: on small screens, revert sidebar to normal document flow */
 @media (max-width: 800px) {
@@ -123,7 +129,6 @@ nav.navbar .nav-link .nav-icon {
     background-color: var(--bg-card);
 }
 
-
 /* -------------------------------
    Overview Section
    ------------------------------- */
@@ -138,7 +143,11 @@ nav.navbar .nav-link .nav-icon {
     position: absolute;
     top: 20px;
     right: 24px;
-    background: linear-gradient(135deg, var(--btn-primary-hover) 0%, var(--accent-dark) 100%);
+    background: linear-gradient(
+        135deg,
+        var(--btn-primary-hover) 0%,
+        var(--accent-dark) 100%
+    );
     color: white;
     font-size: 0.75rem;
     font-weight: 600;
@@ -225,7 +234,6 @@ nav.navbar .nav-link .nav-icon {
     color: white;
 }
 
-
 /* -------------------------------
    Positions Section
    ------------------------------- */
@@ -247,7 +255,7 @@ nav.navbar .nav-link .nav-icon {
 /* containers */
 .section#positions .position-box {
     flex: 1;
-    background: linear-gradient(135deg, #DCE5E9 0%, #C6DAE2 100%);
+    background: linear-gradient(135deg, #dce5e9 0%, #c6dae2 100%);
     border-radius: 12px;
     padding: 20px 24px;
     display: flex;
@@ -281,37 +289,27 @@ nav.navbar .nav-link .nav-icon {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-
 /* -------------------------------
-   Graphs / Charts Section
-   ------------------------------- */
-.plot-wrap {
+    Graphs / Charts Section
+    ------------------------------- */
+
+#timelinePlot {
     width: 100%;
-    margin: 0 auto; 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex: 1; 
-}
-#myPlot {
-    width: 100%;
-    height: 320px;
+    height: 400px;
     display: block;
 }
 
-/* two-column layout for the plots (pie + line) */
 .graphs-row {
     display: flex;
     gap: var(--general-margin);
     align-items: stretch;
 }
 
-/* make each section a card and split space: left bigger, right smaller */
 .graphs-row > .section {
     flex: 1 1 0%;
     box-sizing: border-box;
     display: flex;
-    flex-direction: column; 
+    flex-direction: column;
     background-color: var(--bg-card);
     border-radius: var(--general-border-radius);
 }
@@ -323,20 +321,161 @@ nav.navbar .nav-link .nav-icon {
     justify-content: center;
     width: 100%;
     flex: 1;
+    padding: 20px 0;
 }
 
-/* keep pie graph size */
-#piePlot {
-    width: 62%;
+#piePlot,
+#deskStatePlot {
+    width: 200%;
+    height: 350px;
+    display: block;
+}
+.plot-wrap {
+    width: 100%;
+    height: 400px;
+    padding: 0 20px;
 }
 
-/* legend as white rounded box like the design */
-.pie-legend {
-    background-color: #ffffff;
-    padding: 18px 20px;
-    border-radius: 12px;
+#dailyUsagePlot {
+    width: 100%;
+    height: 400px;
+    display: block;
+}
+
+.chart-navigation {
     display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 20px 0;
+}
+
+.plot-container {
+    height: 400px;
+    padding: 20px;
+}
+
+.nav-button {
+    background-color: var(--bg-page);
+    color: var(--text-dark);
+    border: 1px solid var(--accent-dark);
+    padding: 8px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-button.active,
+.nav-button:hover {
+    background-color: var(--btn-primary-hover);
+    color: white;
+    border-color: var(--btn-primary-hover);
+}
+
+.chart-plot {
+    width: 100%;
+    height: 100%;
+    display: none;
+}
+
+.chart-plot.active-chart {
+    display: block;
+}
+
+.timeline-filter {
+    display: flex;
+    max-width: 300px;
     flex-direction: column;
-    gap: 12px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 20px;
+}
+
+/* Custom Select Styles */
+.custom-select {
+    position: relative;
+    min-width: 150px;
+}
+
+.select-selected {
+    background-color: rgba(255, 255, 255, 0.5);
+    padding: 10px 32px 10px 12px;
+    border: 1px solid rgba(102, 178, 208, 0.3);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    color: var(--text-dark);
+}
+
+.select-selected::after {
+    content: "▼";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.7rem;
+    color: var(--accent-dark);
+    transition: transform 0.2s ease;
+}
+
+.custom-select.active .select-selected::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.select-selected:hover {
+    background-color: rgba(4, 133, 185, 0.08);
+    border-color: var(--btn-primary-hover);
+}
+
+.select-items {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.98);
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    border: 1px solid rgba(4, 133, 185, 0.2);
+    border-radius: 8px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    animation: dropDown 0.2s ease;
+}
+
+.select-items.hidden {
+    display: none;
+}
+
+.select-items div {
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+    transition: background-color 0.2s ease;
+}
+
+.select-items div:hover {
+    background-color: rgba(4, 133, 185, 0.08);
+}
+
+.select-items div.selected {
+    background-color: rgba(4, 133, 185, 0.15);
+    font-weight: 600;
+}
+
+.select-items div.selected-multi {
+    background-color: rgba(4, 133, 185, 0.25);
+    font-weight: 600;
+}
+
+@keyframes dropDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

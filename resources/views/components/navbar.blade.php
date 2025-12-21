@@ -34,7 +34,16 @@
             </li>
 
             <li>
-                <a href="{{ route('admin.schedules') }}" class="nav-link {{ $active === 'schedules' ? 'active' : '' }}">
+                <a href="{{ route('admin.office-management') }}"
+                    class="nav-link {{ $active === 'office-management' ? 'active' : '' }}">
+                    <span class="material-icons-round nav-icon">business</span>
+                    <span class="nav-text">Office Management</span>
+                </a>
+            </li>
+
+            <li>
+                <a href="{{ route('admin.schedules') }}"
+                    class="nav-link {{ $active === 'schedules' ? 'active' : '' }}">
                     <span class="material-icons-round nav-icon icon">schedule</span>
                     <span class="nav-text">Schedules</span>
                 </a>

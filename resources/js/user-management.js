@@ -27,12 +27,57 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalUsers = userRows.length;
 
     let isEditMode = false; // Track if we're editing or creating
+    let availableDesks = []; // Store available desks
+
+    // Load available desks
+    function loadAvailableDesks() {
+        return fetch("/admin/desks")
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.success) {
+                    availableDesks = data.desks;
+                    return availableDesks;
+                }
+                return [];
+            })
+            .catch((error) => {
+                console.error("Error loading desks:", error);
+                return [];
+            });
+    }
+
+    // Populate desk dropdown
+    function populateDeskDropdown(currentDeskId = null, currentUserId = null) {
+        const deskSelect = document.getElementById("edit-desk");
+        deskSelect.innerHTML = '<option value="">No Desk Assigned</option>';
+
+        availableDesks.forEach((desk) => {
+            const isAssignedToOther =
+                desk.user && desk.user.id !== currentUserId;
+            const option = document.createElement("option");
+            option.value = desk.desk_id;
+            option.textContent = `${desk.name || desk.desk_id}${
+                isAssignedToOther ? " (Assigned)" : ""
+            }${desk.room ? " - " + desk.room.name : ""}`;
+            option.disabled = isAssignedToOther;
+
+            if (desk.desk_id === currentDeskId) {
+                option.selected = true;
+            }
+
+            deskSelect.appendChild(option);
+        });
+    }
+
+    // Load desks on page load
+    loadAvailableDesks();
 
     // Initialize filter values from URL
     const urlParams = new URLSearchParams(window.location.search);
     const customSelectValues = {
         "filter-user-type": urlParams.get("user_type") || "all",
         "filter-personalization": urlParams.get("personalization") || "all",
+        "filter-desk-assignment": urlParams.get("desk_assignment") || "all",
         "filter-age-comparison": urlParams.get("age_comparison") || "any",
         "filter-height-comparison": urlParams.get("height_comparison") || "any",
     };
@@ -42,6 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
         urlParams.get("search") ||
         urlParams.get("user_type") ||
         urlParams.get("personalization") ||
+        urlParams.get("desk_assignment") ||
         urlParams.get("age_comparison") ||
         urlParams.get("height_comparison");
 
@@ -348,18 +394,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Open add modal
-    function openAddModal() {
+    async function openAddModal() {
         isEditMode = false;
         modalTitle.textContent = "Add New User";
         saveUserBtn.textContent = "Create User";
 
-        // Show modal immediately
+        // Show modal with loading state
         editModal.classList.add("active");
+        modalLoading.classList.remove("hidden");
+        modalBody.classList.add("hidden");
+        modalActions.classList.add("hidden");
 
-        // Hide loading, show form
-        modalLoading.classList.add("hidden");
-        modalBody.classList.remove("hidden");
-        modalActions.classList.remove("hidden");
+        // Load desks before showing form
+        await loadAvailableDesks();
 
         // Show password field for new users
         passwordGroup.classList.remove("hidden");
@@ -372,8 +419,16 @@ document.addEventListener("DOMContentLoaded", () => {
         editUserForm.reset();
         document.getElementById("edit-user-id").value = "";
 
+        // Populate desk dropdown for add mode
+        populateDeskDropdown(null, null);
+
         // Setup mutual exclusion between needs_personalization and height/age
         updatePersonalizationFields();
+
+        // Hide loading, show form
+        modalLoading.classList.add("hidden");
+        modalBody.classList.remove("hidden");
+        modalActions.classList.remove("hidden");
     }
 
     // Open edit modal and populate with user data
@@ -421,6 +476,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("edit-needs-personalization").checked =
                     user.needs_personalization;
 
+                // Populate desk dropdown
+                populateDeskDropdown(user.desk_id, user.id);
+
                 // Setup mutual exclusion between needs_personalization and height/age
                 updatePersonalizationFields();
 
@@ -448,29 +506,43 @@ document.addEventListener("DOMContentLoaded", () => {
     closeModalBtn.addEventListener("click", closeEditModal);
     cancelEditBtn.addEventListener("click", closeEditModal);
 
-    // Close modal when clicking outside
-    editModal.addEventListener("click", (e) => {
-        if (e.target === editModal) {
-            closeEditModal();
-        }
-    });
+    // Modal will not close when clicking outside (removed backdrop click handler)
 
     // Save user changes or create new user
     saveUserBtn.addEventListener("click", () => {
         const userId = document.getElementById("edit-user-id").value;
         const password = document.getElementById("edit-password").value;
 
+        const firstName = document.getElementById("edit-first-name").value;
+        const lastName = document.getElementById("edit-last-name").value;
+        let email = document.getElementById("edit-email").value;
+
+        // Auto-generate email if blank and creating new user
+        if (!isEditMode && !email && firstName && lastName) {
+            const firstInitial = firstName.charAt(0).toLowerCase();
+            const lastNamePart =
+                lastName.length <= 4
+                    ? lastName.toLowerCase()
+                    : lastName.substring(0, 4).toLowerCase();
+            email = `${firstInitial}${lastNamePart}@vinydeskline.com`;
+            document.getElementById("edit-email").value = email;
+        }
+
         const userData = {
-            first_name: document.getElementById("edit-first-name").value,
-            last_name: document.getElementById("edit-last-name").value,
-            email: document.getElementById("edit-email").value,
-            height: document.getElementById("edit-height").value || null,
-            age: document.getElementById("edit-age").value || null,
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            height:
+                document.getElementById("edit-height").value?.trim() || null,
+            age: document.getElementById("edit-age").value?.trim() || null,
             is_admin: document.getElementById("edit-is-admin").checked,
             needs_personalization: document.getElementById(
                 "edit-needs-personalization"
             ).checked,
         };
+
+        // Get selected desk
+        const selectedDesk = document.getElementById("edit-desk").value;
 
         // Add password if provided
         if (password) {
@@ -494,12 +566,17 @@ document.addEventListener("DOMContentLoaded", () => {
         saveUserBtn.textContent = isEditMode ? "Saving..." : "Creating...";
 
         const url = isEditMode ? `/api/users/${userId}` : `/api/users`;
-        const method = isEditMode ? "PUT" : "POST";
+
+        // Laravel requires _method field for PUT requests when using POST
+        if (isEditMode) {
+            userData._method = "PUT";
+        }
 
         fetch(url, {
-            method: method,
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                Accept: "application/json",
                 "X-CSRF-TOKEN": document.querySelector(
                     'meta[name="csrf-token"]'
                 ).content,
@@ -508,21 +585,54 @@ document.addEventListener("DOMContentLoaded", () => {
         })
             .then((response) => {
                 if (!response.ok) {
-                    return response.json().then((err) => {
-                        throw new Error(err.message || "Failed to save user");
+                    // Try to parse as JSON, but if it fails, get text
+                    return response.text().then((text) => {
+                        try {
+                            const json = JSON.parse(text);
+                            // If it's a validation error, show field-specific errors
+                            if (json.errors) {
+                                const errorMessages = Object.values(json.errors)
+                                    .flat()
+                                    .join("\n");
+                                throw new Error(errorMessages);
+                            }
+                            throw new Error(
+                                json.message || "Failed to save user"
+                            );
+                        } catch (e) {
+                            // If JSON parsing worked, re-throw the error
+                            if (e.message !== text) {
+                                throw e;
+                            }
+                            // If it's not JSON, it's likely an HTML error page
+                            console.error(
+                                "Server returned HTML instead of JSON:",
+                                text
+                            );
+                            throw new Error(
+                                `Server error (${response.status}): ${response.statusText}`
+                            );
+                        }
                     });
                 }
                 return response.json();
             })
-            .then(() => {
-                alert(
-                    isEditMode
-                        ? "User updated successfully!"
-                        : "User created successfully!"
+            .then((data) => {
+                const savedUserId = data.user.id || userId;
+
+                // Handle desk assignment if changed
+                return handleDeskAssignment(savedUserId, selectedDesk).then(
+                    () => {
+                        alert(
+                            isEditMode
+                                ? "User updated successfully!"
+                                : "User created successfully!"
+                        );
+                        closeEditModal();
+                        // Reload the page to reflect changes
+                        window.location.reload();
+                    }
                 );
-                closeEditModal();
-                // Reload the page to reflect changes
-                window.location.reload();
             })
             .catch((error) => {
                 console.error("Error saving user:", error);
@@ -535,6 +645,44 @@ document.addEventListener("DOMContentLoaded", () => {
                     : "Create User";
             });
     });
+
+    // Handle desk assignment
+    function handleDeskAssignment(userId, deskId) {
+        if (!deskId) {
+            // Unassign desk
+            return fetch(`/api/users/${userId}/unassign-desk`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector(
+                        'meta[name="csrf-token"]'
+                    ).content,
+                },
+            }).catch((error) => {
+                console.log("No desk to unassign or error:", error);
+                return Promise.resolve(); // Continue even if unassign fails
+            });
+        } else {
+            // Assign desk
+            return fetch(`/api/users/${userId}/assign-desk`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-TOKEN": document.querySelector(
+                        'meta[name="csrf-token"]'
+                    ).content,
+                },
+                body: JSON.stringify({ desk_id: deskId }),
+            }).then((response) => {
+                if (!response.ok) {
+                    return response.json().then((err) => {
+                        throw new Error(err.message || "Failed to assign desk");
+                    });
+                }
+                return response.json();
+            });
+        }
+    }
 
     // Delete user function
     function deleteUser(userId) {
@@ -597,6 +745,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const personalization = customSelectValues["filter-personalization"];
         if (personalization && personalization !== "all") {
             params.set("personalization", personalization);
+        }
+
+        // Add desk assignment filter
+        const deskAssignment = customSelectValues["filter-desk-assignment"];
+        if (deskAssignment && deskAssignment !== "all") {
+            params.set("desk_assignment", deskAssignment);
         }
 
         // Add age filter

@@ -67,9 +67,9 @@
                     <li><strong>Frontend:</strong> Blade templates with Vite-powered JavaScript and custom CSS.</li>
                     <li><strong>Backend:</strong> Laravel (PHP) web application exposing routes for users and admins.
                     </li>
-                    <li><strong>Database:</strong> SQLite/MySQL with Eloquent ORM for users, desks, and usage data.</li>
-                    <li><strong>Embedded & tools:</strong> Pico-based desk controller, GitHub, DevDb, Docker, Figma,
-                        Discord.</li>
+                    <li><strong>Database:</strong> SQLite with Eloquent ORM for users, desks, and usage data.</li>
+                    <li><strong>Embedded & tools:</strong> Pico-based sensor provider, GitHub, DevDb, Figma, Discord.
+                    </li>
                 </ul>
             </div>
 

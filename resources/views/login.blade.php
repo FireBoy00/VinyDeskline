@@ -53,7 +53,7 @@
             </form>
 
             <p class="forgot-pass">
-                Need help? <span class="highlight"><a href="#">Contact Admin</a></span>
+                Need help? <span class="highlight"><a href="mailto:jjohn@vinydeskline.com">Contact Admin</a></span>
             </p>
         </section>
     </body>

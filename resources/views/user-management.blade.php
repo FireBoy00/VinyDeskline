@@ -96,6 +96,31 @@
                             </div>
                         </div>
                         <div class="filter-group">
+                            <label class="filter-label">Desk Assignment:</label>
+                            <div class="custom-select" data-name="filter-desk-assignment">
+                                <div class="select-selected">
+                                    @if (request('desk_assignment') === 'assigned')
+                                        Has Desk
+                                    @elseif(request('desk_assignment') === 'unassigned')
+                                        No Desk
+                                    @else
+                                        All
+                                    @endif
+                                </div>
+                                <div class="select-items hidden">
+                                    <div data-value="all"
+                                        class="{{ request('desk_assignment', 'all') === 'all' ? 'selected' : '' }}">All
+                                    </div>
+                                    <div data-value="assigned"
+                                        class="{{ request('desk_assignment') === 'assigned' ? 'selected' : '' }}">
+                                        Has Desk</div>
+                                    <div data-value="unassigned"
+                                        class="{{ request('desk_assignment') === 'unassigned' ? 'selected' : '' }}">No
+                                        Desk</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="filter-group">
                             <label class="filter-label">Age:</label>
                             <div class="custom-select" data-name="filter-age-comparison">
                                 <div class="select-selected">
@@ -185,6 +210,12 @@
                             </div>
                             <div class="user-divider"></div>
                             <div class="user-pill-group">
+                                @if ($user->desk_id)
+                                    <span class="user-pill desk">
+                                        <span class="material-icons-round">desk</span>
+                                        Desk: {{ $user->desk->name ?? $user->desk_id }}
+                                    </span>
+                                @endif
                                 @if ($user->needs_personalization)
                                     <span class="user-pill needs-personalization">Needs Personalization</span>
                                 @elseif (!$user->height && !$user->age)
@@ -293,7 +324,8 @@
 
                     <div class="form-group">
                         <label class="form-label">Email</label>
-                        <input type="email" class="form-input" id="edit-email" required>
+                        <input type="email" class="form-input" id="edit-email" required
+                            placeholder="Auto-generated if left blank">
                     </div>
 
                     <div class="form-group" id="password-group">
@@ -311,6 +343,14 @@
                         <label class="form-label">Age</label>
                         <input type="number" class="form-input" id="edit-age" min="0"
                             placeholder="Optional">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Assigned Desk</label>
+                        <select class="form-input" id="edit-desk">
+                            <option value="">No Desk Assigned</option>
+                            <!-- Will be populated dynamically via JavaScript -->
+                        </select>
                     </div>
 
                     <div class="form-group">

@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\Desk;
+use App\Models\User;
+use App\Models\DeskMetric;
+use App\Services\DeskApiService;
+use Illuminate\Http\Request;
 
 class DeskController extends Controller
 {
@@ -12,186 +16,270 @@ class DeskController extends Controller
     private const SEATED_THRESHOLD = 700;
     private const STANDING_THRESHOLD = 1200;
 
+    protected $deskApiService;
+
+    public function __construct(DeskApiService $deskApiService)
+    {
+        $this->deskApiService = $deskApiService;
+    }
+
+    /**
+     * Get all desks with their assignments and locations
+     */
     public function index()
     {
-        $apiKey = env('DESKS_API_KEY');
-        // TODO: Move URL to .env
-        $url = "http://127.0.0.1:8001/api/v2/{$apiKey}/desks";
+        $desks = Desk::with(['user', 'room.floor'])
+            ->where('is_removed_from_api', false)
+            ->get();
 
-        $response = Http::get($url);
-
-        if ($response->failed()) {
-            return response()->json(['error' => 'API error'], 500);
-        }
-
-        $deskIds = $response->json();
-
-        foreach ($deskIds as $id) {
-            Desk::updateOrCreate(
-                ['desk_id' => $id],
-            );
-        }
+        // Enrich with real-time API data
+        $desksWithApiData = $desks->map(function ($desk) {
+            $apiData = $this->deskApiService->getDeskData($desk->desk_id);
+            
+            // Use stored name, fallback to API if not stored
+            $deskName = $desk->name ?? ($apiData['config']['name'] ?? null);
+            
+            return [
+                'desk_id' => $desk->desk_id,
+                'room_id' => $desk->room_id,
+                'floor_id' => $desk->floor_id, // Computed from room
+                'room' => $desk->room,
+                'floor' => $desk->room ? $desk->room->floor : null,
+                'user' => $desk->user,
+                // Real-time data from API
+                'name' => $deskName,
+                'manufacturer' => $apiData['config']['manufacturer'] ?? null,
+                'position_mm' => $apiData['state']['position_mm'] ?? null,
+                'speed_mms' => $apiData['state']['speed_mms'] ?? null,
+                'status' => $apiData['state']['status'] ?? null,
+                'activations_counter' => $apiData['usage']['activationsCounter'] ?? 0,
+                'sit_stand_counter' => $apiData['usage']['sitStandCounter'] ?? 0,
+            ];
+        });
 
         return response()->json([
-            'message' => 'Data fetched successfully',
-            'desks'   => $deskIds
+            'success' => true,
+            'desks' => $desksWithApiData
         ]);
     }
 
-    public function state($desk_id)
+    /**
+     * Get specific desk details
+     */
+    public function show($deskId)
     {
-        $apiKey = env('DESKS_API_KEY');
-        // TODO: Move URL to .env
-        $url = "http://127.0.0.1:8001/api/v2/{$apiKey}/desks/{$desk_id}";
+        $desk = Desk::with(['user', 'room.floor'])
+            ->where('desk_id', $deskId)
+            ->first();
 
-        $response = Http::get($url);
+        if (!$desk) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Desk not found'
+            ], 404);
+        }
 
-        $deskData = $response->json();
+        // Get real-time data from API
+        $apiData = $this->deskApiService->getDeskData($deskId);
 
-        Desk::updateOrCreate(
-            ['desk_id' => $desk_id],
-            ['state' => $deskData['state']]
-        );
+        return response()->json([
+            'success' => true,
+            'desk' => $desk,
+            'api_data' => $apiData
+        ]);
+    }
 
-        return response()->json($deskData);
+    /**
+     * Update desk height via API (snake_case route handler)
+     */
+    public function set_height(Request $request, $desk_id)
+    {
+        return $this->setHeight($request, $desk_id);
+    }
+
+    /**
+     * Update desk height via API
+     */
+    public function setHeight(Request $request, $deskId)
+    {
+        $request->validate([
+            'position_mm' => 'required|integer|min:680|max:1320'
+        ]);
+
+        $targetHeight = $request->input('position_mm');
+
+        // Send update to API
+        $success = $this->deskApiService->updateDeskPosition($deskId, $targetHeight);
+
+        if (!$success) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update desk height'
+            ], 500);
+        }
+
+        // No need to update local database - real-time data comes from API
+        return response()->json([
+            'success' => true,
+            'position_mm' => $targetHeight
+        ]);
+    }
+
+    /**
+     * Assign user to desk
+     */
+    public function assignUser(Request $request, $deskId)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id'
+        ]);
+
+        $desk = Desk::where('desk_id', $deskId)->first();
+
+        if (!$desk) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Desk not found'
+            ], 404);
+        }
+
+        // Get the user to be assigned
+        $user = User::find($request->user_id);
+
+        // If this desk already has a different user assigned, unassign them first
+        $existingUser = User::where('desk_id', $deskId)
+            ->where('id', '!=', $request->user_id)
+            ->first();
+
+        if ($existingUser) {
+            $existingUser->update(['desk_id' => null]);
+        }
+
+        // Check if user is already assigned to another desk and unassign first
+        if ($user->desk_id && $user->desk_id !== $deskId) {
+            $user->update(['desk_id' => null]);
+        }
+
+        // Assign user to desk
+        $user->update(['desk_id' => $deskId]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User assigned successfully',
+            'user' => $user->load('desk')
+        ]);
+    }
+
+    /**
+     * Unassign user from desk
+     */
+    public function unassignUser($deskId)
+    {
+        $user = User::where('desk_id', $deskId)->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No user assigned to this desk'
+            ], 404);
+        }
+
+        $user->update(['desk_id' => null]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User unassigned successfully'
+        ]);
+    }
+
+    /**
+     * Get desk metrics/statistics
+     */
+    public function getMetrics($deskId, Request $request)
+    {
+        $days = $request->input('days', 7); // Default to last 7 days
+
+        $metrics = DeskMetric::where('desk_id', $deskId)
+            ->where('recorded_at', '>=', now()->subDays($days))
+            ->orderBy('recorded_at', 'asc')
+            ->get();
+
+        // Calculate sitting/standing time
+        $sittingMinutes = 0;
+        $standingMinutes = 0;
+
+        for ($i = 0; $i < $metrics->count() - 1; $i++) {
+            $current = $metrics[$i];
+            $next = $metrics[$i + 1];
+
+            $minutesDiff = $current->recorded_at->diffInMinutes($next->recorded_at);
+
+            if ($current->is_sitting) {
+                $sittingMinutes += $minutesDiff;
+            } else {
+                $standingMinutes += $minutesDiff;
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'desk_id' => $deskId,
+            'period_days' => $days,
+            'sitting_minutes' => $sittingMinutes,
+            'standing_minutes' => $standingMinutes,
+            'total_minutes' => $sittingMinutes + $standingMinutes,
+            'metrics' => $metrics
+        ]);
     }
 
     /**
      * Return aggregated statistics about desks (admin view)
-     * - total: total desks tracked in DB
-     * - occupied / available / raised / lowered / faulty
      */
     public function stats()
     {
-        $apiKey = env('DESKS_API_KEY');
-        $base = rtrim(env('SIMULATOR_BASE_URL', 'http://127.0.0.1:8001'), '/');
-        $listUrl = "{$base}/api/v2/{$apiKey}/desks";
+        $desks = Desk::with('user')
+            ->where('is_removed_from_api', false)
+            ->get();
 
-        // Initialize counters
         $counts = [
-            'seated'   => 0,
+            'total_users' => User::count(),
+            'total_desks' => 0,
+            'assigned' => 0,
+            'sitting' => 0,
             'standing' => 0,
-            'active'   => 0,
-            'cleaning' => 0,
-            'idle'     => 0,
+            'active' => 0,
         ];
 
-        $totalUsers = 0;
+        foreach ($desks as $desk) {
+            // Count all desks from API
+            $counts['total_desks']++;
 
-        try {
-            $res = Http::timeout(5)->get($listUrl);
+            // Get real-time position and speed from API
+            $apiData = $this->deskApiService->getDeskData($desk->desk_id);
+            $position = $apiData['state']['position_mm'] ?? null;
+            $speed = $apiData['state']['speed_mms'] ?? 0;
 
-            if ($res->failed()) {
-                Log::warning('DeskController::stats - failed to fetch desk list', ['url' => $listUrl, 'status' => $res->status()]);
-                throw new \Exception("Failed to fetch desk list (HTTP {$res->status()}): {$res->body()}");
-            }
+            // Count assigned desks
+            if ($desk->user) {
+                $counts['assigned']++;
 
-            $ids = $res->json();
-
-            if (!is_array($ids)) {
-                Log::warning('DeskController::stats - desk list not array', ['body' => $res->body()]);
-                throw new \Exception('Invalid desk list format');
-            }
-
-            // For each desk id, fetch the detailed desk object
-            foreach ($ids as $deskId) {
-                try {
-                    $deskUrl = "{$base}/api/v2/{$apiKey}/desks/{$deskId}";
-                    $dres = Http::timeout(5)->get($deskUrl);
-
-                    if ($dres->failed()) {
-                        Log::warning('DeskController::stats - failed to fetch desk', ['desk' => $deskId, 'status' => $dres->status()]);
-                        // treat as idle/missing; continue
-                        $counts['idle']++;
-                        continue;
-                    }
-
-                    $deskJson = $dres->json();
-
-                    // Some simulator variants return the structure directly, others nest under top-level key.
-                    // Accept several shapes:
-                    // 1) {"config":..., "state":..., "usage":..., "lastErrors":... , "user":"seated"}  <-- unlikely for single-desk endpoint
-                    // 2) {"desk_data": {...}, "user":"seated"}  <-- if your simulator returns this
-                    // 3) {"desk_data": {...}}  <-- maybe no user
-                    // So try to detect user:
-                    $user = null;
-                    if (isset($deskJson['user'])) {
-                        $user = strtolower(trim($deskJson['user'] ?? ''));
-                    } elseif (isset($deskJson['desk_data']) && isset($deskJson['desk_data']['user'])) {
-                        $user = strtolower(trim($deskJson['desk_data']['user'] ?? ''));
-                    } elseif (isset($deskJson['desk_data']) && isset($deskJson['desk_data']['state']['user'])) {
-                        $user = strtolower(trim($deskJson['desk_data']['state']['user'] ?? ''));
-                    }
-
-                    // Many simulator variants don't include `user` per-desk; some include "user" at top-level response.
-                    // If not found, try to infer by position_mm and status (best-effort).
-                    if (!$user) {
-                        $position = $deskJson['desk_data']['state']['position_mm'] ?? $deskJson['state']['position_mm'] ?? null;
-                        $status = strtolower($deskJson['desk_data']['state']['status'] ?? $deskJson['state']['status'] ?? '');
-                        // If status indicates collision -> treat as active (faulty)
-                        if (str_contains($status, 'collision') || ($deskJson['desk_data']['state']['isAntiCollision'] ?? $deskJson['state']['isAntiCollision'] ?? false)) {
-                            $user = 'active';
-                        } elseif ($position !== null) {
-                            // heuristic: low => seated, high => standing, middle => active/idle
-                            if ($position <= self::SEATED_THRESHOLD) $user = 'seated';
-                            elseif ($position >= self::STANDING_THRESHOLD) $user = 'standing';
-                            else $user = 'idle';
-                        } else {
-                            $user = 'idle';
-                        }
-                    }
-
-                    if (isset($counts[$user])) {
-                        $counts[$user]++;
-                    } else {
-                        // Unknown state -> classify as idle
-                        $counts['idle']++;
-                    }
-
-                    $totalUsers++;
-
-                } catch (\Exception $e) {
-                    // per-desk failure: log and count as idle
-                    Log::warning('DeskController::stats - exception fetching desk', ['desk' => $deskId, 'err' => $e->getMessage()]);
-                    $counts['idle']++;
-                }
-            }
-
-        } catch (\Exception $e) {
-            // If API failed entirely, fall back to local DB (Desk::all()) if you have stored state there
-            Log::warning('DeskController::stats - falling back to DB due to API error', ['err' => $e->getMessage()]);
-
-            $desks = Desk::all();
-            foreach ($desks as $desk) {
-                $state = $desk->state ?? [];
-                // try to read previously stored 'user' field if saved, else infer from position/status
-                $user = strtolower(trim($state['user'] ?? ($state['status'] ?? 'idle')));
-                if (!isset($counts[$user])) {
-                    // infer from position
-                    $position = $state['position_mm'] ?? null;
-                    if ($position !== null) {
-                        if ($position <= self::SEATED_THRESHOLD) $user = 'seated';
-                        elseif ($position >= self::STANDING_THRESHOLD) $user = 'standing';
-                        else $user = 'idle';
-                    } else {
-                        $user = 'idle';
+                // Determine sitting/standing based on position
+                if ($position !== null) {
+                    if ($position <= self::SEATED_THRESHOLD) {
+                        $counts['sitting']++;
+                    } elseif ($position >= self::STANDING_THRESHOLD) {
+                        $counts['standing']++;
                     }
                 }
-                $counts[$user] = ($counts[$user] ?? 0) + 1;
-                $totalUsers++;
+
+                // Count active desks (in transit - has speed > 0)
+                // Only count active for desks with users assigned
+                if ($speed > 0) {
+                    $counts['active']++;
+                }
             }
         }
 
-        // Return normalized response for frontend
-        return response()->json([
-            'total_users' => $totalUsers,
-            'seated'      => $counts['seated'],
-            'standing'    => $counts['standing'],
-            'active'      => $counts['active'],
-            'cleaning'    => $counts['cleaning'],
-            'idle'        => $counts['idle'],
-            'last_updated' => now()->toIso8601String(),
-        ]);
+        return response()->json($counts);
     }
-
 }

@@ -82,6 +82,8 @@ class UserFactory extends Factory
             'needs_personalization' => false,
             'height' => fake()->randomFloat(1, 150, 200),
             'age' => fake()->numberBetween(22, 65),
+            'optimal_sitting_height' => fake()->numberBetween(700, 800),
+            'optimal_standing_height' => fake()->numberBetween(1050, 1150),
         ]);
     }
 
@@ -94,6 +96,106 @@ class UserFactory extends Factory
             'needs_personalization' => true,
             'height' => null,
             'age' => null,
+            'optimal_sitting_height' => null,
+            'optimal_standing_height' => null,
+        ]);
+    }
+
+    /**
+     * User with custom height presets configured.
+     */
+    public function withCustomHeights(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'needs_personalization' => false,
+            'height' => fake()->randomFloat(1, 150, 200),
+            'age' => fake()->numberBetween(22, 65),
+            'optimal_sitting_height' => fake()->numberBetween(700, 800),
+            'optimal_standing_height' => fake()->numberBetween(1050, 1150),
+            'custom_name_1' => fake()->randomElement(['Meeting Position', 'Phone Height', 'Relaxed', 'Active']),
+            'custom_height_1' => fake()->numberBetween(750, 1050),
+            'custom_name_2' => fake()->optional(0.7)->randomElement(['Collaboration', 'Deep Focus', 'Presentation', null]),
+            'custom_height_2' => fake()->optional(0.7)->numberBetween(750, 1050),
+        ]);
+    }
+
+    /**
+     * User assigned to a specific desk.
+     */
+    public function withDesk(string $deskId): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'desk_id' => $deskId,
+        ]);
+    }
+
+    /**
+     * User who is tall (above average height).
+     */
+    public function tall(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'needs_personalization' => false,
+            'height' => fake()->randomFloat(1, 185, 210),
+            'age' => fake()->numberBetween(22, 65),
+            'optimal_sitting_height' => fake()->numberBetween(800, 850),
+            'optimal_standing_height' => fake()->numberBetween(1100, 1200),
+        ]);
+    }
+
+    /**
+     * User who is short (below average height).
+     */
+    public function short(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'needs_personalization' => false,
+            'height' => fake()->randomFloat(1, 150, 165),
+            'age' => fake()->numberBetween(22, 65),
+            'optimal_sitting_height' => fake()->numberBetween(700, 750),
+            'optimal_standing_height' => fake()->numberBetween(1000, 1050),
+        ]);
+    }
+
+    /**
+     * User with average height.
+     */
+    public function average(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'needs_personalization' => false,
+            'height' => fake()->randomFloat(1, 165, 185),
+            'age' => fake()->numberBetween(22, 65),
+            'optimal_sitting_height' => fake()->numberBetween(750, 800),
+            'optimal_standing_height' => fake()->numberBetween(1050, 1100),
+        ]);
+    }
+
+    /**
+     * Young professional user.
+     */
+    public function young(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'needs_personalization' => false,
+            'height' => fake()->randomFloat(1, 150, 200),
+            'age' => fake()->numberBetween(22, 35),
+            'optimal_sitting_height' => fake()->numberBetween(700, 800),
+            'optimal_standing_height' => fake()->numberBetween(1050, 1150),
+        ]);
+    }
+
+    /**
+     * Senior professional user.
+     */
+    public function senior(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'needs_personalization' => false,
+            'height' => fake()->randomFloat(1, 150, 200),
+            'age' => fake()->numberBetween(50, 70),
+            'optimal_sitting_height' => fake()->numberBetween(700, 800),
+            'optimal_standing_height' => fake()->numberBetween(1050, 1150),
         ]);
     }
 

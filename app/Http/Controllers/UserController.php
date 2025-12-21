@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Desk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -32,6 +33,7 @@ class UserController extends Controller
             'age' => $user->age,
             'is_admin' => $user->is_admin,
             'needs_personalization' => $user->needs_personalization,
+            'desk_id' => $user->desk_id,
         ]);
     }
 
@@ -46,7 +48,7 @@ class UserController extends Controller
             'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
-            'height' => 'nullable|integer|min:0',
+            'height' => 'nullable|numeric|min:0',
             'age' => 'nullable|integer|min:0',
             'is_admin' => 'boolean',
             'needs_personalization' => 'boolean',
@@ -80,16 +82,17 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        // Validate the request
+        // Validate the request (ignore _method field used for Laravel method spoofing)
         $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
             'password' => 'nullable|string|min:8',
-            'height' => 'nullable|integer|min:0',
+            'height' => 'nullable|numeric|min:0',
             'age' => 'nullable|integer|min:0',
             'is_admin' => 'boolean',
             'needs_personalization' => 'boolean',
+            '_method' => 'sometimes|string', // Allow _method field for method spoofing
         ]);
 
         // Update user data
@@ -139,4 +142,62 @@ class UserController extends Controller
             'message' => 'User deleted successfully',
         ]);
     }
+
+    /**
+     * Assign desk to user
+     */
+    public function assignDesk(Request $request, $userId)
+    {
+        $user = User::findOrFail($userId);
+
+        $validated = $request->validate([
+            'desk_id' => 'required|string|exists:desks,desk_id'
+        ]);
+
+        $deskId = $validated['desk_id'];
+
+        // Check if another user is already assigned to this desk
+        $existingUser = User::where('desk_id', $deskId)
+            ->where('id', '!=', $userId)
+            ->first();
+
+        if ($existingUser) {
+            return response()->json([
+                'success' => false,
+                'message' => 'This desk is already assigned to another user'
+            ], 422);
+        }
+
+        // Assign desk to user
+        $user->update(['desk_id' => $deskId]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Desk assigned successfully',
+            'user' => $user->load('desk')
+        ]);
+    }
+
+    /**
+     * Unassign desk from user
+     */
+    public function unassignDesk($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        if (!$user->desk_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User does not have a desk assigned'
+            ], 404);
+        }
+
+        $user->update(['desk_id' => null]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Desk unassigned successfully'
+        ]);
+    }
 }
+

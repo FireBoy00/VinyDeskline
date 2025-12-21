@@ -69,12 +69,18 @@
             <div class="about-section">
                 <h3>3. Desk behaviour & schedules</h3>
                 <ul>
-                    <li><strong>Cleaning schedule:</strong> At configured times, desks can be raised to a cleaning
-                        height to support cleaning staff.</li>
-                    <li><strong>Uniform schedule:</strong> Admins can align multiple desks to the same height for
-                        specific periods.</li>
-                    <li><strong>Manual control:</strong> You can still use the physical desk controls; the system will
-                        update its state based on the controller.</li>
+                    <li><strong>Automated Schedules:</strong> Administrators can configure two types of schedules to
+                        control desk behavior during office hours:
+                        <ul style="margin-top: 8px; margin-left: 20px;">
+                            <li><strong>Cleaning Schedule:</strong> Automatically raises desks to a designated cleaning
+                                height at configured times to assist cleaning staff.</li>
+                            <li><strong>Uniform Schedule:</strong> Aligns multiple desks to the same height during
+                                specified periods, which can be set to repeat daily or occur once.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Manual Override:</strong> Users can always use the physical desk controls to manually
+                        adjust desk height at any time. The system will automatically update to reflect the controller's
+                        current position.</li>
                 </ul>
             </div>
 
@@ -82,10 +88,24 @@
             <div class="about-section">
                 <h3>4. Admin features (for administrators)</h3>
                 <ul>
-                    <li><strong>Admin Dashboard:</strong> Overview of total, occupied, available, raised, lowered, and
-                        faulty desks.</li>
-                    <li><strong>Desk Management:</strong> Inspect individual desks and their current state.</li>
-                    <li><strong>Schedules:</strong> Configure and manage cleaning and uniform height schedules.</li>
+                    <li><strong>Dashboard:</strong> Real-time overview of system statistics including total users, total
+                        desks, assigned desks, and desks in different states (sitting, standing, active). Displays next
+                        scheduled cleaning and uniform schedule events.</li>
+                    <li><strong>Desk Management:</strong> View all desks with their current status. Select and perform
+                        bulk actions on desks (assign users, mark available, mark for cleaning, mark as faulty). Inspect
+                        individual desk details and metrics.</li>
+                    <li><strong>Schedule Management:</strong> Configure and manage two types of schedules:
+                        <ul style="margin-top: 8px; margin-left: 20px;">
+                            <li><strong>Cleaning Schedule:</strong> Set specific times when desks automatically raise to
+                                cleaning height to support cleaning staff.</li>
+                            <li><strong>Uniform Schedule:</strong> Align multiple desks to the same height for specific
+                                periods (daily or one-time).</li>
+                        </ul>
+                    </li>
+                    <li><strong>User Management:</strong> Create, edit, and delete user accounts. Assign and unassign
+                        desks to users.</li>
+                    <li><strong>Office Management:</strong> Manage office structure including floors, rooms, and desk
+                        locations within the office layout.</li>
                 </ul>
             </div>
 
@@ -97,6 +117,22 @@
                         <strong>Why can’t I access the Admin Dashboard?</strong><br>
                         Only users with admin permissions can access admin pages. Regular users will see a 403
                         (Forbidden) page.
+                    </li>
+                    <li>
+                        <strong>What admin features are available?</strong><br>
+                        Admins have access to a Dashboard (overview statistics), Desk Management (view and manage
+                        desks), Schedule Management (create cleaning and uniform schedules), User Management (manage
+                        user accounts), and Office Management (manage floors, rooms, and desk locations).
+                    </li>
+                    <li>
+                        <strong>How do I set up a cleaning schedule?</strong><br>
+                        Go to Admin > Schedules, then create a new Cleaning Schedule. Specify the time and cleaning
+                        height. You can set it to repeat daily or run once on a specific date.
+                    </li>
+                    <li>
+                        <strong>Can I assign multiple desks to a user?</strong><br>
+                        Users are typically assigned one desk, but admins can view desk assignments and modify them
+                        through Desk Management or User Management pages.
                     </li>
                     <li>
                         <strong>Why do I keep seeing the personalization page?</strong><br>
