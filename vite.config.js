@@ -27,6 +27,9 @@ export default defineConfig({
                 "resources/css/home.css",
                 "resources/js/home.js",
 
+                // No desk
+                "resources/css/no-desk-assigned.css",
+
                 // Login
                 "resources/css/login.css",
 
@@ -51,6 +54,10 @@ export default defineConfig({
                 // User Management
                 "resources/css/user-management.css",
                 "resources/js/user-management.js",
+
+                // Office Management
+                "resources/css/office-management.css",
+                "resources/js/office-management.js",
             ],
             refresh: true,
         }),

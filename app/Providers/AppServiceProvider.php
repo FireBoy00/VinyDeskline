@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\User;
+use App\Observers\UserHeightObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register the UserHeightObserver to automatically calculate optimal heights
+        // whenever a user's height changes
+        User::observe(UserHeightObserver::class);
     }
 }

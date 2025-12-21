@@ -95,6 +95,17 @@ body {
     color: rgba(0, 79, 110, 0.5);
 }
 
+.form-row input:disabled {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.5);
+    cursor: not-allowed;
+}
+
+.form-row input:disabled::placeholder {
+    color: rgba(0, 0, 0, 0.3);
+}
+
 /* Validation Error Styles */
 .error-input {
     border-color: #ff6b6b !important;

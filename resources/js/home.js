@@ -1,3 +1,5 @@
+import { DeskInsightsService } from "./deskInsightsService.js";
+
 const sensorData = [
     { id: "temp", title: "Temperature", value: "19°C" },
     { id: "humid", title: "Humidity", value: "65%" },
@@ -9,6 +11,8 @@ let paginationDotsContainer;
 let sensorTitleElement;
 let sensorValueElement;
 let myPlotElement;
+let metricsData = [];
+let insightsService = null;
 
 // Global chart container IDs
 const chartContainers = {
@@ -16,153 +20,197 @@ const chartContainers = {
     heightHistory: "heightPlot",
 };
 
-// --- Data Randomization Functions ---
+/**
+ * Fetch desk metrics from the API
+ */
+async function fetchDeskMetrics() {
+    try {
+        const response = await fetch("/home/metrics");
+        if (!response.ok) {
+            console.error("Failed to fetch metrics:", response.statusText);
+            return [];
+        }
+
+        const data = await response.json();
+        if (data.success && data.metrics && data.metrics.length > 0) {
+            metricsData = data.metrics;
+            return metricsData;
+        } else {
+            console.warn("No metrics data available");
+            return [];
+        }
+    } catch (error) {
+        console.error("Error fetching metrics:", error);
+        return [];
+    }
+}
 
 /**
- * Generates randomized duration data for a single day.
- * Includes Sitting, Standing, Cleaning, and Uniform.
+ * Calculate daily sitting and standing durations from metrics
  */
-function generateDailyDurations() {
-    const maxWorkMinutes = 480; // Total time (8 hours) to distribute
+function calculateDailyDurations(metrics) {
+    const durations = {};
 
-    let sitting =
-        Math.floor(
-            Math.random() * (maxWorkMinutes * 0.6 - maxWorkMinutes * 0.2 + 1)
-        ) +
-        maxWorkMinutes * 0.3;
-    let standing =
-        Math.floor(
-            Math.random() * (maxWorkMinutes * 0.4 - maxWorkMinutes * 0 + 1)
-        ) +
-        maxWorkMinutes * 0.1;
-    let cleaning = Math.floor(Math.random() * 80);
-    let uniform = Math.floor(Math.random() * 60);
+    // Group metrics by day
+    const metricsByDay = {};
+    metrics.forEach((metric) => {
+        const date = new Date(metric.recorded_at);
+        const dayKey = date.toISOString().split("T")[0]; // YYYY-MM-DD
 
-    const total = sitting + standing + cleaning + uniform;
-    if (total > maxWorkMinutes) {
-        const ratio = maxWorkMinutes / total;
-        sitting *= ratio;
-        standing *= ratio;
-        cleaning *= ratio;
-        uniform *= ratio;
-    }
+        if (!metricsByDay[dayKey]) {
+            metricsByDay[dayKey] = [];
+        }
+        metricsByDay[dayKey].push(metric);
+    });
 
-    return {
-        Sitting: Math.round(sitting),
-        Standing: Math.round(standing),
-        Cleaning: Math.round(cleaning),
-        Uniform: Math.round(uniform),
-    };
+    // Calculate durations for each day
+    Object.keys(metricsByDay)
+        .sort()
+        .forEach((dayKey) => {
+            const dayMetrics = metricsByDay[dayKey];
+            let sittingTime = 0;
+            let standingTime = 0;
+
+            // Assume each metric represents ~5 minutes if consecutive
+            // Count transitions and time spent in each position
+            dayMetrics.forEach((metric, index) => {
+                const nextMetric = dayMetrics[index + 1];
+                if (nextMetric) {
+                    const timeDiff =
+                        new Date(nextMetric.recorded_at) -
+                        new Date(metric.recorded_at);
+                    const minutes = timeDiff / (1000 * 60);
+
+                    // Only count if the gap is reasonable (e.g., < 15 minutes)
+                    if (minutes < 15) {
+                        if (metric.is_sitting) {
+                            sittingTime += minutes;
+                        } else {
+                            standingTime += minutes;
+                        }
+                    }
+                }
+            });
+
+            durations[dayKey] = {
+                Sitting: Math.round(sittingTime),
+                Standing: Math.round(standingTime),
+                Cleaning: 0,
+                Uniform: 0,
+            };
+        });
+
+    return durations;
 }
 
 /**
  * Generates time-series data for the Desk Height vs. Time line chart.
- * Simulates movement between Sitting (~700mm) and Standing (~1100mm)
+ * Uses real metrics data from the database
  */
-function generateHeightHistory() {
+function generateHeightHistoryFromMetrics(metrics) {
     const data = { x: [], y: [] };
 
-    const startTime = new Date();
-    startTime.setHours(8, 0, 0, 0); // Start at 8:00 AM
-    let currentTime = new Date(startTime);
-    let currentHeight = 700;
-    let position = "Sitting";
-
-    const totalDurationHours = 8;
-    const totalSteps = (totalDurationHours * 60) / 10;
-
-    for (let i = 0; i < totalSteps; i++) {
-        currentTime = new Date(startTime.getTime() + i * 10 * 60000);
-        data.x.push(new Date(currentTime));
-        data.y.push(currentHeight + Math.floor(Math.random() * 10) - 5);
-
-        if (i > 0 && i % 9 === 0) {
-            const newPosition = position === "Sitting" ? "Standing" : "Sitting";
-            const newHeight = newPosition === "Standing" ? 1100 : 700;
-            const transitionDuration = 3 * 60000; // 3 minutes for transition
-
-            const steps = 3;
-            for (let j = 1; j <= steps; j++) {
-                const stepTime = new Date(
-                    currentTime.getTime() + (j / steps) * transitionDuration
-                );
-                const stepHeight =
-                    currentHeight + (newHeight - currentHeight) * (j / steps);
-                data.x.push(stepTime);
-                data.y.push(stepHeight + Math.floor(Math.random() * 5) - 2);
-            }
-
-            currentTime = new Date(currentTime.getTime() + transitionDuration);
-            data.x.push(currentTime);
-            data.y.push(newHeight + Math.floor(Math.random() * 10) - 5);
-
-            currentHeight = newHeight;
-            position = newPosition;
-
-            i += Math.floor(transitionDuration / (10 * 60000));
-        }
+    if (!metrics || metrics.length === 0) {
+        return data;
     }
 
-    return { x: data.x, y: data.y, annotations: [] };
+    // Filter to last day only for better visualization
+    const lastDay = new Date(metrics[metrics.length - 1].recorded_at);
+    lastDay.setHours(0, 0, 0, 0);
+
+    const todayMetrics = metrics.filter((metric) => {
+        const metricDate = new Date(metric.recorded_at);
+        metricDate.setHours(0, 0, 0, 0);
+        return metricDate.getTime() === lastDay.getTime();
+    });
+
+    // If no data for today, use all available data
+    const metricsToUse =
+        todayMetrics.length > 0 ? todayMetrics : metrics.slice(-48);
+
+    metricsToUse.forEach((metric) => {
+        data.x.push(new Date(metric.recorded_at));
+        data.y.push(metric.height_mm);
+    });
+
+    return data;
 }
 
-// --- Plotly Render Functions ---
+/**
+ * Format minutes into human readable format
+ * Returns: "0 min" (hidden), "45 min", "1h 30m", "2h 15m", etc.
+ */
+function formatDuration(minutes) {
+    if (!minutes || minutes === 0) {
+        return "—";
+    }
+
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+
+    if (hours === 0) {
+        return `${mins}m`;
+    } else if (mins === 0) {
+        return `${hours}h`;
+    } else {
+        return `${hours}h ${mins}m`;
+    }
+}
 
 /**
- * Daily Desk Usage Duration (Stacked Bar Chart).
+ * Helper function to create and render the daily usage chart
  */
-function renderDailyUsageChart() {
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri"];
-    const dataByDay = days.map(generateDailyDurations);
+function createAndRenderDailyChart(
+    dayLabels,
+    sittingTimes,
+    standingTimes,
+    isWeekly = false
+) {
+    // Create custom hover data with formatted times
+    const customData = sittingTimes.map((sitting, idx) => ({
+        sitting: sitting,
+        standing: standingTimes[idx],
+    }));
 
-    const sittingTimes = dataByDay.map((d) => d.Sitting);
-    const standingTimes = dataByDay.map((d) => d.Standing);
-    const cleaningTimes = dataByDay.map((d) => d.Cleaning);
-    const uniformTimes = dataByDay.map((d) => d.Uniform);
+    const sittingHoverTemplate =
+        "<b>Sitting:</b> " +
+        customData.map((d) => formatDuration(d.sitting)).join("") +
+        "<extra></extra>";
+    const standingHoverTemplate =
+        "<b>Standing:</b> " +
+        customData.map((d) => formatDuration(d.standing)).join("") +
+        "<extra></extra>";
 
-    const simpleHoverTemplate = "%{y}<extra></extra>";
-
+    // Use Plotly's custom hover with customdata
     const sittingTrace = {
-        x: days,
+        x: dayLabels,
         y: sittingTimes,
+        customdata: customData.map((d) => formatDuration(d.sitting)),
         name: "Sitting",
         type: "bar",
         marker: { color: "#004F6E" },
-        hovertemplate: simpleHoverTemplate,
+        hovertemplate: "<b>Sitting:</b> %{customdata}<extra></extra>",
     };
 
     const standingTrace = {
-        x: days,
+        x: dayLabels,
         y: standingTimes,
+        customdata: customData.map((d) => formatDuration(d.standing)),
         name: "Standing",
         type: "bar",
         marker: { color: "#0485B9" },
-        hovertemplate: simpleHoverTemplate,
+        hovertemplate: "<b>Standing:</b> %{customdata}<extra></extra>",
     };
 
-    const cleaningTrace = {
-        x: days,
-        y: cleaningTimes,
-        name: "Cleaning",
-        type: "bar",
-        marker: { color: "#66B2D0" },
-        hovertemplate: simpleHoverTemplate,
-    };
+    const data = [sittingTrace, standingTrace];
 
-    const uniformTrace = {
-        x: days,
-        y: uniformTimes,
-        name: "Uniform",
-        type: "bar",
-        marker: { color: "#C6DAE2" },
-        hovertemplate: simpleHoverTemplate,
-    };
-
-    const data = [sittingTrace, standingTrace, cleaningTrace, uniformTrace];
+    const title = isWeekly
+        ? "Weekly Sitting vs Standing Time (Last 7 Days) in Minutes"
+        : "Daily Sitting vs Standing Time (Minutes)";
 
     const layout = {
         barmode: "stack",
-        title: "Daily Desk Usage Duration (Minutes)",
+        title: title,
         xaxis: { title: "Day of Week" },
         yaxis: { title: "Duration (Minutes)" },
         margin: { t: 50, b: 50, l: 50, r: 20 },
@@ -180,14 +228,64 @@ function renderDailyUsageChart() {
 }
 
 /**
+ * Daily Desk Usage Duration (Stacked Bar Chart).
+ * Uses real metrics data from the database
+ */
+function renderDailyUsageChart() {
+    // Calculate daily durations from metrics
+    const dayDurations = calculateDailyDurations(metricsData);
+
+    if (Object.keys(dayDurations).length === 0) {
+        // Show empty chart
+        const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+        createAndRenderDailyChart(
+            days,
+            Array(7).fill(0),
+            Array(7).fill(0),
+            true
+        );
+        return;
+    }
+
+    // Get last 7 consecutive calendar days starting from Monday
+    const today = new Date();
+    const daysBackToMonday = (today.getDay() + 6) % 7; // How many days back to Monday
+    const last7Days = [];
+    const dayLabels = [];
+    const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(today);
+        date.setDate(date.getDate() - daysBackToMonday + i);
+        const dateKey = date.toISOString().split("T")[0]; // YYYY-MM-DD
+        last7Days.push(dateKey);
+        dayLabels.push(dayNames[i]);
+    }
+
+    // Get values for each day, or 0 if no data for that day
+    const sittingTimes = last7Days.map((d) => dayDurations[d]?.Sitting ?? 0);
+    const standingTimes = last7Days.map((d) => dayDurations[d]?.Standing ?? 0);
+
+    createAndRenderDailyChart(dayLabels, sittingTimes, standingTimes, true);
+}
+
+/**
  * Desk Height vs. Time (Line Chart).
+ * Uses real metrics data from the database
  */
 function renderHeightHistoryChart() {
-    const { x, y } = generateHeightHistory();
+    let data;
+
+    if (metricsData.length > 0) {
+        data = generateHeightHistoryFromMetrics(metricsData);
+    } else {
+        // Fallback to empty data
+        data = { x: [], y: [] };
+    }
 
     const trace = {
-        x: x,
-        y: y,
+        x: data.x,
+        y: data.y,
         mode: "lines",
         name: "Desk Height",
         line: {
@@ -207,13 +305,28 @@ function renderHeightHistoryChart() {
         },
         yaxis: {
             title: "Height (mm)",
-            range: [650, 1150],
+            range: [680, 1320],
         },
         annotations: [],
         margin: { t: 50, b: 50, l: 50, r: 20 },
         plot_bgcolor: "#dce5e9",
         paper_bgcolor: "#dce5e9",
     };
+
+    if (data.x.length === 0) {
+        layout.annotations.push({
+            text: "No data available for today",
+            xref: "paper",
+            yref: "paper",
+            x: 0.5,
+            y: 0.5,
+            showarrow: false,
+            font: {
+                size: 16,
+                color: "#666",
+            },
+        });
+    }
 
     if (window.Plotly) {
         window.Plotly.newPlot(chartContainers.heightHistory, [trace], layout, {
@@ -268,6 +381,85 @@ function updateCarousel() {
     });
 }
 
+/**
+ * Render Daily Briefing
+ */
+function renderDailyBriefing() {
+    const briefingElement = document.getElementById("daily-briefing-text");
+    if (!briefingElement) return;
+
+    if (insightsService && metricsData.length > 0) {
+        const briefing = insightsService.generateDailyBriefing();
+        briefingElement.textContent = briefing;
+    } else {
+        briefingElement.textContent =
+            "Welcome! Start using your desk and we'll provide insights about your posture habits.";
+    }
+}
+
+/**
+ * Render Feedback observations and suggestions
+ */
+function renderFeedback() {
+    const observationsElement = document.getElementById(
+        "feedback-observations"
+    );
+    const suggestionsElement = document.getElementById("feedback-suggestions");
+
+    if (!observationsElement || !suggestionsElement) return;
+
+    if (insightsService && metricsData.length > 0) {
+        const feedback = insightsService.generateFeedback();
+
+        // Check if observations contain "no data" messages
+        const isNoDataObservation = (obs) => {
+            return (
+                obs.includes("No desk usage data recorded yet") ||
+                obs.includes("No desk activity recorded today yet")
+            );
+        };
+
+        // Render observations as cards
+        observationsElement.innerHTML = feedback.observations
+            .map(
+                (obs) => `
+                <div class="feedback-card-item${
+                    isNoDataObservation(obs) ? " no-data" : ""
+                }">
+                    <div class="feedback-icon">📊</div>
+                    <div class="feedback-text">${obs}</div>
+                </div>
+            `
+            )
+            .join("");
+
+        // Render suggestions as cards
+        suggestionsElement.innerHTML = feedback.suggestions
+            .map(
+                (sug) => `
+                <div class="feedback-card-item">
+                    <div class="feedback-icon">💡</div>
+                    <div class="feedback-text">${sug}</div>
+                </div>
+            `
+            )
+            .join("");
+    } else {
+        observationsElement.innerHTML = `
+            <div class="feedback-card-item no-data">
+                <div class="feedback-icon">📊</div>
+                <div class="feedback-text">No desk usage data recorded yet.</div>
+            </div>
+        `;
+        suggestionsElement.innerHTML = `
+            <div class="feedback-card-item">
+                <div class="feedback-icon">💡</div>
+                <div class="feedback-text">Start using your desk to receive personalized ergonomic recommendations.</div>
+            </div>
+        `;
+    }
+}
+
 function navigate(direction) {
     currentSlide += direction;
     updateCarousel();
@@ -281,18 +473,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const csrfToken = document
         .querySelector('meta[name="csrf-token"]')
         .getAttribute("content");
-    let height;
 
     buttons.forEach((button) => {
         button.addEventListener("click", async () => {
             const parentRow = button.closest(".pos-row");
             const positionIndex = button.getAttribute("data-position");
+            let heightInMm;
+
+            // Handle custom positions (with pos-row parent)
             if (positionIndex && parentRow) {
                 const nameInput = parentRow.querySelector(".custom-name");
                 const heightInput = parentRow.querySelector(".custom-height");
 
                 const customName = nameInput.value;
-                const customHeight = heightInput.value;
+                const customHeightCm = heightInput.value;
 
                 try {
                     const response = await fetch(
@@ -306,7 +500,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             body: JSON.stringify({
                                 index: positionIndex,
                                 name: customName,
-                                position_mm: customHeight * 10,
+                                position_mm: customHeightCm * 10,
                             }),
                         }
                     );
@@ -314,41 +508,56 @@ document.addEventListener("DOMContentLoaded", function () {
                     const data = await response.json();
 
                     if (data.success) {
-                        height = data.height / 10;
+                        heightInMm = data.height;
                         alert(`Height and name updated!`);
                     } else {
                         alert(
                             `Error: ${data.message}` || `Error updating height.`
                         );
+                        return; // Don't proceed to set desk height if update failed
                     }
                 } catch (error) {
                     console.error("Error:", error);
-                    alert("An error occurred while setting height.");
+                    alert("An error occurred while updating custom position.");
+                    return; // Don't proceed to set desk height if update failed
                 }
             } else {
-                height = button.getAttribute("data-height");
+                // Handle optimal positions (standing/sitting)
+                heightInMm = button.getAttribute("data-height");
             }
-            try {
-                const response = await fetch(`/desks/${deskId}/set-height`, {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": csrfToken,
-                    },
-                    body: JSON.stringify({ position_mm: height * 10 }),
-                });
 
-                const data = await response.json();
-                if (data.success) alert("Height updated!");
-                else
-                    alert(
-                        `Desk Error : ${data.message}` ||
-                            `Error updating height.`
+            // Set the desk height
+            if (heightInMm) {
+                try {
+                    const response = await fetch(
+                        `/desks/${deskId}/set-height`,
+                        {
+                            method: "PUT",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "X-CSRF-TOKEN": csrfToken,
+                            },
+                            body: JSON.stringify({
+                                position_mm: parseInt(heightInMm),
+                            }),
+                        }
                     );
-                height = null;
-            } catch (error) {
-                console.error(error);
-                alert("Desk error:  An error occurred while setting height.");
+
+                    const data = await response.json();
+                    if (data.success) {
+                        alert("Desk height set successfully!");
+                    } else {
+                        alert(
+                            `Desk Error: ${data.message}` ||
+                                `Error setting desk height.`
+                        );
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert(
+                        "Desk error: An error occurred while setting height."
+                    );
+                }
             }
         });
     });
@@ -356,7 +565,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 // --- DOM Initialization ---
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     paginationDotsContainer = document.getElementById("pagination-dots");
     sensorTitleElement = document.getElementById("sensor-title");
     sensorValueElement = document.getElementById("sensor-value");
@@ -376,8 +585,18 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    // Fetch real metrics data from API
+    metricsData = await fetchDeskMetrics();
+
+    // Initialize insights service with metrics data
+    if (metricsData && metricsData.length > 0) {
+        insightsService = new DeskInsightsService(metricsData);
+    }
+
+    // Render all components
     renderDailyUsageChart();
     renderHeightHistoryChart();
-
+    renderDailyBriefing();
+    renderFeedback();
     renderCarousel();
 });

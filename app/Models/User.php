@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class User extends Authenticatable
 {
@@ -35,6 +36,16 @@ class User extends Authenticatable
         'custom_height_2',
 
     ];
+
+    /**
+     * Boot the model.
+     * Register the observer for automatic height calculation.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+        // Observer is registered globally in AppServiceProvider
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -67,5 +78,13 @@ class User extends Authenticatable
     public function getFullNameAttribute(): string
     {
         return trim(($this->first_name ?? '') . ' ' . ($this->last_name ?? ''));
+    }
+
+    /**
+     * Get the desk assigned to this user.
+     */
+    public function desk(): BelongsTo
+    {
+        return $this->belongsTo(Desk::class, 'desk_id', 'desk_id');
     }
 }

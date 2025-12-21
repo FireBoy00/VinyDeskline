@@ -35,11 +35,8 @@
             <h2 class="accent-title"><span>Daily</span> <span>Briefing</span></h2>
 
             <div class="brief-row">
-                <span class="brief-text">
-                    This is
-                    lalalallalalalallalalalalalalalalalalalalalalalalalalalalallalalallalalalaalallalalalallallalal.
-                    This is
-                    lalalallalalalallalalalalalalalalalalalalalalalalalalalallalalallalalalaalallalalalallallalal.
+                <span class="brief-text" id="daily-briefing-text">
+                    Loading your daily insights...
                 </span>
             </div>
         </section>
@@ -79,20 +76,21 @@
             <div class="item">
                 <p class="accent"><span>Standing</span></p>
                 <div class="pos-group">
-                    <button class="pos-btn"
-                        data-height={{ $user->optimal_standing_height }}>{{ $user->optimal_standing_height ?? '—' }}
+                    <button class="pos-btn" type="button"
+                        data-height="{{ $user->optimal_standing_height }}">{{ $user->optimal_standing_height ? $user->optimal_standing_height / 10 : '—' }}
                         CM</button>
-                    <i class="material-icons-round save-icon" data-height={{ $user->optimal_standing_height }}>save</i>
+                    <i class="material-icons-round save-icon"
+                        data-height="{{ $user->optimal_standing_height }}">save</i>
                 </div>
             </div>
 
             <div class="item">
                 <p class="accent"><span>Sitting</span></p>
                 <div class="pos-group">
-                    <button class="pos-btn"
-                        data-height={{ $user->optimal_sitting_height }}>{{ $user->optimal_sitting_height ?? '—' }}
+                    <button class="pos-btn" type="button"
+                        data-height="{{ $user->optimal_sitting_height }}">{{ $user->optimal_sitting_height ? $user->optimal_sitting_height / 10 : '—' }}
                         CM</button>
-                    <i class="material-icons-round save-icon" data-height={{ $user->optimal_sitting_height }}>save</i>
+                    <i class="material-icons-round save-icon" data-height="{{ $user->optimal_sitting_height }}">save</i>
                 </div>
             </div>
         </section>
@@ -104,31 +102,33 @@
                 <span class="material-icons-round">help_outline</span>
             </button>
             <h2 class="accent-title"><span>Custom</span> <span>Positions</span></h2>
-            <form class="pos-row">
+            <form class="pos-row" onsubmit="event.preventDefault(); return false;">
                 <input type="text" class="custom-name" placeholder= 'Give it a name'
-                    value={{ $user->custom_name_1 }}>
+                    value="{{ $user->custom_name_1 }}">
                 <input type="number" class="custom-height" placeholder='Height in cm'
-                    value={{ $user->custom_height_1 / 10 ? $user->custom_height_1 / 10 : '' }}>
+                    value="{{ $user->custom_height_1 ? $user->custom_height_1 / 10 : '' }}">
                 <i data-position="1" class="material-icons-round save-icon"
-                    data-height={{ $user->custom_height_1 }}>save</i>
+                    data-height="{{ $user->custom_height_1 }}">save</i>
             </form>
-            <form class="pos-row">
+            <form class="pos-row" onsubmit="event.preventDefault(); return false;">
                 <input type="text" class="custom-name" placeholder="Give it a name"
-                    value={{ $user->custom_name_2 }}>
+                    value="{{ $user->custom_name_2 }}">
                 <input type="number" class="custom-height" placeholder='Height in cm'
-                    value={{ $user->custom_height_2 / 10 ? $user->custom_height_2 / 10 : '' }}>
+                    value="{{ $user->custom_height_2 ? $user->custom_height_2 / 10 : '' }}">
                 <i data-position="2" class="material-icons-round save-icon"
-                    data-height={{ $user->custom_height_2 }}>save</i>
+                    data-height="{{ $user->custom_height_2 }}">save</i>
             </form>
         </section>
 
         <!-- STATISTICS -->
         <section class="card stats-card">
             <button class="card-help-btn"
-                data-tooltip="View your desk usage statistics and track time spent in different positions throughout the day.">
+                data-tooltip="Track your daily sitting and standing time to maintain a healthy desk posture balance.">
                 <span class="material-icons-round">help_outline</span>
             </button>
-            <h2 class="accent-title"><span>Your</span> <span>Statistics</span></h2>
+            <h2 class="accent-title"><span>Weekly</span> <span>Sit</span> <span>vs</span> <span>Stand</span>
+                <span>(7d)</span>
+            </h2>
 
             <div id="myPlot"></div>
 
@@ -140,14 +140,6 @@
                 <div class="legend-item">
                     <span class="legend-dot standing"></span>
                     <span class="legend-label">Standing</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-dot cleaning"></span>
-                    <span class="legend-label">Cleaning</span>
-                </div>
-                <div class="legend-item">
-                    <span class="legend-dot lowered"></span>
-                    <span class="legend-label">Uniform</span>
                 </div>
             </div>
         </section>
@@ -165,13 +157,47 @@
 
         <!-- FEEDBACK -->
         <section class="card feedback-card">
-            <button class="card-help-btn" data-tooltip="Get a feedback recommendation based on your desk usage.">
+            <button class="card-help-btn"
+                data-tooltip="Review your desk usage observations and receive personalized ergonomic recommendations.">
                 <span class="material-icons-round">help_outline</span>
             </button>
             <h2 class="accent-title"><span>Feedback</span></h2>
-            <div class="feedback-dot"></div>
-            <div class="feedback-dot"></div>
-            <div class="feedback-dot"></div>
+
+            <div id="feedback-content" class="feedback-scroll-container">
+                <div class="feedback-section">
+                    <h3 class="feedback-subtitle">Today's Observations</h3>
+                    <div id="feedback-observations" class="feedback-cards-container">
+                        <div class="feedback-card-item">
+                            <div class="feedback-icon">📊</div>
+                            <div class="feedback-text">Loading observations...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="feedback-section">
+                    <h3 class="feedback-subtitle">Suggestions</h3>
+                    <div id="feedback-suggestions" class="feedback-cards-container">
+                        <div class="feedback-card-item">
+                            <div class="feedback-icon">💡</div>
+                            <div class="feedback-text">Loading suggestions...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        </ul>
+        </div>
+        </div>
+        </section>
+
+        <!-- TUTORIAL -->
+        <section class="card tutorial-card">
+            <button class="card-help-btn"
+                data-tooltip="View the desk usage tutorial to learn best practices for optimal ergonomics and desk positioning.">
+                <span class="material-icons-round">help_outline</span>
+            </button>
+            <h2 class="accent-title"><span>Desk</span> <span>Usage</span> <span>Tutorial</span></h2>
+            <img src="{{ asset('assets/desk_use_tutorial.png') }}" alt="Desk Usage Tutorial">
         </section>
     </main>
 </body>

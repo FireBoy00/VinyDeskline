@@ -433,6 +433,23 @@
     border: 1px solid rgba(236, 72, 153, 0.3);
 }
 
+.user-pill.desk {
+    background: linear-gradient(
+        135deg,
+        rgba(59, 130, 246, 0.15),
+        rgba(37, 99, 235, 0.15)
+    );
+    color: #2563eb;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.user-pill.desk .material-icons-round {
+    font-size: 16px;
+}
+
 .user-pill.needs-personalization {
     background: linear-gradient(
         135deg,
