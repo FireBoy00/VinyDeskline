@@ -1,0 +1,45 @@
+﻿
+   FAIL  Tests\Feature\SensorMetricsTest
+  ÔĘ» it can cÔÇŽ 0.34s  
+  ÔĘ» home pagÔÇŽ 0.03s  
+  Ôťô it validÔÇŽ 0.02s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\SensorMetricsTest > it can create a sensor metric using factory  BadMethodCallException   
+  Call to undefined method App\Models\SensorMetric::factory()
+
+  at vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+     63ÔľĽ      * @throws \BadMethodCallException
+     64ÔľĽ      */
+     65ÔľĽ     protected static function throwBadMethodCallException($method)
+     66ÔľĽ     {
+  Ô×ť  67ÔľĽ         throw new BadMethodCallException(sprintf(
+     68ÔľĽ             'Call to undefined method %s::%s()', static::class, $method
+     69ÔľĽ         ));
+     70ÔľĽ     }
+     71ÔľĽ }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+  2   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:36
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  Tests\Feature\SensorMetricsTest > home page displays latest sensor data  BadMethodCallException   
+  Call to undefined method App\Models\SensorMetric::factory()
+
+  at vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+     63ÔľĽ      * @throws \BadMethodCallException
+     64ÔľĽ      */
+     65ÔľĽ     protected static function throwBadMethodCallException($method)
+     66ÔľĽ     {
+  Ô×ť  67ÔľĽ         throw new BadMethodCallException(sprintf(
+     68ÔľĽ             'Call to undefined method %s::%s()', static::class, $method
+     69ÔľĽ         ));
+     70ÔľĽ     }
+     71ÔľĽ }
+
+  1   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:67
+  2   vendor\laravel\framework\src\Illuminate\Support\Traits\ForwardsCalls.php:36
+
+
+  Tests:    2 failed, 1 passed (1 assertions)
+  Duration: 0.62s
+
