@@ -20,21 +20,76 @@ class UserFactory extends Factory
      * List of first names for generating users
      */
     protected static array $firstNames = [
-        'John', 'Jane', 'Michael', 'Sarah', 'David', 'Emily', 'Robert', 'Lisa',
-        'James', 'Mary', 'William', 'Patricia', 'Richard', 'Jennifer', 'Charles',
-        'Linda', 'Thomas', 'Elizabeth', 'Daniel', 'Susan', 'Matthew', 'Jessica',
-        'Anthony', 'Karen', 'Mark', 'Nancy', 'Donald', 'Betty', 'Steven', 'Margaret'
+        'John',
+        'Jane',
+        'Michael',
+        'Sarah',
+        'David',
+        'Emily',
+        'Robert',
+        'Lisa',
+        'James',
+        'Mary',
+        'William',
+        'Patricia',
+        'Richard',
+        'Jennifer',
+        'Charles',
+        'Linda',
+        'Thomas',
+        'Elizabeth',
+        'Daniel',
+        'Susan',
+        'Matthew',
+        'Jessica',
+        'Anthony',
+        'Karen',
+        'Mark',
+        'Nancy',
+        'Donald',
+        'Betty',
+        'Steven',
+        'Margaret'
     ];
 
     /**
      * List of last names for generating users
      */
     protected static array $lastNames = [
-        'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller',
-        'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez',
-        'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin',
-        'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark',
-        'Ramirez', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King'
+        'Smith',
+        'Johnson',
+        'Williams',
+        'Brown',
+        'Jones',
+        'Garcia',
+        'Miller',
+        'Davis',
+        'Rodriguez',
+        'Martinez',
+        'Hernandez',
+        'Lopez',
+        'Gonzalez',
+        'Wilson',
+        'Anderson',
+        'Thomas',
+        'Taylor',
+        'Moore',
+        'Jackson',
+        'Martin',
+        'Lee',
+        'Perez',
+        'Thompson',
+        'White',
+        'Harris',
+        'Sanchez',
+        'Clark',
+        'Ramirez',
+        'Lewis',
+        'Robinson',
+        'Walker',
+        'Young',
+        'Allen',
+        'King'
     ];
 
     /**
@@ -46,7 +101,7 @@ class UserFactory extends Factory
     {
         $firstName = fake()->randomElement(self::$firstNames);
         $lastName = fake()->randomElement(self::$lastNames);
-        
+
         // Generate email: first letter of first name + first 4 letters of last name (or all if shorter)
         $emailPrefix = strtolower(substr($firstName, 0, 1) . substr($lastName, 0, min(4, strlen($lastName))));
         $email = $emailPrefix . '@vinydeskline.com';
@@ -68,7 +123,7 @@ class UserFactory extends Factory
      */
     public function admin(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'is_admin' => true,
         ]);
     }
@@ -78,7 +133,7 @@ class UserFactory extends Factory
      */
     public function personalized(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'needs_personalization' => false,
             'height' => fake()->randomFloat(1, 150, 200),
             'age' => fake()->numberBetween(22, 65),
@@ -92,7 +147,7 @@ class UserFactory extends Factory
      */
     public function needsPersonalization(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'needs_personalization' => true,
             'height' => null,
             'age' => null,
@@ -106,7 +161,7 @@ class UserFactory extends Factory
      */
     public function withCustomHeights(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'needs_personalization' => false,
             'height' => fake()->randomFloat(1, 150, 200),
             'age' => fake()->numberBetween(22, 65),
@@ -122,9 +177,9 @@ class UserFactory extends Factory
     /**
      * User assigned to a specific desk.
      */
-    public function withDesk(string $deskId): static
+    public function withDesk($deskId): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'desk_id' => $deskId,
         ]);
     }
@@ -134,7 +189,7 @@ class UserFactory extends Factory
      */
     public function tall(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'needs_personalization' => false,
             'height' => fake()->randomFloat(1, 185, 210),
             'age' => fake()->numberBetween(22, 65),
@@ -148,7 +203,7 @@ class UserFactory extends Factory
      */
     public function short(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'needs_personalization' => false,
             'height' => fake()->randomFloat(1, 150, 165),
             'age' => fake()->numberBetween(22, 65),
@@ -162,7 +217,7 @@ class UserFactory extends Factory
      */
     public function average(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'needs_personalization' => false,
             'height' => fake()->randomFloat(1, 165, 185),
             'age' => fake()->numberBetween(22, 65),
@@ -176,7 +231,7 @@ class UserFactory extends Factory
      */
     public function young(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'needs_personalization' => false,
             'height' => fake()->randomFloat(1, 150, 200),
             'age' => fake()->numberBetween(22, 35),
@@ -190,7 +245,7 @@ class UserFactory extends Factory
      */
     public function senior(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'needs_personalization' => false,
             'height' => fake()->randomFloat(1, 150, 200),
             'age' => fake()->numberBetween(50, 70),
@@ -204,7 +259,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }
