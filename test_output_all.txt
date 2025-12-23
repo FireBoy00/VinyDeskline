@@ -1,0 +1,112 @@
+﻿
+   FAIL  Tests\Feature\SensorMetricsTest
+  Ôťô it can cÔÇŽ 0.58s  
+  ÔĘ» home pagÔÇŽ 0.12s  
+  Ôťô it validÔÇŽ 0.02s  
+
+   FAIL  Tests\Feature\OfficeStructureTest
+  ÔĘ» admin caÔÇŽ 0.05s  
+  ÔĘ» admin caÔÇŽ 0.04s  
+  ÔĘ» admin caÔÇŽ 0.04s  
+  ÔĘ» admin caÔÇŽ 0.04s  
+  ÔĘ» admin caÔÇŽ 0.04s  
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  TestsÔÇŽ   
+  Expected response status code [200] but received 302.
+Failed asserting that 302 is identical to 200.
+
+  at tests\Feature\SensorMetricsTest.php:39
+     35ÔľĽ     ]);
+     36ÔľĽ 
+     37ÔľĽ     $response = $this->actingAs($user)->get('/home');
+     38ÔľĽ 
+  Ô×ť  39ÔľĽ     $response->assertStatus(200);
+     40ÔľĽ     $response->assertSee('24.5'); // Checking if temperature appears on page
+     41ÔľĽ 
+     42ÔľĽ     // Also verify the JSON endpoint that frontend might use
+     43ÔľĽ     $apiResponse = $this->actingAs($user)->getJson('/api/sensors/latest'); // Assuming endpoint exists or verifying check
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  TestsÔÇŽ   
+  Expected response status code [200] but received 404.
+Failed asserting that 404 is identical to 200.
+
+  at tests\Feature\OfficeStructureTest.php:23
+     19ÔľĽ         'floor_number' => 1,
+     20ÔľĽ         'description' => 'Main lobby and reception'
+     21ÔľĽ     ]);
+     22ÔľĽ 
+  Ô×ť  23ÔľĽ     $response->assertStatus(200);
+     24ÔľĽ     $this->assertDatabaseHas('floors', [
+     25ÔľĽ         'name' => 'Ground Floor',
+     26ÔľĽ         'floor_number' => 1,
+     27ÔľĽ     ]);
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  TestsÔÇŽ   
+  Expected response status code [200] but received 404.
+Failed asserting that 404 is identical to 200.
+
+  at tests\Feature\OfficeStructureTest.php:41
+     37ÔľĽ         'floor_number' => $floor->floor_number,
+     38ÔľĽ         'description' => 'Updated desc'
+     39ÔľĽ     ]);
+     40ÔľĽ 
+  Ô×ť  41ÔľĽ     $response->assertStatus(200);
+     42ÔľĽ     $this->assertDatabaseHas('floors', [
+     43ÔľĽ         'id' => $floor->id,
+     44ÔľĽ         'name' => 'New Name',
+     45ÔľĽ     ]);
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  TestsÔÇŽ   
+  Expected response status code [422] but received 404.
+Failed asserting that 404 is identical to 422.
+
+  at tests\Feature\OfficeStructureTest.php:57
+     53ÔľĽ     $admin = User::factory()->admin()->personalized()->withDesk($desk->desk_id)->create();
+     54ÔľĽ 
+     55ÔľĽ     $response = $this->actingAs($admin)->deleteJson("/admin/api/floors/{$floor->id}");
+     56ÔľĽ 
+  Ô×ť  57ÔľĽ     $response->assertStatus(422); // Assuming controller returns 422 for this logic
+     58ÔľĽ     $this->assertDatabaseHas('floors', ['id' => $floor->id]);
+     59ÔľĽ });
+     60ÔľĽ 
+     61ÔľĽ test('admin can create a room', function () {
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  TestsÔÇŽ   
+  Expected response status code [200] but received 404.
+Failed asserting that 404 is identical to 200.
+
+  at tests\Feature\OfficeStructureTest.php:72
+     68ÔľĽ         'floor_id' => $floor->id,
+     69ÔľĽ         'description' => 'Small meeting room'
+     70ÔľĽ     ]);
+     71ÔľĽ 
+  Ô×ť  72ÔľĽ     $response->assertStatus(200);
+     73ÔľĽ     $this->assertDatabaseHas('rooms', [
+     74ÔľĽ         'name' => 'Meeting Room A',
+     75ÔľĽ         'floor_id' => $floor->id,
+     76ÔľĽ     ]);
+
+  ÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇÔöÇ  
+   FAILED  TestsÔÇŽ   
+  Expected response status code [200] but received 404.
+Failed asserting that 404 is identical to 200.
+
+  at tests\Feature\OfficeStructureTest.php:90
+     86ÔľĽ     $response = $this->actingAs($admin)->putJson("/admin/api/desks/{$targetDesk->desk_id}/location", [
+     87ÔľĽ         'room_id' => $room->id
+     88ÔľĽ     ]);
+     89ÔľĽ 
+  Ô×ť  90ÔľĽ     $response->assertStatus(200);
+     91ÔľĽ 
+     92ÔľĽ     // Refresh to check DB
+     93ÔľĽ     $targetDesk->refresh();
+     94ÔľĽ     expect($targetDesk->room_id)->toBe($room->id)
+
+
+  Tests:    6 failed, 2 passed (8 assertions)
+  Duration: 1.14s
+

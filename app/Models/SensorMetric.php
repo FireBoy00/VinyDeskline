@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SensorMetric extends Model
 {
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
     protected $fillable = [
         'desk_id',
         'temperature',

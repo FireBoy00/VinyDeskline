@@ -35,6 +35,7 @@ export default defineConfig({
 
                 // Personalize
                 "resources/css/personalize.css",
+                "resources/js/personalize.js",
 
                 // About & Help
                 "resources/css/about.css",
