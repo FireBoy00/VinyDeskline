@@ -1,5 +1,7 @@
 # VinyDeskline
 
+**The 2nd repository that holds microcontroler code is: https://github.com/GabijaSt/Raspberry_pi_sem_pr**
+
 **Making standing desks smarter, one metric at a time.**
 
 VinyDeskline is a web application that monitors and manages standing desks in office environments. We integrated smart desk API monitoring, environmental sensors, and user ergonomic tracking into one clean dashboard. Basically, we wanted to know if people were actually using standing desks, so we built something to track it.
