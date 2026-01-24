@@ -30,7 +30,7 @@ class MockPico extends Command
     {
         $server   = 'broker.hivemq.com';
         $port     = 1883;
-        $clientId = 'viny-deskline-mock-' . uniqid();
+        $clientId = 'viny-deskline-mock';
 
         $mqtt = new MqttClient($server, $port, $clientId);
 
