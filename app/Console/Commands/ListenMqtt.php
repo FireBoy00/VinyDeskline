@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 
 use App\Models\SensorMetric;
-use PhpMqtt\Client\Facades\MQTT;
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 
@@ -33,7 +32,7 @@ class ListenMqtt extends Command
         // Using the WebSocket address provided by the user
         $server   = 'broker.hivemq.com';
         $port     = 1883; // We use 1883 (TCP) for the PHP server as it is more stable than WS for background tasks
-        $clientId = 'viny-deskline-server-' . uniqid();
+        $clientId = 'viny-deskline-server';
 
         $mqtt = new MqttClient($server, $port, $clientId);
 
